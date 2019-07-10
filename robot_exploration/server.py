@@ -14,9 +14,7 @@ model_params = {
                                         description="Choose how many obstacle there are in the map"),
     "wifi_range":UserSettableParameter('slider', "Wifi range", 50, 10, 1000, 10,
                                         description="Choose how many cells around the robot can see"),
-    "alpha":UserSettableParameter('number', "Alpha value", value = 1,
-                                        description="Importance of utility in target selection"),
-    "gamma":UserSettableParameter('number', "Gamma value", value = 0.01,
+    "alpha":UserSettableParameter('number', "Alpha value", value = 0.01,
                                         description="Importance of path cost in target selection")
 }
 

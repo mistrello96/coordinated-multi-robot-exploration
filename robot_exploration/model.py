@@ -14,7 +14,6 @@ class ExplorationArea(Model):
 		self.obstacles_dist = obstacles_dist
 		self.wifi_range = wifi_range
 		self.alpha = alpha
-		self.gamma = gamma
 
 		self.grid = MultiGrid(ncells, ncells, torus=False)
         self.schedule = RandomActivation(self)
@@ -119,7 +118,7 @@ class Robot(Agent):
 		best_gain = -math.inf
 			for element in bids:
 				cell, cost = element
-				gain = self.model.alpha * self.model.grid_utility[cell] - self.model.gamma * cost
+				gain = self.model.grid_utility[cell] - (self.model.alpha * cost)
 				if gain > best_gain:
 					best_gain = gain
 					best_cell = cell
