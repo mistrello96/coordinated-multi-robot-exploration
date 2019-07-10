@@ -125,7 +125,20 @@ class Robot(Agent):
 					best_cell = cell
 		return best_cell
 
+	def distance(cell1, cell2):
+		x1, y1 = cell1
+		x2, y2 = cell2
+    	dx = abs(x2 - x1);
+    	dy = abs(y2 - y1);
 
+    	minimum = min(dx, dy);
+    	maximum = max(dx, dy);
+
+    	diagonalSteps = minimum;
+    	straightSteps = maximum - minimum;
+
+    	#return math.sqrt(2) * diagonalSteps + straightSteps;
+    	return diagonalSteps + straightSteps
 
 
 	def step(self):
@@ -158,6 +171,4 @@ class Robot(Agent):
 				self.target_path = nx.astar_path(self.model.seen_graph, self.pos, cell, weight='weight')
 				# reduce the utility of the cells nearby the target cell
 				for element in self.model.get_neighborhood(self.target_cell, moore, include_center=False, radius=self.radar_radius):
-				
-
-
+					self.model.grid_utility[elemet] -= 1 - self.disance(self.target, element) / self.radar_radius
