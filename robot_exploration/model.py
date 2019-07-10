@@ -73,16 +73,8 @@ class Robot(Agent):
 		self.exploration_treshold = math.inf
 		self.exploration_status = 0
 
-
-	def step(self):
-		# if the agent has a move to get closer to the target, move towards it
-		if not list(self.target_path):
-			# update the last position
-			self.last_pos = self.pos
-			# move the agent
-			self.model.grid.move_agent(self, heapq.heappop(target_path))
-			# find the cell that the robot can see
-			for nearby in self.model.grid.iter_neighborhood(self.pos, moore=True, include_center=False, radius=self.radar_radius):
+	def percept(self):
+		for nearby in self.model.grid.iter_neighborhood(self.pos, moore=True, include_center=False, radius=self.radar_radius):
 				# TOREMOVE
 				#self.model.grid_seen[nearby] = True
 				# s is suource node, d is destination node
@@ -100,6 +92,51 @@ class Robot(Agent):
 				w = 1 + (self.model.grid_difficulty[d] // 4 )
 				if tuple([s, d]) not in self.model.seen_graph.edges():
 					self.model.seen_graph.add_weighted_edges_from(tuple([s, d, w]))
+	
+	def find_best_cell(self):
+		# find the frontier cells
+		frontier_cells = list()
+		for cell in grid_explored.keys():
+			if not grid_explored[cell]:
+				for element in self.model.get_neighborhood(cell, moore, include_center=False, radius=1):
+					if grid_explored[element]:
+						frontier_cells.append(cell)
+						break
+		# NB we are computing path to not explored cell that are near explored cells.
+		# Since the they are close, the unexplored cell has already been seen and added to the graph
+		# only consider seen cells that are not blocked for the SP computation
+		# list of tuples, the first element is the cell, the second is the cost
+		bids = list()
+		for cell in frontier_cells:
+			try:
+				dist = nx.astar_path_length(seen_graph, self.pos, cell, weight='weight')
+				bids.append((cell, dist))
+			except:
+				# if the path is not known, the cell is not considered
+				pass
+		# pick the most convinient cell
+		best_cell = tuple()
+		best_gain = -math.inf
+			for element in bids:
+				cell, cost = element
+				gain = self.model.alpha * self.model.grid_utility[cell] - self.model.gamma * cost
+				if gain > best_gain:
+					best_gain = gain
+					best_cell = cell
+		return best_cell
+
+
+
+
+	def step(self):
+		# if the agent has a move to get closer to the target, move towards it
+		if not list(self.target_path):
+			# update the last position
+			self.last_pos = self.pos
+			# move the agent
+			self.model.grid.move_agent(self, heapq.heappop(target_path))
+			# find the cell that the robot can see
+			self.percept()
 			# TODO wifi range check
 		else:
 			# if the agent has no move to do, but is on the target, explore
@@ -114,43 +151,13 @@ class Robot(Agent):
 					self.target_cell = ()
 			# if the robot has no target, find one
 			else:
-				# find the frontier cells
-				frontier_cells = list()
-				for cell in grid_explored.keys():
-					if not grid_explored[cell]:
-						for element in self.model.get_neighborhood(cell, moore, include_center=False, radius=1):
-							if grid_explored[element]:
-								frontier_cells.append(cell)
-								break
-				# NB we are computing path to not explored cell that are near explored cells.
-				# Since the they are close, the unexplored cell has already been seen and added to the graph
-				# only consider seen cells that are not blocked for the SP computation
-				# list of tuples, the first element is the cell, the second is the cost
-				bids = list()
-				for cell in frontier_cells:
-					try:
-						dist = nx.astar_path_length(seen_graph, self.pos, cell, weight='weight')
-						bids.append((cell, dist))
-					except:
-						# if the path is not known, the cell is not considered
-						pass
-				# pick the most convinient cell
-				best_cell = tuple()
-				best_gain = -math.inf
- 				for element in bids:
- 					cell, cost = element
- 					gain = self.model.alpha * self.model.grid_utility[cell] - self.model.gamma * cost
- 					if gain > best_gain:
- 						best_gain = gain
- 						best_cell = cell
- 						
- 				self.target_cell = best_cell
+ 				self.target_cell = self.find_best_cell()
  				# NB, in the real life, the 
  				self.exploration_treshold = self.model.grid_difficulty[best_cell]
 				# compute and store the most convinient path
-				self.target_path = nx.astar_path(seen_graph, self.pos, cell, weight='weight')
+				self.target_path = nx.astar_path(self.model.seen_graph, self.pos, cell, weight='weight')
 				# reduce the utility of the cells nearby the target cell
-				for element in self.model.get_neighborhood(best_cell, moore, include_center=False, radius=self.radar_radius):
+				for element in self.model.get_neighborhood(self.target_cell, moore, include_center=False, radius=self.radar_radius):
 				
 
 
