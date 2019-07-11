@@ -7,7 +7,7 @@ import heapq
 import networkx as nx
 
 class ExplorationArea(Model):
-	def __init__(self):
+	def __init__(self, nrobots, radar_radius, ncells, obstacles_dist, wifi_range, alpha):
 		self.nrobots = nrobots
 		self.radar_radius = radar_radius
 		self.ncells = ncells
@@ -23,27 +23,28 @@ class ExplorationArea(Model):
 		self.grid_difficulty = dict()
 		self.grid_explored = dict()
 		self.grid_priority = dict()
+		self.grid_utility = dict()
 
 		for i in self.grid.coord_iter():
 			rand = np.random.random_sample()
-			grid_traversability[i[1:]] = True if rand > self.obstacles_dist else False
-			if grid_traversability[i[1:]]:
-				grid_difficulty[i[1:]] = numpy.random.randint(low = 1, high=13)
-				grid_explored[i[1:]] = False
-				grid_priority[i[1:]] = False
-				grid_utility[i[1:]] = 1.0
+			self.grid_traversability[i[1:]] = True if rand > self.obstacles_dist else False
+			if self.grid_traversability[i[1:]]:
+				self.grid_difficulty[i[1:]] = np.random.randint(low = 1, high=13)
+				self.grid_explored[i[1:]] = False
+				self.grid_priority[i[1:]] = False
+				self.grid_utility[i[1:]] = 1.0
 			else:
-				grid_difficulty[i[1:]] = math.inf
-				grid_explored[i[1:]] = True
-				grid_priority[i[1:]] = False
-				grid_utility[i[1:]] = -math.inf
+				self.grid_difficulty[i[1:]] = math.inf
+				self.grid_explored[i[1:]] = True
+				self.grid_priority[i[1:]] = False
+				self.grid_utility[i[1:]] = -math.inf
   			
-			seen_graph = nx.DiGraph()
-			#TODO wifi representation
+		self.seen_graph = nx.DiGraph()
+		#TODO wifi representation
 
 		# create agents
 		for i in range(self.nrobots):
-			a = Robot(i, self. radar_radius)
+			a = Robot(i, self, self.radar_radius)
 			self.schedule.add(a)
 			# Add the agent to a random grid cell??
 			#x = self.random.randrange(self.grid.width)
@@ -71,7 +72,7 @@ class Robot(Agent):
 	def __init__(self, unique_id, model, radar_radius):
 		super().__init__(unique_id, model)
 		# self pos is already initializated
-		self.last_pos = self.pos
+		self.last_pos = tuple()
 		self.radar_radius = radar_radius
 		self.target_path = list()
 		heapq.heapify(self.target_path)
