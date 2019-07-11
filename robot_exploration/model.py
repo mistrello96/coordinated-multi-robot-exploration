@@ -59,8 +59,10 @@ class ExplorationArea(Model):
 	def step(self):
 		# call step function for all of the robots in random order
 		self.schedule.step()
-		print(list(self.grid_explored.values()).count(True) / list(self.grid_explored.values()).count(False))
-
+		if list(self.grid_explored.values()).count(False):
+			print(list(self.grid_explored.values()).count(True) / list(self.grid_explored.values()).count(False))
+		else:
+			print("Exploration Completed")
 	def run_model(self):
 		while(True):
 			if (False in self.grid_explored.values()):
