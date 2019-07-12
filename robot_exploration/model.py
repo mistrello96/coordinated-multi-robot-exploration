@@ -8,6 +8,7 @@ import networkx as nx
 
 class ExplorationArea(Model):
 	def __init__(self, nrobots, radar_radius, ncells, obstacles_dist, wifi_range, alpha):
+		self.running = True
 		self.nrobots = nrobots
 		self.radar_radius = radar_radius
 		self.ncells = ncells
@@ -24,7 +25,7 @@ class ExplorationArea(Model):
 		self.grid_explored = dict()
 		self.grid_priority = dict()
 		self.grid_utility = dict()
-
+		self.agent_counter = 1
 		for i in self.grid.coord_iter():
 			rand = np.random.random_sample()
 			self.grid_traversability[i[1:]] = True if rand > self.obstacles_dist else False
@@ -33,27 +34,37 @@ class ExplorationArea(Model):
 				self.grid_explored[i[1:]] = False
 				self.grid_priority[i[1:]] = False
 				self.grid_utility[i[1:]] = 1.0
+				a = Exploration(self.agent_counter, self, i[1:], 0)
+				self.schedule.add(a)
+				self.grid.place_agent(a, i[1:])
+				self.agent_counter += 1
 			else:
 				self.grid_difficulty[i[1:]] = math.inf
 				self.grid_explored[i[1:]] = None
 				self.grid_priority[i[1:]] = False
 				self.grid_utility[i[1:]] = -math.inf
+				a = Exploration(self.agent_counter, self, i[1:], -1)
+				self.schedule.add(a)
+				self.grid.place_agent(a, i[1:])
+				self.agent_counter += 1
   			
 		self.seen_graph = nx.DiGraph()
 		#TODO wifi representation
 
 		# create agents
-		for i in range(self.nrobots):
-			# Add the agent to a random grid cell??
-			#x = self.random.randrange(self.grid.width)
-			#y = self.random.randrange(self.grid.height)
+		for i in range(self.agent_counter, self.nrobots + self.agent_counter):
+			y = self.random.randrange(self.grid.height)
 			x = 0
-			#y = self.grid.height / 2
-			y = 0
-			a = Robot(i, self, tuple([x,y]),self.radar_radius)
+			while(not self.grid_traversability[tuple([x,y])]):
+				y = self.random.randrange(self.grid.height)
+			a = Robot(i, self, tuple([x,y]), self.radar_radius)
 			self.schedule.add(a)
 			self.grid.place_agent(a, (x, y))
 			self.grid_explored[tuple([x,y])] = True
+			this_cell = self.grid.get_cell_list_contents(tuple([x,y]))
+			exploration_agent = [obj for obj in this_cell if isinstance(obj, Exploration)][0]
+			exploration_agent.status = 2
+
 
 	# what the model do at each time step
 	def step(self):
@@ -63,14 +74,28 @@ class ExplorationArea(Model):
 			print(list(self.grid_explored.values()).count(True) / list(self.grid_explored.values()).count(False))
 		else:
 			print("Exploration Completed")
+			self.running = False
 	def run_model(self):
 		while(True):
 			if (False in self.grid_explored.values()):
 				self.step()
 			else:
+				self.running = False
 				break
 		#TODO
 		# implement search untill victim found
+
+class Exploration(Agent):
+	# 0 = not explored
+	# -1 obstacle
+	# 1 exploration ongoing
+	# 2 explored
+	def __init__(self, unique_id, model, pos, status):
+		super().__init__(unique_id, model)
+		self.pos = pos
+		self.status = status
+	def step(self):
+		pass
 
 class Robot(Agent):
 	def __init__(self, unique_id, model, pos, radar_radius):
@@ -165,6 +190,7 @@ class Robot(Agent):
 	def step(self):
 		# if the agent has a move to get closer to the target, move towards it
 		if list(self.target_path):
+			print("A")
 			# update the last position
 			self.last_pos = self.pos
 			# move the agent
@@ -176,15 +202,26 @@ class Robot(Agent):
 			# if the agent has no move to do, but is on the target, explore
 			if self.target_cell:
 				if self.exploration_status < self.exploration_treshold:
+					print("B")
+					if self.exploration_status == 0:
+						# update status of exploration
+						this_cell = self.model.grid.get_cell_list_contents([self.pos])
+						exploration_agent = [obj for obj in this_cell if isinstance(obj, Exploration)][0]
+						exploration_agent.status = 1
 					self.exploration_status += 1
 				# if the agent has ended the exploration, update the data
 				else:
+					print("C")
 					self.exploration_treshold = math.inf
 					self.exploration_status = 0
 					self.model.grid_explored[self.target_cell] = True
 					self.target_cell = ()
+					this_cell = self.model.grid.get_cell_list_contents([self.pos])
+					exploration_agent = [obj for obj in this_cell if isinstance(obj, Exploration)][0]
+					exploration_agent.status = 2
 			# if the robot has no target, find one
 			else:
+				print("D")
 				frontier_cells = self.find_frontier_cells()
 				self.target_cell = self.find_best_cell(frontier_cells)
 				# if no frontier is avaiable, just pass
@@ -194,9 +231,11 @@ class Robot(Agent):
 					self.model.grid_utility[self.target_cell] = -math.inf
 					# compute and store the most convinient path to get there
 					self.target_path = nx.astar_path(self.model.seen_graph, self.pos, self.target_cell, weight='weight')
+					# the first element is the cell itself
+					heapq.heappop(self.target_path)
 					# reduce the utility of the FRONTIERS (and only frontiers) cells nearby the target cell
 					for element in self.model.grid.get_neighborhood(self.target_cell, "moore", include_center=False, radius=self.radar_radius):
 						if element in frontier_cells:
 							#self.model.grid_utility[elemet] -= (1 - self.distance(self.target_cell, element) / self.radar_radius)
 							self.model.grid_utility[element] *= (1 - self.distance(self.target_cell, element) / self.radar_radius)
-		print(self.pos)
+		print(tuple([self.unique_id, self.pos]))
