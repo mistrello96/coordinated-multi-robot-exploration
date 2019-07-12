@@ -8,46 +8,43 @@ import networkx as nx
 
 class ExplorationArea(Model):
 	def __init__(self, nrobots, radar_radius, ncells, obstacles_dist, wifi_range, alpha):
+		# used in server start
 		self.running = True
 		self.nrobots = nrobots
 		self.radar_radius = radar_radius
 		self.ncells = ncells
 		self.obstacles_dist = obstacles_dist
-		#self.wifi_range = wifi_range
+		self.wifi_range = wifi_range
 		self.alpha = alpha
 
+		# grid and schedule representation
 		self.grid = MultiGrid(ncells, ncells, torus=False)
 		self.schedule = RandomActivation(self)
-
-        # create grid attributes
-		self.grid_traversability = dict()
-		self.grid_difficulty = dict()
-		self.grid_explored = dict()
-		self.grid_priority = dict()
-		self.grid_utility = dict()
+		# unique counter for agents 
 		self.agent_counter = 1
+		# place a cell agent on each chell of the grid
 		for i in self.grid.coord_iter():
 			rand = np.random.random_sample()
-			self.grid_traversability[i[1:]] = True if rand > self.obstacles_dist else False
-			if self.grid_traversability[i[1:]]:
-				self.grid_difficulty[i[1:]] = np.random.randint(low = 1, high=13)
-				self.grid_explored[i[1:]] = False
-				self.grid_priority[i[1:]] = False
-				self.grid_utility[i[1:]] = 1.0
-				a = Exploration(self.agent_counter, self, i[1:], 0)
-				self.schedule.add(a)
-				self.grid.place_agent(a, i[1:])
-				self.agent_counter += 1
+			traversability = True if rand > self.obstacles_dist else False
+			# if free
+			if traversability:
+				difficulty = np.random.randint(low = 1, high=13)
+				explored = 0
+				priority = False
+				utility= 1.0
+			# if obstacle
 			else:
-				self.grid_difficulty[i[1:]] = math.inf
-				self.grid_explored[i[1:]] = None
-				self.grid_priority[i[1:]] = False
-				self.grid_utility[i[1:]] = -math.inf
-				a = Exploration(self.agent_counter, self, i[1:], -1)
-				self.schedule.add(a)
-				self.grid.place_agent(a, i[1:])
-				self.agent_counter += 1
+				difficulty = math.inf
+				explored = -1
+				priority = False
+				utility = -math.inf
+			# place the agent in the grid
+			a = Cell(self.agent_counter, self, i[1:], traversability, difficulty, explored, priority, utility)
+			self.schedule.add(a)
+			self.grid.place_agent(a, i[1:])
+			self.agent_counter += 1
   			
+  		# graph of seen cells
 		self.seen_graph = nx.DiGraph()
 		#TODO wifi representation
 
@@ -55,45 +52,75 @@ class ExplorationArea(Model):
 		for i in range(self.agent_counter, self.nrobots + self.agent_counter):
 			y = self.random.randrange(self.grid.height)
 			x = 0
-			while(not self.grid_traversability[tuple([x,y])]):
+			# take the agent Cell in the grid cell x,y
+			cell = [obj for obj in self.grid.get_cell_list_contents(tuple([x,y])) if isinstance(obj, Cell)][0]
+			# do-while structure, place agents only in free cells
+			while(cell.explored == -1):
 				y = self.random.randrange(self.grid.height)
+				cell = self.grid.get_cell_list_contents(tuple([x,y]))
+				cell = [obj for obj in cell if isinstance(obj, Cell)][0]
+			# place robotic agens in the grid
 			a = Robot(i, self, tuple([x,y]), self.radar_radius)
 			self.schedule.add(a)
 			self.grid.place_agent(a, (x, y))
-			self.grid_explored[tuple([x,y])] = True
-			this_cell = self.grid.get_cell_list_contents(tuple([x,y]))
-			exploration_agent = [obj for obj in this_cell if isinstance(obj, Exploration)][0]
-			exploration_agent.status = 2
+			cell.explored = 2
 
 
 	# what the model do at each time step
 	def step(self):
 		# call step function for all of the robots in random order
 		self.schedule.step()
-		if list(self.grid_explored.values()).count(False):
-			print(list(self.grid_explored.values()).count(True) / list(self.grid_explored.values()).count(False))
-		else:
+		# compute percentage of explored over total 
+		count_explored = 0
+		count_obstacle = 0
+		# iterate over cells
+		for i in self.grid.coord_iter():
+			cell = [obj for obj in self.grid.get_cell_list_contents(i[1:]) if isinstance(obj, Cell)][0]
+			if cell.explored == 2:
+				count_explored +=1
+			if cell.explored == -1:
+				count_obstacle +=1
+		result = count_explored / (self.ncells*self.ncells - count_obstacle)
+		# if all cell has benn explored, stop the simulation
+		if result == 1:
 			print("Exploration Completed")
 			self.running = False
+		# keep going  with the exploration
+		else:
+			print(str(result))
+
 	def run_model(self):
 		while(True):
-			if (False in self.grid_explored.values()):
+			# search for unexplored cells
+			keep_going = False
+			for i in self.grid.coord_iter():
+				cell = [obj for obj in self.grid.get_cell_list_contents(i[1:]) if isinstance(obj, Cell)][0]
+				if cell.explored == 0:
+					keep_going = True
+			# if found, keep going the simulation
+			if keep_going:
 				self.step()
+			# end the simulation
 			else:
 				self.running = False
 				break
 		#TODO
 		# implement search untill victim found
 
-class Exploration(Agent):
+class Cell(Agent):
 	# 0 = not explored
 	# -1 obstacle
-	# 1 exploration ongoing
+	# 1 Cell ongoing
 	# 2 explored
-	def __init__(self, unique_id, model, pos, status):
+	def __init__(self, unique_id, model, pos, traversability, difficulty, explored, priority, utility):
 		super().__init__(unique_id, model)
 		self.pos = pos
-		self.status = status
+		self.traversability = traversability
+		self.difficulty = difficulty
+		self.explored = explored
+		self.priority = priority
+		self.utility = utility
+	# this agent is only used for store data and visualization, no need of step function
 	def step(self):
 		pass
 
@@ -104,72 +131,99 @@ class Robot(Agent):
 		self.last_pos = tuple()
 		self.pos = pos
 		self.radar_radius = radar_radius
+		# heap with the path to the target
 		self.target_path = list()
 		heapq.heapify(self.target_path)
+		# a tuple with the indexes of the target
 		self.target_cell = ()
+		# store the number of steps needed to explore the cell
 		self.exploration_treshold = math.inf
 		self.exploration_status = 0
 		self.percept()
 
+	# return the cell agent at the index given
+	def agent_get_cell(self, index):
+		tmp = self.model.grid.get_cell_list_contents(index)
+		cell = [obj for obj in tmp if isinstance(obj, Cell)][0]
+		return cell
+
+	# add the sorrundings of the cell to the graph used for SP computation
 	def percept(self):
+		# iterate over the neighborhood
 		for nearby in self.model.grid.iter_neighborhood(self.pos, moore=True, include_center=False, radius=self.radar_radius):
 				# s is suource node, d is destination node
 				s = self.pos
 				d = nearby
 				# check if d is reachable
-				if self.model.grid_traversability[d]:
+				cell = self.agent_get_cell(d)
+				if cell.traversability:
 					# compute the cost of moving in that direction
-					w = 1 + (self.model.grid_difficulty[d] // 4 )
-					# if the edge is not yet present, add it
+					w = 1 + (cell.difficulty // 4 )
+					# if the edge is not yet present in the graph, add it
 					if tuple([s, d]) not in self.model.seen_graph.edges():
 						self.model.seen_graph.add_edge(s, d, weight=w)
+				# add the reversed edge if not present
 				s = nearby
 				d = self.pos
-				w = 1 + (self.model.grid_difficulty[d] // 4 )
+				w = 1 + (cell.difficulty // 4 )
 				if tuple([s, d]) not in self.model.seen_graph.edges():
 					self.model.seen_graph.add_edge(s, d, weight=w)
 	
+	# retunr a list of tuples that represents the indexes of all the frontier cells
 	def find_frontier_cells(self):
 		frontier_cells = list()
-		for cell in self.model.grid_explored.keys():
-			if not self.model.grid_explored[cell]:
-				for element in self.model.grid.get_neighborhood(cell, "moore", include_center=False, radius=1):
-					if self.model.grid_explored[element]:
-						frontier_cells.append(cell)
+		# iterate over all cell of the grid
+		for i in self.model.grid.coord_iter():
+			# pich the unexplored cell
+			cell = self.agent_get_cell(i[1:])
+			if cell.explored == 0:
+				# iterate over the 1-radius neighborhood
+				for element in self.model.grid.get_neighborhood(i[1:], "moore", include_center=False, radius=1):
+					# search for a explored cell
+					cell2 = self.agent_get_cell(element)
+					if cell2.explored == 1 or cell2.explored == 2:
+						# if found, the unexplored cell is a frontier cell
+						frontier_cells.append(i[1:])
 						break
 		return frontier_cells
 
+	# find the most convinient cell to explore for a robot
 	def find_best_cell(self, frontier_cells):		
-		# NB we are computing path to not explored cell that are near explored cells.
-		# Since the they are close, the unexplored cell has already been seen and added to the graph
-		# only consider seen cells that are not blocked for the SP computation
-		# list of tuples, the first element is the cell, the second is the cost
+		# NB we are computing path to not explored cells that are near explored cells.
+		# Since the they are close, the unexplored cell has already been seen at least one time and added to the graph
+		# only consider seen cells that are not obstacles for the SP computation
+		
+		# list of tuples, the first element is the indexes of thecell, the second is the cost to get there
 		bids = list()
-		for cell in frontier_cells:
+		for i in frontier_cells:
+			# try to compute the shortest path to get to the cell. If the operation succedes, add the tuple to the bids list
 			try:
-				dist = nx.astar_path_length(self.model.seen_graph, self.pos, cell, weight='weight')
-				bids.append((cell, dist))
+				dist = nx.astar_path_length(self.model.seen_graph, self.pos, i, weight='weight')
+				bids.append((i, dist))
 			except:
-				# if the path is not known, the cell is not considered
+				print("No Path")
+				# if the path is not found, the cell is not considered
 				pass
 		# pick the most convinient cell
-		best_cell = tuple()
+		best_cell_index = tuple()
 		best_gain = -math.inf
 		best_cost = 0
+		# iterate over the possible destination
 		for element in bids:
-			cell, cost = element
-			gain = self.model.grid_utility[cell] - (self.model.alpha * cost)
+			cell_index, cost = element
+			cell = self.agent_get_cell(cell_index)
+			gain = cell.utility - (self.model.alpha * cost)
 			if gain > best_gain:
 				best_gain = gain
-				best_cell = cell
+				best_cell_index = cell_index
 				best_cost = cost
 			# in case of same gain, prefer smaller distance to travel
 			if gain == best_gain:
 				if cost < best_cost:
 					best_gain = gain
-					best_cell = cell
+					best_cell_index = cell_index
 					best_cost = cost						
-		return best_cell
+		return best_cell_index
 
 	def distance(self, cell1, cell2):
 		x1, y1 = cell1
@@ -186,7 +240,6 @@ class Robot(Agent):
 		#return math.sqrt(2) * diagonalSteps + straightSteps;
 		return diagonalSteps + straightSteps
 
-
 	def step(self):
 		# if the agent has a move to get closer to the target, move towards it
 		if list(self.target_path):
@@ -195,47 +248,52 @@ class Robot(Agent):
 			self.last_pos = self.pos
 			# move the agent
 			self.model.grid.move_agent(self, heapq.heappop(self.target_path))
-			# find the cell that the robot can see
+			# find the cell that the robot can see and add to the graph
 			self.percept()
 			# TODO wifi range check
 		else:
 			# if the agent has no move to do, but is on the target, explore
 			if self.target_cell:
+				# if the cell is not yet full explored, keep going
 				if self.exploration_status < self.exploration_treshold:
 					print("B")
+					# if fist step of exploration, update cell status
 					if self.exploration_status == 0:
-						# update status of exploration
-						this_cell = self.model.grid.get_cell_list_contents([self.pos])
-						exploration_agent = [obj for obj in this_cell if isinstance(obj, Exploration)][0]
-						exploration_agent.status = 1
+						cell = self.agent_get_cell(self.pos)
+						cell.explored = 1
+					# anyway, explore
 					self.exploration_status += 1
-				# if the agent has ended the exploration, update the data
+				# if the agent has ended the exploration, update the data of the cell (and self data)
 				else:
 					print("C")
 					self.exploration_treshold = math.inf
 					self.exploration_status = 0
-					self.model.grid_explored[self.target_cell] = True
 					self.target_cell = ()
-					this_cell = self.model.grid.get_cell_list_contents([self.pos])
-					exploration_agent = [obj for obj in this_cell if isinstance(obj, Exploration)][0]
-					exploration_agent.status = 2
+					cell = self.agent_get_cell(self.pos)
+					cell.explored = 2
 			# if the robot has no target, find one
 			else:
 				print("D")
+				# find frontier's cells
 				frontier_cells = self.find_frontier_cells()
+				# find best cell
 				self.target_cell = self.find_best_cell(frontier_cells)
-				# if no frontier is avaiable, just pass
+				# if no frontier is avaiable, just stand still
+				# else, search for the sp and reduce utility near the targetted cell
 				if (self.target_cell):
-					self.exploration_treshold = self.model.grid_difficulty[self.target_cell]
+					cell = self.agent_get_cell(self.target_cell)
+					self.exploration_treshold = cell.difficulty
+					# NBNBNBNBNBNB
 					# not sure if make sense
-					self.model.grid_utility[self.target_cell] = -math.inf
+					cell.utility = -math.inf
 					# compute and store the most convinient path to get there
 					self.target_path = nx.astar_path(self.model.seen_graph, self.pos, self.target_cell, weight='weight')
-					# the first element is the cell itself
+					# the first element is the cell itself, so pop it
 					heapq.heappop(self.target_path)
 					# reduce the utility of the FRONTIERS (and only frontiers) cells nearby the target cell
 					for element in self.model.grid.get_neighborhood(self.target_cell, "moore", include_center=False, radius=self.radar_radius):
 						if element in frontier_cells:
-							#self.model.grid_utility[elemet] -= (1 - self.distance(self.target_cell, element) / self.radar_radius)
-							self.model.grid_utility[element] *= (1 - self.distance(self.target_cell, element) / self.radar_radius)
+							cell2 = self.agent_get_cell(element)
+							#cell.utility -= (1 - self.distance(self.target_cell, element) / self.radar_radius)
+							cell2.utility *= (1 - self.distance(self.target_cell, element) / self.radar_radius)
 		print(tuple([self.unique_id, self.pos]))
