@@ -3,7 +3,6 @@ from mesa.time import RandomActivation
 from mesa.space import MultiGrid
 import numpy as np
 import math
-import heapq
 import networkx as nx
 
 class ExplorationArea(Model):
@@ -133,7 +132,6 @@ class Robot(Agent):
 		self.radar_radius = radar_radius
 		# heap with the path to the target
 		self.target_path = list()
-		heapq.heapify(self.target_path)
 		# a tuple with the indexes of the target
 		self.target_cell = ()
 		# store the number of steps needed to explore the cell
@@ -150,24 +148,32 @@ class Robot(Agent):
 	# add the sorrundings of the cell to the graph used for SP computation
 	def percept(self):
 		# iterate over the neighborhood
-		for nearby in self.model.grid.iter_neighborhood(self.pos, moore=True, include_center=False, radius=self.radar_radius):
+		robot_seen = set(self.model.grid.get_neighborhood(self.pos, "moore", include_center=True, radius=self.radar_radius))
+		for element in robot_seen:
+			cell_neigh = set(self.model.grid.get_neighborhood(element, "moore", include_center=False, radius=1))
+			inter = set.intersection(robot_seen, cell_neigh)
+			for element2 in inter:
 				# s is suource node, d is destination node
-				s = self.pos
-				d = nearby
+				s = element
+				d = element2
 				# check if d is reachable
-				cell = self.agent_get_cell(d)
-				if cell.traversability:
+				cell1 = self.agent_get_cell(s)
+				cell2 = self.agent_get_cell(d)
+				if cell1.traversability and cell2.traversability:
 					# compute the cost of moving in that direction
-					w = 1 + (cell.difficulty // 4 )
+					w = 1 + (cell1.difficulty // 4)
 					# if the edge is not yet present in the graph, add it
 					if tuple([s, d]) not in self.model.seen_graph.edges():
 						self.model.seen_graph.add_edge(s, d, weight=w)
 				# add the reversed edge if not present
-				s = nearby
-				d = self.pos
-				w = 1 + (cell.difficulty // 4 )
-				if tuple([s, d]) not in self.model.seen_graph.edges():
-					self.model.seen_graph.add_edge(s, d, weight=w)
+				s = element2
+				d = element
+				cell1 = self.agent_get_cell(d)
+				cell2 = self.agent_get_cell(s)
+				if cell1.traversability and cell2.traversability:
+					w = 1 + (cell1.difficulty // 4)
+					if tuple([s, d]) not in self.model.seen_graph.edges():
+						self.model.seen_graph.add_edge(s, d, weight=w)
 	
 	# retunr a list of tuples that represents the indexes of all the frontier cells
 	def find_frontier_cells(self):
@@ -201,7 +207,6 @@ class Robot(Agent):
 				dist = nx.astar_path_length(self.model.seen_graph, self.pos, i, weight='weight')
 				bids.append((i, dist))
 			except:
-				print("No Path")
 				# if the path is not found, the cell is not considered
 				pass
 		# pick the most convinient cell
@@ -242,12 +247,13 @@ class Robot(Agent):
 
 	def step(self):
 		# if the agent has a move to get closer to the target, move towards it
-		if list(self.target_path):
+		if self.target_path:
 			print("A")
 			# update the last position
 			self.last_pos = self.pos
 			# move the agent
-			self.model.grid.move_agent(self, heapq.heappop(self.target_path))
+			self.model.grid.move_agent(self, self.target_path[0])
+			self.target_path = self.target_path[1:]
 			# find the cell that the robot can see and add to the graph
 			self.percept()
 			# TODO wifi range check
@@ -289,7 +295,7 @@ class Robot(Agent):
 					# compute and store the most convinient path to get there
 					self.target_path = nx.astar_path(self.model.seen_graph, self.pos, self.target_cell, weight='weight')
 					# the first element is the cell itself, so pop it
-					heapq.heappop(self.target_path)
+					self.target_path = self.target_path[1:]
 					# reduce the utility of the FRONTIERS (and only frontiers) cells nearby the target cell
 					for element in self.model.grid.get_neighborhood(self.target_cell, "moore", include_center=False, radius=self.radar_radius):
 						if element in frontier_cells:
