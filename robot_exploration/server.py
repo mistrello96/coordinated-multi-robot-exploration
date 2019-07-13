@@ -39,7 +39,7 @@ model_params = {
 }
 
 #grid representation
-grid = CanvasGrid(agent_portrayal, 10, 10, 500, 500)
+grid = CanvasGrid(agent_portrayal, 30, 30, 500, 500)
 
 #server = ModularServer(ExplorationArea, [grid, chart], "Search and Rescue simulation", model_params)
 server = ModularServer(ExplorationArea, [grid], "Search and Rescue simulation", model_params)
