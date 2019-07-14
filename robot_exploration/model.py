@@ -62,6 +62,9 @@ class ExplorationArea(Model):
 			# DP There should be a way to avoi that while, 
 			# in Python there's a function which randomize an element from
 			# a list; we can use that updating the list every time we place a robot
+			
+			# DP and also looks like this does not work as intended, 5x5 table with 5 robots and i didn't have
+			# all the column green
 			x = 0
 			# take the agent Cell in the grid cell x,y
 			cell = [obj for obj in self.grid.get_cell_list_contents(tuple([x,y])) if isinstance(obj, Cell)][0]
@@ -98,16 +101,20 @@ class ExplorationArea(Model):
 		# if all cells have benn explored, stop the simulation
 		if result == 1:
 			print("Exploration Completed")
+			print("Final step number_step funciton: " + str(self.schedule.steps)) # debug print, I'll delete it when it won't be needed anymore DP
 			self.running = False
 		# keep going with the exploration
 		else:
 			# DP I don't think you should cast it to string, if you want to print
 			# only a varibale the cast is implicit
+			print("Step number: " + str(self.schedule.steps)) # debug print, DP
 			print(str(result))
 
 	def run_model(self):
 		while(True):
 			# search for unexplored cells
+			#debug print, DP
+			print("Run model function called") # DP looks like this function does not get called in when running on the server.
 			keep_going = False
 			for i in self.grid.coord_iter():
 				cell = [obj for obj in self.grid.get_cell_list_contents(i[1:]) if isinstance(obj, Cell)][0]
@@ -120,6 +127,8 @@ class ExplorationArea(Model):
 			else:
 				self.running = False
 				break
+		# Looks like that in the server mod this print do not come :(
+		print("Step number at the end of run model: " + str(self.schedule.steps)) # debug print, DP
 		#TODO
 		# implement search until victim found
 		# DP We do not know how many victims are out there, we should keep looking for them
