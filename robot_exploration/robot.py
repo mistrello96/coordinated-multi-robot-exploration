@@ -18,6 +18,10 @@ class Robot(Agent):
 		# store the number of steps needed to explore the cell
 		self.exploration_treshold = math.inf
 		self.exploration_status = 0
+		self.can_move = False
+		cell = self.agent_get_cell(self.pos)
+		self.travel_status = 0
+		self.travel_treshold = 1 + (cell.difficulty // 4)
 		self.percept()
 		# add self.status for robot task (moving/exploring/waiting)
 
@@ -148,17 +152,19 @@ class Robot(Agent):
 		# DP what values can assume target_path and target_cell? Are object with None values or empty tuples?
 
 		if self.target_path:
-			
-			## TODO
-			# consider path difficulty
-			
-			# update the last position
-			self.last_pos = self.pos
-			# move the agent
-			self.model.grid.move_agent(self, self.target_path[0])
-			self.target_path = self.target_path[1:]
-			# find the cell that the robot can see and add to the graph
-			self.percept()
+			if self.travel_status == self.travel_treshold:
+				# update the last position
+				self.last_pos = self.pos
+				# move the agent
+				self.model.grid.move_agent(self, self.target_path[0])
+				self.target_path = self.target_path[1:]
+				# find the cell that the robot can see and add to the graph
+				self.percept()
+				cell = self.agent_get_cell(self.pos)
+				self.travel_status = 0
+				self.travel_treshold = 1 + (cell.difficulty // 4)
+			else:
+				self.travel_status += 1
 
 			# TODO wifi range check
 		
