@@ -9,7 +9,6 @@ import networkx as nx
 
 # Minors
 # rewrite find_frontier_cells
-# use lamda in find best cell
 
 class Robot(Agent):
 	def __init__(self, unique_id, model, pos, radar_radius):
@@ -108,28 +107,12 @@ class Robot(Agent):
 				# if the path is not found, the cell is not considered
 				pass
 		# pick the most convinient cell
-		best_cell_index = tuple()
-		best_gain = -math.inf
-		best_cost = 0
-		# iterate over the possible destination
-		# DP I guess you're looking for the maximum, can't we simply sort the list 
-		# using key argument?
-		# somthing like this should mae the trick: sorted_by_length = sorted(list_, key=lambda x: (x[0], len(x[1]), float(x[1])))
-		for element in bids:
-			cell_index, cost = element
-			cell = self.agent_get_cell(cell_index)
-			gain = cell.utility - (self.model.alpha * cost)
-			if gain > best_gain:
-				best_gain = gain
-				best_cell_index = cell_index
-				best_cost = cost
-			# in case of same gain, prefer smaller distance to travel
-			if gain == best_gain:
-				if cost < best_cost:
-					best_gain = gain
-					best_cell_index = cell_index
-					best_cost = cost					
-		return best_cell_index
+		bids_sort_cost = sorted(bids, key=lambda x: x[1])
+		bids_sort_gain = sorted(bids_sort_cost, key=lambda x: (self.agent_get_cell(x[0]).utility - (self.model.alpha * x[1])), reverse = True)
+		if bids_sort_gain:				
+			return bids_sort_gain[0][0]
+		else:
+			return tuple()
 
 	def distance(self, cell1, cell2):
 		x1, y1 = cell1
