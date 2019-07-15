@@ -3,6 +3,7 @@ from .cell import Cell
 from mesa import Model
 from mesa.time import RandomActivation
 from mesa.space import MultiGrid
+from mesa.datacollection import DataCollector
 import numpy as np
 import math
 import networkx as nx
@@ -89,6 +90,8 @@ class ExplorationArea(Model):
 	def step(self):
 		# call step function for all of the robots in random order
 		self.schedule.step()
+		'''
+		legacy code, there's a function which does this work
 		# compute percentage of explored over total 
 		count_explored = 0
 		# iterate over cells
@@ -97,7 +100,10 @@ class ExplorationArea(Model):
 			if cell.explored == 2:
 				count_explored += 1
 		result = count_explored / (self.ncells * self.ncells - self.nobstacle)
+		'''
+		result = self.get_explored(self)
 		print(result)
+		self.dc_percentage_step.collect(self)
 		# if all seen cells have benn explored, stop the simulation
 		# we do this so if there are unreachable cells, the cannot be seen, so the simulation stops anyway
 		stop = True
@@ -107,13 +113,26 @@ class ExplorationArea(Model):
 				stop = False
 		if stop:
 			print("Exploration Completed")
-			print("Final step number_step funciton: " + str(self.schedule.steps)) # debug print, I'll delete it when it won't be needed anymore DP
+			print("Final step number_step funciton: " + str(self.get_step(self))) # debug print, I'll delete it when it won't be needed anymore DP
+			
+			# Data collection
 			df = pd.read_csv("./robot_exploration/results/number_of_steps.csv")
 			df = df.append({"nrobots": self.nrobots, "ncells": self.ncells, 
 							"steps": self.schedule.steps, 
 							"total_exploration_time_required": self.total_exploration_time_required},
 							ignore_index = True)
 			df.to_csv("./robot_exploration/results/number_of_steps.csv", index = False)
+			
+			df_explored = self.dc_percentage_step.get_model_vars_dataframe()
+			print(df_explored.head(6))
+			df = pd.read_csv("./robot_exploration/results/percentage_exploration_simulation_step.csv")
+			if len(df["sim_id"]) == 0: # in case the csv has no values
+				df_explored["sim_id"] = 0
+			else:
+				df_explored["sim_id"] = df["sim_id"][df.index[-1]] + 1 # get the last value of sim_id increase of one
+			df = df.append(df_explored, ignore_index = True, sort = False)
+			df.to_csv("./robot_exploration/results/percentage_exploration_simulation_step.csv", index = False)
+
 			self.running = False
 		# keep going with the exploration
 		else:
@@ -148,6 +167,7 @@ class ExplorationArea(Model):
 
 	@staticmethod
 	def get_explored(m):
+		count_explored = 0
 		for i in m.grid.coord_iter():
 			cell = [obj for obj in m.grid.get_cell_list_contents(i[1:]) if isinstance(obj, Cell)][0]
 			if cell.explored == 2:
