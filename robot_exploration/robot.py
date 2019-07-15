@@ -138,8 +138,10 @@ class Robot(Agent):
 				# if the path is not found, the cell is not considered
 				pass
 		# pick the most convinient cell
-		bids_sort_cost = sorted(bids, key=lambda x: x[1])
-		bids_sort_gain = sorted(bids_sort_cost, key=lambda x: (self.agent_get_cell(x[0]).utility - (self.model.alpha * x[1])), reverse = True)
+		# DP, the only sort with a more complicated lambda as suggested by stackoveflow wan't enough?
+		# Asking to learn.
+		bids_sort_cost = sorted(bids, key = lambda x: x[1])
+		bids_sort_gain = sorted(bids_sort_cost, key = lambda x: (self.agent_get_cell(x[0]).utility - (self.model.alpha * x[1])), reverse = True)
 		if bids_sort_gain:				
 			return bids_sort_gain[0][0]
 		else:

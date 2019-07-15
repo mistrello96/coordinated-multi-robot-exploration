@@ -27,6 +27,12 @@ class ExplorationArea(Model):
 			{"step": lambda m: self.get_step(m),
 			 "explored": lambda m: self.get_explored(m)}
 		)
+		self.dc_robot_status = DataCollector(
+			{"idling": lambda m: self.get_number_robots_status(m, "idling"),
+			 "travelling": lambda m: self.get_number_robots_status(m, "travelling"),
+			 "exploring": lambda m: self.get_number_robots_status(m, "exploring"),
+			 "step": lambda m: self.get_step(m)}
+		)
 
 		# grid and schedule representation
 		self.grid = MultiGrid(ncells, ncells, torus = False)
@@ -104,6 +110,7 @@ class ExplorationArea(Model):
 		result = self.get_explored(self)
 		print(result)
 		self.dc_percentage_step.collect(self)
+		self.dc_robot_status.collect(self)
 		# if all seen cells have benn explored, stop the simulation
 		# we do this so if there are unreachable cells, the cannot be seen, so the simulation stops anyway
 		stop = True
@@ -130,8 +137,18 @@ class ExplorationArea(Model):
 				df_explored["sim_id"] = 0
 			else:
 				df_explored["sim_id"] = df["sim_id"][df.index[-1]] + 1 # get the last value of sim_id increase of one
-			df = df.append(df_explored, ignore_index = True, sort = False)
+			df = df.append(df_explored, ignore_index = True, sort = False) # If there are some problems in the csvs, look for this sort, DP
 			df.to_csv("./robot_exploration/results/percentage_exploration_simulation_step.csv", index = False)
+
+			df_robots_status = self.dc_robot_status.get_model_vars_dataframe()
+			print(df_robots_status.head(6))
+			df = pd.read_csv("./robot_exploration/results/robots_status_simulation_step.csv")
+			if len(df["sim_id"]) == 0:
+				df_robots_status["sim_id"] = 0
+			else:
+				df_robots_status["sim_id"] = df["sim_id"][df.index[-1]] + 1
+			df = df.append(df_robots_status, ignore_index = True, sort = False)
+			df.to_csv("./robot_exploration/results/robots_status_simulation_step.csv", index = False)
 
 			self.running = False
 		# keep going with the exploration
@@ -174,3 +191,8 @@ class ExplorationArea(Model):
 				count_explored += 1
 		result = count_explored / (m.ncells * m.ncells - m.nobstacle)
 		return result
+
+	@staticmethod
+	def get_number_robots_status(m, status):
+		status_value = {"idling": 0, "travelling": 1, "exploring": 2}
+		return len([x for x in m.schedule.agents if isinstance(x, Robot) and x.status == status_value[status]])
