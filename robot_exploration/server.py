@@ -8,19 +8,19 @@ def agent_portrayal(agent):
 	# if cell, represent the corresponding colour
     if type(agent) is Cell:
         if agent.explored == -1 :
-            portrayal = {"Shape": "circle", "Color": "black", "Filled": "false", "Layer": 0, "r": 0.8}
+            portrayal = {"Shape": "rect", "Color": "black", "Filled": "false", "Layer": 0, "w": 1, "h" : 1}
         if agent.explored == 0 :
-            portrayal = {"Shape": "circle", "Color": "red", "Filled": "false", "Layer": 0, "r": 0.8}
+            portrayal = {"Shape": "rect", "Color": "red", "Filled": "false", "Layer": 0, "w": 1, "h" : 1}
         if agent.explored == 1 :
-            portrayal = {"Shape": "circle", "Color": "orange", "Filled": "false", "Layer": 0, "r": 0.8}
+            portrayal = {"Shape": "rect", "Color": "orange", "Filled": "false", "Layer": 0, "w": 1, "h" : 1}
         if agent.explored == 2 :
-            portrayal = {"Shape": "circle", "Color": "green", "Filled": "false", "Layer": 0, "r": 0.8}
+            portrayal = {"Shape": "rect", "Color": "green", "Filled": "false", "Layer": 0, "w": 1, "h" : 1}
     # if robot, represent corresponding status
     else:
         if agent.exploration_status != 0:
-            portrayal = {"Shape": "circle", "Color": "blue", "Filled": "true", "Layer": 0.5, "r": 0.4}
+            portrayal = {"Shape": "circle", "Color": "blue", "Filled": "true", "Layer": 0.5, "r": 0.6}
         else:
-            portrayal = {"Shape": "circle", "Color": "gray", "Filled": "true", "Layer": 0.5, "r": 0.4}
+            portrayal = {"Shape": "circle", "Color": "#505050", "Filled": "true", "Layer": 0.5, "r": 0.6}
     return portrayal
 
 ## Parameters of the model
@@ -40,7 +40,7 @@ model_params = {
 }
 
 #grid representation
-grid = CanvasGrid(agent_portrayal, 30, 30, 500, 500)
+grid = CanvasGrid(agent_portrayal, 20, 20, 800, 800)
 
 #server = ModularServer(ExplorationArea, [grid, chart], "Search and Rescue simulation", model_params)
 server = ModularServer(ExplorationArea, [grid], "Search and Rescue simulation", model_params)
