@@ -5,10 +5,10 @@ class Cell(Agent):
 	# -1 obstacle
 	# 1 exploration ongoing
 	# 2 explored
-	def __init__(self, unique_id, model, pos, traversability, difficulty, explored, priority, utility):
+	def __init__(self, unique_id, model, pos, difficulty, explored, priority, utility):
 		super().__init__(unique_id, model)
 		self.pos = pos
-		self.traversability = traversability
+		# difficulty of exploring. Can obtain from it the difficulty of crossing the cell
 		self.difficulty = difficulty
 		self.explored = explored
 		self.priority = priority

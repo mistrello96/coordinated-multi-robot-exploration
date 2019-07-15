@@ -28,13 +28,14 @@ class ExplorationArea(Model):
 		self.schedule = RandomActivation(self)
 		# unique counter for agents 
 		self.agent_counter = 1
+		self.nobstacle = 0
 
 		# place a cell agent for store data and visualization on each chell of the grid
 		for i in self.grid.coord_iter():
 			rand = np.random.random_sample()
-			traversability = True if rand > self.obstacles_dist else False
+			obstacle = True if rand > self.obstacles_dist else False
 			# if free
-			if traversability:
+			if obstacle:
 				difficulty = np.random.randint(low = 1, high = 13)
 				self.total_exploration_time_required += difficulty
 				explored = 0
@@ -42,12 +43,13 @@ class ExplorationArea(Model):
 				utility = 1.0
 			# if obstacle
 			else:
+				self.nobstacle += 1
 				difficulty = math.inf
 				explored = -1
 				priority = False
 				utility = -math.inf
 			# place the agent in the grid
-			a = Cell(self.agent_counter, self, i[1:], traversability, difficulty, explored, priority, utility)
+			a = Cell(self.agent_counter, self, i[1:], difficulty, explored, priority, utility)
 			self.schedule.add(a)
 			self.grid.place_agent(a, i[1:])
 			self.agent_counter += 1
@@ -58,19 +60,11 @@ class ExplorationArea(Model):
 		#TODO wifi representation
 
 		# create robotic agents
-
-		# I think we should use different terminology than before
-
-		# DP Why not range(self.nrobots)?
-		# Can't we use two different counters?
 		for i in range(self.agent_counter, self.nrobots + self.agent_counter):
 			y = self.random.randrange(self.grid.height)
 			# DP There should be a way to avoi that while, 
 			# in Python there's a function which randomize an element from
 			# a list; we can use that updating the list every time we place a robot
-			
-			# DP and also looks like this does not work as intended, 5x5 table with 5 robots and i didn't have
-			# all the column green
 			x = 0
 			# take the agent Cell in the grid cell x,y
 			cell = [obj for obj in self.grid.get_cell_list_contents(tuple([x,y])) if isinstance(obj, Cell)][0]
@@ -93,18 +87,14 @@ class ExplorationArea(Model):
 		self.schedule.step()
 		# compute percentage of explored over total 
 		count_explored = 0
-		count_obstacle = 0 # DP can't we know that a priori?
-		# DP we can calculate the number of obstacles when we initilize the model
-		# and save that number in an attribute of the model
 		# iterate over cells
 		for i in self.grid.coord_iter():
 			cell = [obj for obj in self.grid.get_cell_list_contents(i[1:]) if isinstance(obj, Cell)][0]
 			if cell.explored == 2:
 				count_explored += 1
-			if cell.explored == -1:
-				count_obstacle += 1
-		result = count_explored / (self.ncells * self.ncells - count_obstacle)
+		result = count_explored / (self.ncells * self.ncells - self.nobstacle)
 		# if all cells have benn explored, stop the simulation
+		# TODO if cells are not explorable? (trapped between obstacle) 
 		if result == 1:
 			print("Exploration Completed")
 			print("Final step number_step funciton: " + str(self.schedule.steps)) # debug print, I'll delete it when it won't be needed anymore DP
@@ -117,10 +107,8 @@ class ExplorationArea(Model):
 			self.running = False
 		# keep going with the exploration
 		else:
-			# DP I don't think you should cast it to string, if you want to print
-			# only a varibale the cast is implicit
 			print("Step number: " + str(self.schedule.steps)) # debug print, DP
-			print(str(result))
+			print(result)
 
 	def run_model(self):
 		while(True):
@@ -141,6 +129,3 @@ class ExplorationArea(Model):
 				break
 		# Looks like that in the server mod this print do not come :(
 		print("Step number at the end of run model: " + str(self.schedule.steps)) # debug print, DP
-		#TODO
-		# implement search until victim found
-		# DP We do not know how many victims are out there, we should keep looking for them

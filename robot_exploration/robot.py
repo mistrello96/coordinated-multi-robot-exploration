@@ -3,15 +3,21 @@ from mesa import Agent
 import math
 import networkx as nx
 
+# TODO
+# prioritize cells with victims
+# see only untill obstacle
+
+# Minors
+# rewrite find_frontier_cells
+# use lamda in find best cell
 
 class Robot(Agent):
 	def __init__(self, unique_id, model, pos, radar_radius):
 		super().__init__(unique_id, model)
-		# self pos is already initializated
 		self.last_pos = tuple()
 		self.pos = pos
 		self.radar_radius = radar_radius
-		# heap with the path to the target
+		# queue with the path to the target
 		self.target_path = list()
 		# a tuple with the indexes of the target
 		self.target_cell = ()
@@ -20,9 +26,15 @@ class Robot(Agent):
 		self.exploration_status = 0
 		self.can_move = False
 		cell = self.agent_get_cell(self.pos)
+		# store the number of steps needed to explore the cell
 		self.travel_status = 0
 		self.travel_treshold = 1 + (cell.difficulty // 4)
 		self.percept()
+		# store the status of the Robot
+		# 0 picking target / not moving
+		# 1 travelling
+		# 2 exploring
+		self.status = 0
 		# add self.status for robot task (moving/exploring/waiting)
 
 	# return the cell agent at the index given
@@ -35,38 +47,30 @@ class Robot(Agent):
 	def percept(self):
 		# iterate over the neighborhood
 		robot_seen = set(self.model.grid.get_neighborhood(self.pos, "moore", include_center = True, radius = self.radar_radius))
-		# DP with include center a robot can see itself?
-		for element in robot_seen:
-			cell_neigh = set(self.model.grid.get_neighborhood(element, "moore", include_center = False, radius = 1))
-			inter = set.intersection(robot_seen, cell_neigh) # DP inter isn't definetely a clear variable name
-			for element2 in inter:
-				# s is source node, d is destination node
-				s = element
-				d = element2
-				# check if d is reachable
-				# DP I think that cell_source and cell_destination can fit better
-				# maybe even element and element2 can be missleading
-				cell1 = self.agent_get_cell(s)
-				cell2 = self.agent_get_cell(d)
-				if cell1.traversability and cell2.traversability:
+		for percepted_cell in robot_seen:
+			cell_neigh = set(self.model.grid.get_neighborhood(percepted_cell, "moore", include_center = False, radius = 1))
+			cell_neigh_percepted = set.intersection(robot_seen, cell_neigh) # DP inter isn't definetely a clear variable name
+			for neigh_cell in cell_neigh_percepted:
+				source_index = percepted_cell
+				destination_index = neigh_cell
+				source_cell = self.agent_get_cell(source_index)
+				destination_cell = self.agent_get_cell(destination_index)
+				# check if cells are not obstacles
+				if source_cell.explored != -1 and destination_cell.explored != -1:
 					# compute the cost of moving in that direction
-					w = 1 + (cell1.difficulty // 4)
+					w = 1 + (source_cell.difficulty // 4)
 					# if the edge is not yet present in the graph, add it
-					if tuple([s, d]) not in self.model.seen_graph.edges():
-						self.model.seen_graph.add_edge(s, d, weight=w)
+					if tuple([source_index, destination_index]) not in self.model.seen_graph.edges():
+						self.model.seen_graph.add_edge(source_index, destination_index, weight=w)
 				# add the reversed edge if not present
-				s = element2
-				d = element
-				cell1 = self.agent_get_cell(d)
-				cell2 = self.agent_get_cell(s)
-				if cell1.traversability and cell2.traversability:
-					# DP I assume that traversability is a boolean
-					w = 1 + (cell1.difficulty // 4) # DP I don't get it
-					# DP I know that python is cool but wouldn't initilizing
-					# seen_graph in the __init__ better? In order to be more clearer 
-					# to the reader? 
-					if tuple([s, d]) not in self.model.seen_graph.edges():
-						self.model.seen_graph.add_edge(s, d, weight = w)
+				source_index = neigh_cell
+				destination_index = percepted_cell
+				source_cell = self.agent_get_cell(source_index)
+				destination_cell = self.agent_get_cell(destination_index)
+				if source_cell.explored != -1 and destination_cell.explored != -1:
+					w = 1 + (source_cell.difficulty // 4)
+					if tuple([source_index, destination_index]) not in self.model.seen_graph.edges():
+						self.model.seen_graph.add_edge(source_index, destination_index, weight = w)
 	
 	# return a list of tuples that represents the indexes of all the frontier cells
 	def find_frontier_cells(self):
@@ -93,7 +97,6 @@ class Robot(Agent):
 		# NB we are computing path to not explored cells that are near explored cells.
 		# Since the they are close, the unexplored cell has already been seen at least one time and added to the graph
 		# only consider seen cells that are not obstacles for the SP computation
-		
 		# list of tuples, the first element is the indexes of the cell, the second is the cost to get there
 		bids = list()
 		for i in frontier_cells:
@@ -125,13 +128,10 @@ class Robot(Agent):
 				if cost < best_cost:
 					best_gain = gain
 					best_cell_index = cell_index
-					best_cost = cost						
+					best_cost = cost					
 		return best_cell_index
 
 	def distance(self, cell1, cell2):
-		# DP why are calculating the distance in cells? 
-		# Wouldn't our distace be the sum of the weigths to get through cells?
-		# Am I missing something?
 		x1, y1 = cell1
 		x2, y2 = cell2
 		dx = abs(x2 - x1);
@@ -148,10 +148,9 @@ class Robot(Agent):
 
 	def step(self):
 		# if the agent has a move to get closer to the target, move towards it
-
-		# DP what values can assume target_path and target_cell? Are object with None values or empty tuples?
-
 		if self.target_path:
+			self.status = 1
+			# if a cell has been traversed, go to the next one
 			if self.travel_status == self.travel_treshold:
 				# update the last position
 				self.last_pos = self.pos
@@ -165,12 +164,12 @@ class Robot(Agent):
 				self.travel_treshold = 1 + (cell.difficulty // 4)
 			else:
 				self.travel_status += 1
-
 			# TODO wifi range check
 		
 		else:
 			# if the agent has no move to do, but is on the target, explore
 			if self.target_cell:
+				self.status = 2
 				# if the cell is not yet full explored, keep going
 				if self.exploration_status < self.exploration_treshold:
 					# if fist step of exploration, update cell status
@@ -186,8 +185,10 @@ class Robot(Agent):
 					self.target_cell = ()
 					cell = self.agent_get_cell(self.pos)
 					cell.explored = 2
+
 			# if the robot has no target, find one
 			else:
+				self.status = 0
 				# find frontier's cells
 				frontier_cells = self.find_frontier_cells()
 				# find best cell
