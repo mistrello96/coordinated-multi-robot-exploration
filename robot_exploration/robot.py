@@ -42,6 +42,38 @@ class Robot(Agent):
 		cell = [obj for obj in tmp if isinstance(obj, Cell)][0] # DP why only the first element?
 		return cell
 
+	def line_of_sight(self, source, destination):
+		x0, y0 = source
+		x1, y1 = destination
+		#y0 = self.model.ncells - y0
+		#y1 = self.model.ncells - y1
+		path = list()
+		dx = abs(x1 - x0)
+		dy = abs(y1 - y0)
+		x = x0
+		y = y0
+		n = 1 + dx + dy
+		x_inc = 1 if x1 > x0 else -1
+		y_inc =1 if y1 > y0 else -1
+		error = dx - dy
+		dx *= 2
+		dy *= 2
+		while n > 0:
+			path.append(tuple([x,y]))
+			if error > 0:
+				x += x_inc
+				error -= dy
+			else: 
+				y += y_inc
+				error += dx
+			n -= 1
+		valid = True
+		for cell_index in path:
+			cell = self.agent_get_cell(cell_index)
+			if cell.explored == -1:
+				valid = False
+		return valid
+
 	# add the sorrundings of the cell to the graph used for SP computation
 	def percept(self):
 		# iterate over the neighborhood
@@ -55,7 +87,7 @@ class Robot(Agent):
 				source_cell = self.agent_get_cell(source_index)
 				destination_cell = self.agent_get_cell(destination_index)
 				# check if cells are not obstacles
-				if source_cell.explored != -1 and destination_cell.explored != -1:
+				if self.line_of_sight(source_index, destination_index):
 					# compute the cost of moving in that direction
 					w = 1 + (source_cell.difficulty // 4)
 					# if the edge is not yet present in the graph, add it
@@ -66,7 +98,7 @@ class Robot(Agent):
 				destination_index = percepted_cell
 				source_cell = self.agent_get_cell(source_index)
 				destination_cell = self.agent_get_cell(destination_index)
-				if source_cell.explored != -1 and destination_cell.explored != -1:
+				if self.line_of_sight(source_index, destination_index):
 					w = 1 + (source_cell.difficulty // 4)
 					if tuple([source_index, destination_index]) not in self.model.seen_graph.edges():
 						self.model.seen_graph.add_edge(source_index, destination_index, weight = w)

@@ -138,6 +138,7 @@ class ExplorationArea(Model):
 		else:
 			print("Step number: " + str(self.schedule.steps)) # debug print, DP
 			print(result)
+			print(self.seen_graph.nodes())
 
 	def run_model(self):
 		while(True):
