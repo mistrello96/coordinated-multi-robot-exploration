@@ -211,7 +211,7 @@ class Robot(Agent):
 					for element in self.model.grid.get_neighborhood(self.target_cell, "moore", include_center = False, radius = self.radar_radius):
 						cell2 = self.agent_get_cell(element)
 						if cell2.explored == 0:
-						#cell.utility -= (1 - self.distance(self.target_cell, element) / self.radar_radius)
+							#cell.utility -= (1 - self.distance(self.target_cell, element) / self.radar_radius)
 							cell2.utility *= (1 - self.distance(self.target_cell, element) / self.radar_radius)
 					## WARNING
 					# this approach, proposed in the paper, leads to a pathological situation where a robot after the exploration has a cell in front

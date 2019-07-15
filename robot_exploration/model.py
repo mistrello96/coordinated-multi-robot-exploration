@@ -87,9 +87,15 @@ class ExplorationArea(Model):
 			if cell.explored == 2:
 				count_explored += 1
 		result = count_explored / (self.ncells * self.ncells - self.nobstacle)
-		# if all cells have benn explored, stop the simulation
-		# TODO if cells are not explorable? (trapped between obstacle) 
-		if result == 1:
+		print(result)
+		# if all seen cells have benn explored, stop the simulation
+		# we do this so if there are unreachable cells, the cannot be seen, so the simulation stops anyway
+		stop = True
+		for node in self.seen_graph.nodes():
+			cell = [obj for obj in self.grid.get_cell_list_contents(node) if isinstance(obj, Cell)][0]
+			if cell.explored == 0 or cell.explored == 1:
+				stop = False
+		if stop:
 			print("Exploration Completed")
 			print("Final step number_step funciton: " + str(self.schedule.steps)) # debug print, I'll delete it when it won't be needed anymore DP
 			self.running = False
@@ -103,17 +109,18 @@ class ExplorationArea(Model):
 			# search for unexplored cells
 			#debug print, DP
 			print("Run model function called") # DP looks like this function does not get called in when running on the server.
-			keep_going = False
-			for i in self.grid.coord_iter():
-				cell = [obj for obj in self.grid.get_cell_list_contents(i[1:]) if isinstance(obj, Cell)][0]
-				if cell.explored == 0:
-					keep_going = True
-			# if found, keep going the simulation
-			if keep_going:
-				self.step()
-			# end the simulation
-			else:
+			stop = True
+			for node in self.seen_graph.nodes():
+				cell = [obj for obj in self.grid.get_cell_list_contents(node) if isinstance(obj, Cell)][0]
+				if cell.explored == 0 or cell.explored == 1:
+					stop = False
+			# if all seen cells have benn explored, stop the simulation
+			# we do this so if there are unreachable cells, the cannot be seen, so the simulation stops anyway
+			if stop:
 				self.running = False
 				break
+			else:
+				self.step()
+
 		# Looks like that in the server mod this print do not come :(
 		print("Step number at the end of run model: " + str(self.schedule.steps)) # debug print, DP
