@@ -19,9 +19,13 @@ class ExplorationArea(Model):
 		self.wifi_range = wifi_range
 		self.alpha = alpha
 
-		# the following variable is used for data collection,
+		# Data collection tools
 		# it represents the sum of the difficulties of every cell
 		self.total_exploration_time_required = 0
+		self.dc_percentage_step = DataCollector(
+			{"step": lambda m: self.get_step(m),
+			 "explored": lambda m: self.get_explored(m)}
+		)
 
 		# grid and schedule representation
 		self.grid = MultiGrid(ncells, ncells, torus = False)
@@ -136,3 +140,17 @@ class ExplorationArea(Model):
 
 		# Looks like that in the server mod this print do not come :(
 		print("Step number at the end of run model: " + str(self.schedule.steps)) # debug print, DP
+
+	# Data collection utilities
+	@staticmethod
+	def get_step(m):
+		return m.schedule.steps
+
+	@staticmethod
+	def get_explored(m):
+		for i in m.grid.coord_iter():
+			cell = [obj for obj in m.grid.get_cell_list_contents(i[1:]) if isinstance(obj, Cell)][0]
+			if cell.explored == 2:
+				count_explored += 1
+		result = count_explored / (m.ncells * m.ncells - m.nobstacle)
+		return result
