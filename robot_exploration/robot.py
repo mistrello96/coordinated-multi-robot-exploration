@@ -5,7 +5,6 @@ import networkx as nx
 
 # TODO
 # prioritize cells with victims
-# see only untill obstacle
 
 # Minors
 # rewrite find_frontier_cells
@@ -87,7 +86,7 @@ class Robot(Agent):
 				source_cell = self.agent_get_cell(source_index)
 				destination_cell = self.agent_get_cell(destination_index)
 				# check if cells are not obstacles
-				if self.line_of_sight(source_index, destination_index):
+				if self.line_of_sight(self.pos, source_index) and self.line_of_sight(self.pos, destination_index) and self.line_of_sight(source_index, destination_index):
 					# compute the cost of moving in that direction
 					w = 1 + (source_cell.difficulty // 4)
 					# if the edge is not yet present in the graph, add it
@@ -98,7 +97,7 @@ class Robot(Agent):
 				destination_index = percepted_cell
 				source_cell = self.agent_get_cell(source_index)
 				destination_cell = self.agent_get_cell(destination_index)
-				if self.line_of_sight(source_index, destination_index):
+				if self.line_of_sight(self.pos, source_index) and self.line_of_sight(self.pos, destination_index) and self.line_of_sight(source_index, destination_index):
 					w = 1 + (source_cell.difficulty // 4)
 					if tuple([source_index, destination_index]) not in self.model.seen_graph.edges():
 						self.model.seen_graph.add_edge(source_index, destination_index, weight = w)
