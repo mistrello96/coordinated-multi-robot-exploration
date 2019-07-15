@@ -38,7 +38,7 @@ class Robot(Agent):
 	# return the cell agent at the index given
 	def agent_get_cell(self, index):
 		tmp = self.model.grid.get_cell_list_contents(index)
-		cell = [obj for obj in tmp if isinstance(obj, Cell)][0] # DP why only the first element?
+		cell = [obj for obj in tmp if isinstance(obj, Cell)][0]
 		return cell
 
 	def line_of_sight(self, source, destination):
@@ -107,13 +107,31 @@ class Robot(Agent):
 		frontier_cells = list()
 		# iterate over all cells of the grid
 		# DP I think that we can rewrite it in a more fashonable way
+		'''
+		Legacy code
 		for i in self.model.grid.coord_iter():
 			# pick the unexplored cell
 			cell = self.agent_get_cell(i[1:])
 			if cell.explored == 0:
 				# iterate over the 1-radius neighborhood
 				for element in self.model.grid.get_neighborhood(i[1:], "moore", include_center = False, radius = 1):
-					# search for a explored cell
+					# search for an explored cell
+					cell2 = self.agent_get_cell(element)
+					# maybe is more correct leave only ==2
+					if cell2.explored == 1 or cell2.explored == 2:
+						# if found, the unexplored cell is a frontier cell
+						frontier_cells.append(i[1:])
+						break
+		return frontier_cells
+		'''
+		for i in self.model.grid.coord_iter(): #DP doubt, in this way don't we iterate over all cells of the grid?
+			# and so everything becomes the frontier after one iteration?
+			# pick the unexplored cell
+			cell = self.agent_get_cell(i[1:])
+			if cell.explored == 0:
+				# iterate over the 1-radius neighborhood
+				for element in self.model.grid.get_neighborhood(i[1:], "moore", include_center = False, radius = 1):
+					# search for an explored cell
 					cell2 = self.agent_get_cell(element)
 					# maybe is more correct leave only ==2
 					if cell2.explored == 1 or cell2.explored == 2:
