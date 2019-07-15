@@ -6,6 +6,7 @@ from mesa.space import MultiGrid
 import numpy as np
 import math
 import networkx as nx
+import pandas as pd
 
 class ExplorationArea(Model):
 	def __init__(self, nrobots, radar_radius, ncells, obstacles_dist, wifi_range, alpha):
@@ -17,6 +18,10 @@ class ExplorationArea(Model):
 		self.obstacles_dist = obstacles_dist
 		self.wifi_range = wifi_range
 		self.alpha = alpha
+
+		# the following variable is used for data collection,
+		# it represents the sum of the difficulties of every cell
+		self.total_exploration_time_required = 0
 
 		# grid and schedule representation
 		self.grid = MultiGrid(ncells, ncells, torus = False)
@@ -31,6 +36,7 @@ class ExplorationArea(Model):
 			# if free
 			if traversability:
 				difficulty = np.random.randint(low = 1, high = 13)
+				self.total_exploration_time_required += difficulty
 				explored = 0
 				priority = False
 				utility = 1.0
@@ -102,6 +108,12 @@ class ExplorationArea(Model):
 		if result == 1:
 			print("Exploration Completed")
 			print("Final step number_step funciton: " + str(self.schedule.steps)) # debug print, I'll delete it when it won't be needed anymore DP
+			df = pd.read_csv("./robot_exploration/results/number_of_steps.csv")
+			df = df.append({"nrobots": self.nrobots, "ncells": self.ncells, 
+							"steps": self.schedule.steps, 
+							"total_exploration_time_required": self.total_exploration_time_required},
+							ignore_index = True)
+			df.to_csv("./robot_exploration/results/number_of_steps.csv", index = False)
 			self.running = False
 		# keep going with the exploration
 		else:
