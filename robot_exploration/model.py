@@ -8,6 +8,7 @@ import numpy as np
 import math
 import networkx as nx
 import pandas as pd
+import random as rnd
 
 number_of_steps_csv = "./robot_exploration/results/number_of_steps.csv"
 exploration_percentage_csv = "./robot_exploration/results/percentage_exploration_simulation_step.csv"
@@ -79,6 +80,8 @@ class ExplorationArea(Model):
 		
 		#TODO wifi representation
 
+		'''
+		legacy code
 		# create robotic agents
 		for i in range(self.agent_counter, self.nrobots + self.agent_counter):
 			y = self.random.randrange(self.grid.height)
@@ -89,7 +92,6 @@ class ExplorationArea(Model):
 			# take the agent Cell in the grid cell x,y
 			cell = [obj for obj in self.grid.get_cell_list_contents(tuple([x,y])) if isinstance(obj, Cell)][0]
 			# do-while structure, place agents only in free cells
-			# DP Moment moment moment, does do-while still exist? 
 			while(cell.explored == -1):
 				y = self.random.randrange(self.grid.height)
 				cell = self.grid.get_cell_list_contents(tuple([x,y]))
@@ -99,7 +101,25 @@ class ExplorationArea(Model):
 			self.schedule.add(a)
 			self.grid.place_agent(a, (x, y))
 			cell.explored = 2
+		'''
 
+		# create robotic agents
+		rnd.seed()
+		row = 0
+		starting_coord = []
+		# generating the list for the starting position of robots
+		for c in range(self.grid.width):
+			# take the agent cell
+			cell = [e for e in self.grid.get_cell_list_contents(tuple([c, row])) if isinstance(e, Cell)][0]
+			if cell.explored != -1:
+				starting_coord.append(c)
+		for i in range(self.agent_counter, self.nrobots + self.agent_counter):
+			column = rnd.choice(starting_coord)
+			a = Robot(i, self, tuple([column, row]), self.radar_radius)
+			self.schedule.add(a)
+			self.grid.place_agent(a, (column, row))
+			cell = [e for e in self.grid.get_cell_list_contents(tuple([column, row])) if isinstance(e, Cell)][0]
+			cell.explored = 2
 
 	# what the model does at each time step
 	def step(self):
