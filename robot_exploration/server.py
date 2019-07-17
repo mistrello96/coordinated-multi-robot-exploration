@@ -33,7 +33,7 @@ model_params = {
     "ncells": UserSettableParameter('number', "Number of rows/columns of cells", value = 10),
     "obstacles_dist": UserSettableParameter('slider', "Obstacle probability", 0.1, 0, 1, 0.01,
                                         description = "Choose how many obstacle there are in the map"),
-    "wifi_range": UserSettableParameter('slider', "Wifi range", 50, 10, 1000, 10,
+    "wifi_range": UserSettableParameter('slider', "Wifi range", 100, 10, 1000, 10,
                                         description = "Choose how many cells around the robot can see"),
     "alpha": UserSettableParameter('number', "Alpha value", value = 0.01,
                                         description = "Importance of path cost in target selection")

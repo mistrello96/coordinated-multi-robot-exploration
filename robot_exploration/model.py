@@ -65,7 +65,7 @@ class ExplorationArea(Model):
 				self.total_exploration_time_required += difficulty
 				explored = 0
 				priority = False
-				utility = 10.0
+				utility = 1.0
 			# if obstacle
 			else:
 				self.nobstacle += 1

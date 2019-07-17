@@ -2,10 +2,12 @@ from .cell import Cell
 from mesa import Agent
 import math
 import networkx as nx
+from decimal import Decimal, ROUND_HALF_UP
 
 # TODO
-# prioritize cells with victims
 # implement wifi
+# prioritize cells with victims
+
 
 class Robot(Agent):
 	def __init__(self, unique_id, model, pos, radar_radius):
@@ -83,7 +85,8 @@ class Robot(Agent):
 				# check if cells are not obstacles
 				if self.line_of_sight(self.pos, source_index) and self.line_of_sight(self.pos, destination_index) and self.line_of_sight(source_index, destination_index):
 					# compute the cost of moving in that direction
-					w = 1 + (source_cell.difficulty // 4)
+					# the cost is the thick number required to go across the cell
+					w = int(Decimal(0.5 * source_cell.difficulty).to_integral_value(rounding=ROUND_HALF_UP))
 					# if the edge is not yet present in the graph, add it
 					if tuple([source_index, destination_index]) not in self.model.seen_graph.edges():
 						self.model.seen_graph.add_edge(source_index, destination_index, weight=w)
@@ -93,7 +96,7 @@ class Robot(Agent):
 				source_cell = self.agent_get_cell(source_index)
 				destination_cell = self.agent_get_cell(destination_index)
 				if self.line_of_sight(self.pos, source_index) and self.line_of_sight(self.pos, destination_index) and self.line_of_sight(source_index, destination_index):
-					w = 1 + (source_cell.difficulty // 4)
+					w = int(Decimal(0.5 * source_cell.difficulty).to_integral_value(rounding=ROUND_HALF_UP))
 					if tuple([source_index, destination_index]) not in self.model.seen_graph.edges():
 						self.model.seen_graph.add_edge(source_index, destination_index, weight = w)
 	
@@ -171,7 +174,7 @@ class Robot(Agent):
 				self.percept()
 				cell = self.agent_get_cell(self.pos)
 				self.travel_status = 0
-				self.travel_treshold = 1 + (cell.difficulty // 4)
+				self.travel_treshold = Decimal(0.5 * cell.difficulty).to_integral_value(rounding=ROUND_HALF_UP)
 			else:
 				self.travel_status += 1
 			# TODO wifi range check
@@ -210,7 +213,8 @@ class Robot(Agent):
 				
 				if (self.target_cell):
 					cell = self.agent_get_cell(self.target_cell)
-					self.exploration_treshold = cell.difficulty
+					# speed is reduced by half when exploring. The cell is divided in 6 lanes
+					self.exploration_treshold = 6 * int(Decimal(0.5 * cell.difficulty).to_integral_value(rounding=ROUND_HALF_UP)) * 2
 					# make the cell disgusting for other robots
 					cell.utility = -math.inf
 					# compute and store the most convinient path to get there
