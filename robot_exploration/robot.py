@@ -40,6 +40,7 @@ class Robot(Agent):
 
 	def line_of_sight(self, source, destination):
 		x0, y0 = source
+		x1, y1 = destination
 		path = list()
 		dx = abs(x1 - x0)
 		dy = abs(y1 - y0)
