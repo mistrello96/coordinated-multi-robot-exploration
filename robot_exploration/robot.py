@@ -115,7 +115,7 @@ class Robot(Agent):
 				for neighbor_coord in self.model.grid.get_neighborhood(coord, "moore", include_center = False, radius = 1):
 					neighbor_cell = self.agent_get_cell(neighbor_coord)
 					# maybe is more correct leave only ==2
-					if neighbor_cell.explored == 1 or neigh_cell.explored == 2:
+					if neighbor_cell.explored == 1 or neighbor_cell.explored == 2:
 						# if found, the unexplored cell is a frontier cell
 						frontier_cells.append(coord)
 						break

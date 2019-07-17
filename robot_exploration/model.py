@@ -9,8 +9,14 @@ import math
 import networkx as nx
 import pandas as pd
 
+number_of_steps_csv = "./robot_exploration/results/number_of_steps.csv"
+exploration_percentage_csv = "./robot_exploration/results/percentage_exploration_simulation_step.csv"
+robot_status_csv = "./robot_exploration/results/robots_status_simulation_step.csv"
+
 class ExplorationArea(Model):
-	def __init__(self, nrobots, radar_radius, ncells, obstacles_dist, wifi_range, alpha):
+	def __init__(self, nrobots, radar_radius, ncells, obstacles_dist, wifi_range, alpha, 
+		time_csv = number_of_steps_csv, exploration_percentage_csv = exploration_percentage_csv, 
+		robot_status_csv = robot_status_csv):
 		# used in server start
 		self.running = True
 		self.nrobots = nrobots
@@ -33,6 +39,9 @@ class ExplorationArea(Model):
 			 "exploring": lambda m: self.get_number_robots_status(m, "exploring"),
 			 "step": lambda m: self.get_step(m)}
 		)
+		self.time_csv = number_of_steps_csv
+		self.exploration_percentage_csv = exploration_percentage_csv
+		self.robot_status_csv = robot_status_csv
 
 		# grid and schedule representation
 		self.grid = MultiGrid(ncells, ncells, torus = False)
@@ -123,32 +132,32 @@ class ExplorationArea(Model):
 			print("Final step number_step funciton: " + str(self.get_step(self))) # debug print, I'll delete it when it won't be needed anymore DP
 			
 			# Data collection
-			df = pd.read_csv("./robot_exploration/results/number_of_steps.csv")
+			df = pd.read_csv(self.time_csv)
 			df = df.append({"nrobots": self.nrobots, "ncells": self.ncells, 
 							"steps": self.schedule.steps, 
 							"total_exploration_time_required": self.total_exploration_time_required},
 							ignore_index = True)
-			df.to_csv("./robot_exploration/results/number_of_steps.csv", index = False)
+			df.to_csv(self.time_csv, index = False)
 			
 			df_explored = self.dc_percentage_step.get_model_vars_dataframe()
 			print(df_explored.head(6))
-			df = pd.read_csv("./robot_exploration/results/percentage_exploration_simulation_step.csv")
+			df = pd.read_csv(self.exploration_percentage_csv)
 			if len(df["sim_id"]) == 0: # in case the csv has no values
 				df_explored["sim_id"] = 0
 			else:
 				df_explored["sim_id"] = df["sim_id"][df.index[-1]] + 1 # get the last value of sim_id increase of one
 			df = df.append(df_explored, ignore_index = True, sort = False) # If there are some problems in the csvs, look for this sort, DP
-			df.to_csv("./robot_exploration/results/percentage_exploration_simulation_step.csv", index = False)
+			df.to_csv(self.exploration_percentage_csv, index = False)
 
 			df_robots_status = self.dc_robot_status.get_model_vars_dataframe()
 			print(df_robots_status.head(6))
-			df = pd.read_csv("./robot_exploration/results/robots_status_simulation_step.csv")
+			df = pd.read_csv(self.robot_status_csv)
 			if len(df["sim_id"]) == 0:
 				df_robots_status["sim_id"] = 0
 			else:
 				df_robots_status["sim_id"] = df["sim_id"][df.index[-1]] + 1
 			df = df.append(df_robots_status, ignore_index = True, sort = False)
-			df.to_csv("./robot_exploration/results/robots_status_simulation_step.csv", index = False)
+			df.to_csv(self.robot_status_csv, index = False)
 
 			self.running = False
 		# keep going with the exploration
