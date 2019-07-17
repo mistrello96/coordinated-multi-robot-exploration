@@ -5,9 +5,7 @@ import networkx as nx
 
 # TODO
 # prioritize cells with victims
-
-# Minors
-# rewrite find_frontier_cells
+# implement wifi
 
 class Robot(Agent):
 	def __init__(self, unique_id, model, pos, radar_radius):
@@ -33,7 +31,6 @@ class Robot(Agent):
 		# 1 travelling
 		# 2 exploring
 		self.status = 0
-		# add self.status for robot task (moving/exploring/waiting)
 
 	# return the cell agent at the index given
 	def agent_get_cell(self, index):
@@ -43,9 +40,6 @@ class Robot(Agent):
 
 	def line_of_sight(self, source, destination):
 		x0, y0 = source
-		x1, y1 = destination
-		#y0 = self.model.ncells - y0
-		#y1 = self.model.ncells - y1
 		path = list()
 		dx = abs(x1 - x0)
 		dy = abs(y1 - y0)
@@ -114,7 +108,7 @@ class Robot(Agent):
 				# iterate over the 1-radius neighborhood searching for an xplored cell
 				for neighbor_coord in self.model.grid.get_neighborhood(coord, "moore", include_center = False, radius = 1):
 					neighbor_cell = self.agent_get_cell(neighbor_coord)
-					# maybe is more correct leave only ==2
+					# maybe is more correct leave only == 2
 					if neighbor_cell.explored == 1 or neighbor_cell.explored == 2:
 						# if found, the unexplored cell is a frontier cell
 						frontier_cells.append(coord)
@@ -124,7 +118,7 @@ class Robot(Agent):
 	# find the most convinient cell to explore for a robot
 	def find_best_cell(self, frontier_cells):		
 		# NB we are computing path to not explored cells that are near explored cells.
-		# Since the they are close, the unexplored cell has already been seen at least one time and added to the graph
+		# Since they are close, the unexplored cell has already been seen at least one time and added to the graph
 		# only consider seen cells that are not obstacles for the SP computation
 		# list of tuples, the first element is the indexes of the cell, the second is the cost to get there
 		bids = list()
@@ -224,10 +218,12 @@ class Robot(Agent):
 					self.target_path = self.target_path[1:]
 					# reduce the utility of all the sorrundings cell if not visited yet
 					for element in self.model.grid.get_neighborhood(self.target_cell, "moore", include_center = False, radius = self.radar_radius):
-						cell2 = self.agent_get_cell(element)
-						if cell2.explored == 0:
-							#cell.utility -= (1 - self.distance(self.target_cell, element) / self.radar_radius)
-							cell2.utility *= (1 - self.distance(self.target_cell, element) / self.radar_radius)
+						# only if the cell is in lof with the robot
+						if self.line_of_sight(self.pos, element):
+							cell2 = self.agent_get_cell(element)
+							if cell2.explored == 0:
+								#cell.utility -= (1 - self.distance(self.target_cell, element) / self.radar_radius)
+								cell2.utility *= (1 - self.distance(self.target_cell, element) / self.radar_radius)
 					## WARNING
 					# this approach, proposed in the paper, leads to a pathological situation where a robot after the exploration has a cell in front
 					# of him with utility 1 and cost to get there 1, so it will always pich that cell
