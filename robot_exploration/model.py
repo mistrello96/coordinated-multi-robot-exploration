@@ -10,6 +10,10 @@ import networkx as nx
 import pandas as pd
 import random as rnd
 
+# TODO
+# extend the map of 2 unexplorable/explored cells user only for travel
+# make the robot spawn there
+
 number_of_steps_csv = "./robot_exploration/results/number_of_steps.csv"
 exploration_percentage_csv = "./robot_exploration/results/percentage_exploration_simulation_step.csv"
 robot_status_csv = "./robot_exploration/results/robots_status_simulation_step.csv"
@@ -61,7 +65,7 @@ class ExplorationArea(Model):
 				self.total_exploration_time_required += difficulty
 				explored = 0
 				priority = False
-				utility = 1.0
+				utility = 10.0
 			# if obstacle
 			else:
 				self.nobstacle += 1

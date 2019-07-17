@@ -39,8 +39,8 @@ class Robot(Agent):
 		return cell
 
 	def line_of_sight(self, source, destination):
-		x0, y0 = source
-		x1, y1 = destination
+		y0, x0 = source
+		y1, x1 = destination
 		path = list()
 		dx = abs(x1 - x0)
 		dy = abs(y1 - y0)
@@ -53,7 +53,7 @@ class Robot(Agent):
 		dx *= 2
 		dy *= 2
 		while n > 0:
-			path.append(tuple([x,y]))
+			path.append(tuple([y,x]))
 			if error > 0:
 				x += x_inc
 				error -= dy
@@ -142,8 +142,8 @@ class Robot(Agent):
 			return tuple()
 
 	def distance(self, cell1, cell2):
-		x1, y1 = cell1
-		x2, y2 = cell2
+		y1, x1 = cell1
+		y2, x2 = cell2
 		dx = abs(x2 - x1);
 		dy = abs(y2 - y1);
 
@@ -235,4 +235,6 @@ class Robot(Agent):
 							cell2 = self.agent_get_cell(element)
 							#cell.utility -= (1 - self.distance(self.target_cell, element) / self.radar_radius)
 							cell2.utility *= (1 - self.distance(self.target_cell, element) / self.radar_radius)
+	
 					'''
+		print (self.pos)
