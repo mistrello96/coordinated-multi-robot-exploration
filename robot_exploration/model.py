@@ -49,13 +49,13 @@ class ExplorationArea(Model):
 		self.robot_status_csv = robot_status_csv
 
 		# grid and schedule representation
-		self.grid = MultiGrid(ncells, ncells, torus = False)
+		self.grid = MultiGrid(ncells + 2, ncells + 2, torus = False)
 		self.schedule = RandomActivation(self)
 		# unique counter for agents 
 		self.agent_counter = 1
 		self.nobstacle = 0
 
-		# place a cell agent for store data and visualization on each chell of the grid
+		# place a cell agent for store data and visualization on each cell of the grid
 		for i in self.grid.coord_iter():
 			rand = np.random.random_sample()
 			obstacle = True if rand > self.obstacles_dist else False
