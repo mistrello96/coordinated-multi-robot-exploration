@@ -35,8 +35,10 @@ class Robot(Agent):
 		self.status = 0
 		self.out_of_range = False
 		# store the number of steps for a wifi bean deploy
-		self.deploy_threshold = math.inf
+		self.deploy_threshold = 15
 		self.deploy_status = 0
+		# used for data collection
+		self.number_bean_deployed = 0
 
 	# return the cell agent at the index given
 	def agent_get_cell(self, index):
@@ -182,8 +184,8 @@ class Robot(Agent):
 					cell = self.agent_get_cell(index)
 					cell.wifi_covered = True
 				self.out_of_range = False
-				self.deploy_threshold = math.inf
 				self.deploy_status = 0
+				self.number_bean_deployed += 1
 		else:
 			if self.target_path:
 				self.status = 1
@@ -201,7 +203,6 @@ class Robot(Agent):
 					self.travel_treshold = Decimal(0.5 * cell.difficulty).to_integral_value(rounding = ROUND_HALF_UP)
 					if not cell.wifi_covered:
 						self.out_of_range = True
-						self.deploy_threshold = 15
 						self.deploy_status = 0
 				else:
 					self.travel_status += 1
@@ -269,4 +270,3 @@ class Robot(Agent):
 								cell2.utility *= (1 - self.distance(self.target_cell, element) / self.radar_radius)
 		
 						'''
-		print(self.pos)

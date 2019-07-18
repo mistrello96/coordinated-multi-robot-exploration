@@ -1,3 +1,1 @@
-nrobots,ncells,steps,total_exploration_time_required
-5,10,244,528
-5,10,911,594
+nrobots,ncells,steps,total_exploration_time_required,beans_deployed

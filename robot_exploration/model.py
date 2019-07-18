@@ -42,6 +42,7 @@ class ExplorationArea(Model):
 			{"idling": lambda m: self.get_number_robots_status(m, "idling"),
 			 "travelling": lambda m: self.get_number_robots_status(m, "travelling"),
 			 "exploring": lambda m: self.get_number_robots_status(m, "exploring"),
+			 "deploying_bean": lambda m: self.get_number_robots_status(m, "deploying_bean"),
 			 "step": lambda m: self.get_step(m)}
 		)
 		self.time_csv = number_of_steps_csv
@@ -165,6 +166,7 @@ class ExplorationArea(Model):
 			df = pd.read_csv(self.time_csv)
 			df = df.append({"nrobots": self.nrobots, "ncells": self.ncells, 
 							"steps": self.schedule.steps, 
+							"beans_deployed": self.get_number_bean_deployed(self),
 							"total_exploration_time_required": self.total_exploration_time_required},
 							ignore_index = True)
 			df.to_csv(self.time_csv, index = False)
@@ -233,5 +235,9 @@ class ExplorationArea(Model):
 
 	@staticmethod
 	def get_number_robots_status(m, status):
-		status_value = {"idling": 0, "travelling": 1, "exploring": 2}
+		status_value = {"idling": 0, "travelling": 1, "exploring": 2, "deploying_bean": 3}
 		return len([x for x in m.schedule.agents if isinstance(x, Robot) and x.status == status_value[status]])
+
+	@staticmethod
+	def get_number_bean_deployed(m):
+		return sum([x.number_bean_deployed for x in m.schedule.agents if isinstance(x, Robot)])
