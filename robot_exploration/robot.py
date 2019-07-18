@@ -5,7 +5,9 @@ import networkx as nx
 from decimal import Decimal, ROUND_HALF_UP
 
 # TODO
-# prioritize cells with victims
+# optimize utility value
+# optimize info gain 
+# optimize utility reduction
 
 
 class Robot(Agent):

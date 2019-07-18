@@ -11,8 +11,7 @@ import pandas as pd
 import random as rnd
 
 # TODO
-# extend the map of 2 unexplorable/explored cells user only for travel
-# make the robot spawn there
+# optimize robot wifi deploy at start
 
 number_of_steps_csv = "./robot_exploration/results/number_of_steps.csv"
 exploration_percentage_csv = "./robot_exploration/results/percentage_exploration_simulation_step.csv"
@@ -136,6 +135,26 @@ class ExplorationArea(Model):
 	def step(self):
 		# call step function for all of the robots in random order
 		self.schedule.step()
+		# possible call from help
+		# note that we only can know from whitch bean the call comed from, so we prioritize all the cells in the bean radius
+		rand = np.random.random_sample()
+		found = False
+		if rand > 0.995:
+			print("Someone connected to wifi and asked for help")
+			for bean_index in self.grid.coord_iter():
+				candidate_bean = [obj for obj in self.grid.get_cell_list_contents(bean_index[1:]) if isinstance(obj, Cell)][0]
+				# pick a bean
+				if candidate_bean.wifi_bean:
+					for covered_index in self.grid.get_neighborhood(bean_index[1:], "moore", include_center = False, radius = (self.wifi_range // 3)):
+						covered_cell = [obj for obj in self.grid.get_cell_list_contents(covered_index) if isinstance(obj, Cell)][0]
+						# if it has some unexolored cell, mark them as priority cell
+						if covered_cell.explored == 0:
+							covered_cell.priority = 1
+							# stop the search of another bean that has some free cells in his radius
+							found = True
+				if found:
+					break
+
 		'''
 		legacy code, there's a function which does this work
 		# compute percentage of explored over total 
