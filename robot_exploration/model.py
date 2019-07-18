@@ -57,27 +57,29 @@ class ExplorationArea(Model):
 
 		# place a cell agent for store data and visualization on each cell of the grid
 		for i in self.grid.coord_iter():
-			rand = np.random.random_sample()
-			obstacle = True if rand > self.obstacles_dist else False
-			# if free
-			if obstacle:
-				difficulty = np.random.randint(low = 1, high = 13)
-				self.total_exploration_time_required += difficulty
-				explored = 0
-				priority = False
-				utility = 1.0
-			# if obstacle
-			else:
-				self.nobstacle += 1
-				difficulty = math.inf
-				explored = -1
-				priority = False
-				utility = -math.inf
-			# place the agent in the grid
-			a = Cell(self.agent_counter, self, i[1:], difficulty, explored, priority, utility)
-			self.schedule.add(a)
-			self.grid.place_agent(a, i[1:])
-			self.agent_counter += 1
+			if i[1] != 0 and i[2] != 0 and i[1] != self.ncells + 1 and i[2] != self.ncells + 1:
+				rand = np.random.random_sample()
+				obstacle = True if rand > self.obstacles_dist else False
+				# if free
+				if obstacle:
+					difficulty = np.random.randint(low = 1, high = 13)
+					self.total_exploration_time_required += difficulty
+					explored = 0
+					priority = False
+					utility = 1.0
+				# if obstacle
+				else:
+					self.nobstacle += 1
+					difficulty = math.inf
+					explored = -1
+					priority = False
+					utility = -math.inf
+				# place the agent in the grid
+				a = Cell(self.agent_counter, self, i[1:], difficulty, explored, priority, utility)
+				self.schedule.add(a)
+				self.grid.place_agent(a, i[1:])
+				self.agent_counter += 1
+  			
   			
   		# graph of seen cells
 		self.seen_graph = nx.DiGraph()
