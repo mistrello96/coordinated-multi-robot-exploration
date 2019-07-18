@@ -3,6 +3,7 @@ from mesa import Agent
 class Cell(Agent):
 	# 0 not explored
 	# -1 obstacle
+	# -2 not to be explored, out of border of the exploration map
 	# 1 exploration ongoing
 	# 2 explored
 	def __init__(self, unique_id, model, pos, difficulty, explored, priority, utility):

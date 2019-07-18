@@ -74,13 +74,17 @@ class ExplorationArea(Model):
 					explored = -1
 					priority = False
 					utility = -math.inf
-				# place the agent in the grid
-				a = Cell(self.agent_counter, self, i[1:], difficulty, explored, priority, utility)
-				self.schedule.add(a)
-				self.grid.place_agent(a, i[1:])
-				self.agent_counter += 1
-  			
-  			
+			else:
+  				difficulty = np.random.randint(low = 1, high = 13)
+  				explored = -2
+  				priority = False
+  				utility = -math.inf
+			# place the agent in the grid
+			a = Cell(self.agent_counter, self, i[1:], difficulty, explored, priority, utility)
+			self.schedule.add(a)
+			self.grid.place_agent(a, i[1:])
+			self.agent_counter += 1
+
   		# graph of seen cells
 		self.seen_graph = nx.DiGraph()
 		
@@ -125,7 +129,7 @@ class ExplorationArea(Model):
 			self.schedule.add(a)
 			self.grid.place_agent(a, (column, row))
 			cell = [e for e in self.grid.get_cell_list_contents(tuple([column, row])) if isinstance(e, Cell)][0]
-			cell.explored = 2
+			cell.explored = -2
 
 	# what the model does at each time step
 	def step(self):
