@@ -64,14 +64,14 @@ class ExplorationArea(Model):
 				difficulty = np.random.randint(low = 1, high = 13)
 				self.total_exploration_time_required += difficulty
 				explored = 0
-				priority = False
+				priority = 0
 				utility = 1.0
 			# if obstacle
 			else:
 				self.nobstacle += 1
 				difficulty = math.inf
 				explored = -1
-				priority = False
+				priority = 0
 				utility = -math.inf
 			# place the agent in the grid
 			a = Cell(self.agent_counter, self, i[1:], difficulty, explored, priority, utility)
