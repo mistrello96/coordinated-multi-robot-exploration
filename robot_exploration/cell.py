@@ -13,6 +13,8 @@ class Cell(Agent):
 		self.explored = explored
 		self.priority = priority
 		self.utility = utility
+		self.wifi_covered = False
+		self.wifi_bean = False
 	# this agent is only used for store data and visualization, no need of step function
 	def step(self):
 		pass
