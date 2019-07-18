@@ -32,8 +32,12 @@ class Robot(Agent):
 		# 0 picking target / not moving
 		# 1 travelling
 		# 2 exploring
+		# 3 deploying wifi bean
 		self.status = 0
 		self.out_of_range = False
+		# store the number of steps for a wifi bean deploy
+		self.deploy_threshold = math.inf
+		self.deploy_status = 0
 
 	# return the cell agent at the index given
 	def agent_get_cell(self, index):
@@ -163,16 +167,24 @@ class Robot(Agent):
 	def step(self):
 		# if the agent has a move to get closer to the target, move towards it
 		if self.out_of_range:
-			self.target_path.insert(0, self.pos) 
-			self.model.grid.move_agent(self, self.last_pos)
-			self.last_pos = None
+			if not self.deploy_status:
+				self.status = 3
+				self.target_path.insert(0, self.pos) 
+				self.model.grid.move_agent(self, self.last_pos)
+				self.last_pos = None
+				self.deploy_status += 1
 			# relase wifi bean
-			cell = self.agent_get_cell(self.pos)
-			cell.wifi_bean = True
-			for index in self.model.grid.get_neighborhood(self.pos, "moore", include_center = False, radius = (self.model.wifi_range // 3)):
-				cell = self.agent_get_cell(index)
-				cell.wifi_covered = True
-			self.out_of_range = False
+			else:
+				self.deploy_status += 1
+			if self.deploy_status == self.deploy_threshold:
+				cell = self.agent_get_cell(self.pos)
+				cell.wifi_bean = True
+				for index in self.model.grid.get_neighborhood(self.pos, "moore", include_center = False, radius = (self.model.wifi_range // 3)):
+					cell = self.agent_get_cell(index)
+					cell.wifi_covered = True
+				self.out_of_range = False
+				self.deploy_threshold = math.inf
+				self.deploy_status = 0
 		else:
 			if self.target_path:
 				self.status = 1
@@ -190,6 +202,8 @@ class Robot(Agent):
 					self.travel_treshold = Decimal(0.5 * cell.difficulty).to_integral_value(rounding=ROUND_HALF_UP)
 					if not cell.wifi_covered:
 						self.out_of_range = True
+						self.deploy_threshold = 15
+						self.deploy_status = 0
 				else:
 					self.travel_status += 1
 				# TODO wifi range check
