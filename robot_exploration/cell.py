@@ -6,6 +6,7 @@ class Cell(Agent):
 	# -2 not to be explored, out of border of the exploration map
 	# 1 exploration ongoing
 	# 2 explored
+	# 42 starting position
 	def __init__(self, unique_id, model, pos, difficulty, explored, priority, utility):
 		super().__init__(unique_id, model)
 		self.pos = pos

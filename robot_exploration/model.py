@@ -129,7 +129,7 @@ class ExplorationArea(Model):
 			self.schedule.add(a)
 			self.grid.place_agent(a, (column, row))
 			cell = [e for e in self.grid.get_cell_list_contents(tuple([column, row])) if isinstance(e, Cell)][0]
-			cell.explored = -2
+			cell.explored = 42
 
 	# what the model does at each time step
 	def step(self):

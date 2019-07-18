@@ -90,17 +90,17 @@ class Robot(Agent):
 				if self.line_of_sight(self.pos, source_index) and self.line_of_sight(self.pos, destination_index) and self.line_of_sight(source_index, destination_index):
 					# compute the cost of moving in that direction
 					# the cost is the thick number required to go across the cell
-					w = int(Decimal(0.5 * source_cell.difficulty).to_integral_value(rounding=ROUND_HALF_UP))
+					w = int(Decimal(0.5 * source_cell.difficulty).to_integral_value(rounding = ROUND_HALF_UP))
 					# if the edge is not yet present in the graph, add it
 					if tuple([source_index, destination_index]) not in self.model.seen_graph.edges():
-						self.model.seen_graph.add_edge(source_index, destination_index, weight=w)
+						self.model.seen_graph.add_edge(source_index, destination_index, weight = w)
 				# add the reversed edge if not present
 				source_index = neigh_cell
 				destination_index = percepted_cell
 				source_cell = self.agent_get_cell(source_index)
 				destination_cell = self.agent_get_cell(destination_index)
 				if self.line_of_sight(self.pos, source_index) and self.line_of_sight(self.pos, destination_index) and self.line_of_sight(source_index, destination_index):
-					w = int(Decimal(0.5 * source_cell.difficulty).to_integral_value(rounding=ROUND_HALF_UP))
+					w = int(Decimal(0.5 * source_cell.difficulty).to_integral_value(rounding = ROUND_HALF_UP))
 					if tuple([source_index, destination_index]) not in self.model.seen_graph.edges():
 						self.model.seen_graph.add_edge(source_index, destination_index, weight = w)
 	
@@ -117,14 +117,14 @@ class Robot(Agent):
 				for neighbor_coord in self.model.grid.get_neighborhood(coord, "moore", include_center = False, radius = 1):
 					neighbor_cell = self.agent_get_cell(neighbor_coord)
 					# maybe is more correct leave only == 2
-					if neighbor_cell.explored == 1 or neighbor_cell.explored == 2:
+					if neighbor_cell.explored == 1 or neighbor_cell.explored == 2 or neighbor_cell.explored == 42:
 						# if found, the unexplored cell is a frontier cell
 						frontier_cells.append(coord)
 						break
 		return frontier_cells
 
 	# find the most convinient cell to explore for a robot
-	def find_best_cell(self, frontier_cells):		
+	def find_best_cell(self, frontier_cells):
 		# NB we are computing path to not explored cells that are near explored cells.
 		# Since they are close, the unexplored cell has already been seen at least one time and added to the graph
 		# only consider seen cells that are not obstacles for the SP computation
@@ -198,7 +198,7 @@ class Robot(Agent):
 					self.percept()
 					cell = self.agent_get_cell(self.pos)
 					self.travel_status = 0
-					self.travel_treshold = Decimal(0.5 * cell.difficulty).to_integral_value(rounding=ROUND_HALF_UP)
+					self.travel_treshold = Decimal(0.5 * cell.difficulty).to_integral_value(rounding = ROUND_HALF_UP)
 					if not cell.wifi_covered:
 						self.out_of_range = True
 						self.deploy_threshold = 15
@@ -213,7 +213,7 @@ class Robot(Agent):
 					self.status = 2
 					# if the cell is not yet full explored, keep going
 					if self.exploration_status < self.exploration_treshold:
-						# if fist step of exploration, update cell status
+						# if first step of exploration, update cell status
 						if self.exploration_status == 0:
 							cell = self.agent_get_cell(self.pos)
 							cell.explored = 1
@@ -239,10 +239,10 @@ class Robot(Agent):
 					# DP can waiting for frontiers bring to patological situation? 
 					# else, search for the sp and reduce utility near the target cell
 					
-					if (self.target_cell):
+					if self.target_cell:
 						cell = self.agent_get_cell(self.target_cell)
 						# speed is reduced by half when exploring. The cell is divided in 6 lanes
-						self.exploration_treshold = 6 * int(Decimal(0.5 * cell.difficulty).to_integral_value(rounding=ROUND_HALF_UP)) * 2
+						self.exploration_treshold = 6 * int(Decimal(0.5 * cell.difficulty).to_integral_value(rounding = ROUND_HALF_UP)) * 2
 						# make the cell disgusting for other robots
 						cell.utility = -math.inf
 						# compute and store the most convinient path to get there
@@ -269,4 +269,4 @@ class Robot(Agent):
 								cell2.utility *= (1 - self.distance(self.target_cell, element) / self.radar_radius)
 		
 						'''
-		print (self.pos)
+		print(self.pos)
