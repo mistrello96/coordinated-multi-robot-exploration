@@ -33,6 +33,7 @@ class Robot(Agent):
 		# 1 travelling
 		# 2 exploring
 		self.status = 0
+		self.out_of_range = False
 
 	# return the cell agent at the index given
 	def agent_get_cell(self, index):
@@ -73,7 +74,7 @@ class Robot(Agent):
 	# add the sorrundings of the cell to the graph used for SP computation
 	def percept(self):
 		# iterate over the neighborhood
-		robot_seen = set(self.model.grid.get_neighborhood(self.pos, "moore", include_center = True, radius = self.radar_radius))
+		robot_seen = set(self.model.grid.get_neighborhood(self.pos, "moore", include_center = True, radius = self.radar_radius // 3))
 		for percepted_cell in robot_seen:
 			cell_neigh = set(self.model.grid.get_neighborhood(percepted_cell, "moore", include_center = False, radius = 1))
 			cell_neigh_percepted = set.intersection(robot_seen, cell_neigh) # DP inter isn't definetely a clear variable name
@@ -161,84 +162,98 @@ class Robot(Agent):
 
 	def step(self):
 		# if the agent has a move to get closer to the target, move towards it
-		if self.target_path:
-			self.status = 1
-			# if a cell has been traversed, go to the next one
-			if self.travel_status == self.travel_treshold:
-				# update the last position
-				self.last_pos = self.pos
-				# move the agent
-				self.model.grid.move_agent(self, self.target_path[0])
-				self.target_path = self.target_path[1:]
-				# find the cell that the robot can see and add to the graph
-				self.percept()
-				cell = self.agent_get_cell(self.pos)
-				self.travel_status = 0
-				self.travel_treshold = Decimal(0.5 * cell.difficulty).to_integral_value(rounding=ROUND_HALF_UP)
-			else:
-				self.travel_status += 1
-			# TODO wifi range check
-		
+		if self.out_of_range:
+			self.target_path.insert(0, self.pos) 
+			self.model.grid.move_agent(self, self.last_pos)
+			self.last_pos = None
+			# relase wifi bean
+			cell = self.agent_get_cell(self.pos)
+			cell.wifi_bean = True
+			for index in self.model.grid.get_neighborhood(self.pos, "moore", include_center = False, radius = (self.model.wifi_range // 3)):
+				cell = self.agent_get_cell(index)
+				cell.wifi_covered = True
+			self.out_of_range = False
 		else:
-			# if the agent has no move to do, but is on the target, explore
-			if self.target_cell:
-				self.status = 2
-				# if the cell is not yet full explored, keep going
-				if self.exploration_status < self.exploration_treshold:
-					# if fist step of exploration, update cell status
-					if self.exploration_status == 0:
-						cell = self.agent_get_cell(self.pos)
-						cell.explored = 1
-					# anyway, explore
-					self.exploration_status += 1
-				# if the agent has finished the exploration, update the data of the cell (and self data)
-				else:
-					self.exploration_treshold = math.inf
-					self.exploration_status = 0
-					self.target_cell = ()
-					cell = self.agent_get_cell(self.pos)
-					cell.explored = 2
-
-			# if the robot has no target, find one
-			else:
-				self.status = 0
-				# find frontier's cells
-				frontier_cells = self.find_frontier_cells()
-				# find best cell
-				self.target_cell = self.find_best_cell(frontier_cells)
-				# if no frontier is avaiable, just stand still
-
-				# DP can waiting for frontiers bring to patological situation? 
-				# else, search for the sp and reduce utility near the target cell
-				
-				if (self.target_cell):
-					cell = self.agent_get_cell(self.target_cell)
-					# speed is reduced by half when exploring. The cell is divided in 6 lanes
-					self.exploration_treshold = 6 * int(Decimal(0.5 * cell.difficulty).to_integral_value(rounding=ROUND_HALF_UP)) * 2
-					# make the cell disgusting for other robots
-					cell.utility = -math.inf
-					# compute and store the most convinient path to get there
-					self.target_path = nx.astar_path(self.model.seen_graph, self.pos, self.target_cell, weight = 'weight')
-					# the first element is the cell itself, so pop it
+			if self.target_path:
+				self.status = 1
+				# if a cell has been traversed, go to the next one
+				if self.travel_status == self.travel_treshold:
+					# update the last position
+					self.last_pos = self.pos
+					# move the agent
+					self.model.grid.move_agent(self, self.target_path[0])
 					self.target_path = self.target_path[1:]
-					# reduce the utility of all the sorrundings cell if not visited yet
-					for element in self.model.grid.get_neighborhood(self.target_cell, "moore", include_center = False, radius = self.radar_radius):
-						# only if the cell is in lof with the robot
-						if self.line_of_sight(self.pos, element):
-							cell2 = self.agent_get_cell(element)
-							if cell2.explored == 0:
+					# find the cell that the robot can see and add to the graph
+					self.percept()
+					cell = self.agent_get_cell(self.pos)
+					self.travel_status = 0
+					self.travel_treshold = Decimal(0.5 * cell.difficulty).to_integral_value(rounding=ROUND_HALF_UP)
+					if not cell.wifi_covered:
+						self.out_of_range = True
+				else:
+					self.travel_status += 1
+				# TODO wifi range check
+			
+			else:
+				# if the agent has no move to do, but is on the target, explore
+				if self.target_cell:
+					self.status = 2
+					# if the cell is not yet full explored, keep going
+					if self.exploration_status < self.exploration_treshold:
+						# if fist step of exploration, update cell status
+						if self.exploration_status == 0:
+							cell = self.agent_get_cell(self.pos)
+							cell.explored = 1
+						# anyway, explore
+						self.exploration_status += 1
+					# if the agent has finished the exploration, update the data of the cell (and self data)
+					else:
+						self.exploration_treshold = math.inf
+						self.exploration_status = 0
+						self.target_cell = ()
+						cell = self.agent_get_cell(self.pos)
+						cell.explored = 2
+
+				# if the robot has no target, find one
+				else:
+					self.status = 0
+					# find frontier's cells
+					frontier_cells = self.find_frontier_cells()
+					# find best cell
+					self.target_cell = self.find_best_cell(frontier_cells)
+					# if no frontier is avaiable, just stand still
+
+					# DP can waiting for frontiers bring to patological situation? 
+					# else, search for the sp and reduce utility near the target cell
+					
+					if (self.target_cell):
+						cell = self.agent_get_cell(self.target_cell)
+						# speed is reduced by half when exploring. The cell is divided in 6 lanes
+						self.exploration_treshold = 6 * int(Decimal(0.5 * cell.difficulty).to_integral_value(rounding=ROUND_HALF_UP)) * 2
+						# make the cell disgusting for other robots
+						cell.utility = -math.inf
+						# compute and store the most convinient path to get there
+						self.target_path = nx.astar_path(self.model.seen_graph, self.pos, self.target_cell, weight = 'weight')
+						# the first element is the cell itself, so pop it
+						self.target_path = self.target_path[1:]
+						# reduce the utility of all the sorrundings cell if not visited yet
+						for element in self.model.grid.get_neighborhood(self.target_cell, "moore", include_center = False, radius = self.radar_radius):
+							# only if the cell is in lof with the robot
+							if self.line_of_sight(self.pos, element):
+								cell2 = self.agent_get_cell(element)
+								if cell2.explored == 0:
+									#cell.utility -= (1 - self.distance(self.target_cell, element) / self.radar_radius)
+									cell2.utility *= (1 - self.distance(self.target_cell, element) / self.radar_radius)
+						## WARNING
+						# this approach, proposed in the paper, leads to a pathological situation where a robot after the exploration has a cell in front
+						# of him with utility 1 and cost to get there 1, so it will always pich that cell
+						'''
+						# reduce the utility of the FRONTIERS (and only frontiers) cells nearby the target cell
+						for element in self.model.grid.get_neighborhood(self.target_cell, "moore", include_center=False, radius=self.radar_radius):
+							if element in frontier_cells:
+								cell2 = self.agent_get_cell(element)
 								#cell.utility -= (1 - self.distance(self.target_cell, element) / self.radar_radius)
 								cell2.utility *= (1 - self.distance(self.target_cell, element) / self.radar_radius)
-					## WARNING
-					# this approach, proposed in the paper, leads to a pathological situation where a robot after the exploration has a cell in front
-					# of him with utility 1 and cost to get there 1, so it will always pich that cell
-					'''
-					# reduce the utility of the FRONTIERS (and only frontiers) cells nearby the target cell
-					for element in self.model.grid.get_neighborhood(self.target_cell, "moore", include_center=False, radius=self.radar_radius):
-						if element in frontier_cells:
-							cell2 = self.agent_get_cell(element)
-							#cell.utility -= (1 - self.distance(self.target_cell, element) / self.radar_radius)
-							cell2.utility *= (1 - self.distance(self.target_cell, element) / self.radar_radius)
-	
-					'''
+		
+						'''
 		print (self.pos)

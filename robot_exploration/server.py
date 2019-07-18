@@ -15,6 +15,8 @@ def agent_portrayal(agent):
             portrayal = {"Shape": "rect", "Color": "orange", "Filled": "false", "Layer": 0, "w": 1, "h" : 1}
         if agent.explored == 2 :
             portrayal = {"Shape": "rect", "Color": "green", "Filled": "false", "Layer": 0, "w": 1, "h" : 1}
+        if agent.wifi_bean:
+            portrayal = {"Shape": "circle", "Color": "yellow", "Filled": "false", "Layer": 1, "r": 0.4}
     # if robot, represent corresponding status
     else:
         if agent.exploration_status != 0:
