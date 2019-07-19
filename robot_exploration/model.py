@@ -10,9 +10,6 @@ import networkx as nx
 import pandas as pd
 import random as rnd
 
-# TODO
-# optimize robot wifi deploy at start
-
 number_of_steps_csv = "./robot_exploration/results/number_of_steps.csv"
 exploration_percentage_csv = "./robot_exploration/results/percentage_exploration_simulation_step.csv"
 robot_status_csv = "./robot_exploration/results/robots_status_simulation_step.csv"
@@ -87,8 +84,6 @@ class ExplorationArea(Model):
 
   		# graph of seen cells
 		self.seen_graph = nx.DiGraph()
-		
-		#TODO wifi representation
 
 		'''
 		legacy code
@@ -149,7 +144,7 @@ class ExplorationArea(Model):
 		# note that we only can know from whitch bean the call comed from, so we prioritize all the cells in the bean radius
 		rand = np.random.random_sample()
 		found = False
-		if rand > 0.995:
+		if rand > 0.999:
 			print("Someone connected to wifi and asked for help")
 			for bean_index in self.grid.coord_iter():
 				candidate_bean = [obj for obj in self.grid.get_cell_list_contents(bean_index[1:]) if isinstance(obj, Cell)][0]
