@@ -23,7 +23,7 @@ class Robot(Agent):
 		# store the number of steps needed to explore the cell
 		self.exploration_treshold = math.inf
 		self.exploration_status = 0
-		self.can_move = False
+		self.can_move = False # DP unused variable?
 		cell = self.agent_get_cell(self.pos)
 		# store the number of steps needed to explore the cell
 		self.travel_status = 0
@@ -35,7 +35,7 @@ class Robot(Agent):
 		# 2 exploring
 		# 3 deploying wifi bean
 		self.status = 0
-		self.out_of_range = False
+		self.out_of_range = False # all'inizio la persona o il mezzo che li deploya porta con sè un bean
 		# store the number of steps for a wifi bean deploy
 		self.deploy_threshold = 15
 		self.deploy_status = 0
@@ -147,6 +147,9 @@ class Robot(Agent):
 		# Asking to learn.
 		bids_sort_cost = sorted(bids, key = lambda x: x[1])
 		bids_sort_gain = sorted(bids_sort_cost, key = lambda x: (1000 * self.agent_get_cell(x[0]).priority + self.agent_get_cell(x[0]).utility - (self.model.alpha * x[1])), reverse = True)
+		if bids_sort_gain and self.agent_get_cell(bids_sort_gain[0][0]).utility == -math.inf: # if bids_sort_gain is not None and every cell has -inf utility
+			# in order to avoid two robots exploring the same cell
+			return tuple()
 		if bids_sort_gain:				
 			return bids_sort_gain[0][0]
 		else:
@@ -168,6 +171,31 @@ class Robot(Agent):
 		return diagonalSteps + straightSteps
 
 	def step(self):
+		'''
+		# at the first step the robot can move directly, it is deployed of the 
+		# edge of the first cell of interest
+		if self.model.schedule.steps == 0:
+			self.status = 0
+			# find frontier's cells
+			frontier_cells = self.find_frontier_cells()
+			# find best cell
+			self.target_cell = self.find_best_cell(frontier_cells)
+			# make the cell disgusting for other robots
+			cell = self.agent_get_cell(self.target_cell)
+			cell.utility = -math.inf
+			return 
+		if self.model.schedule.steps == 1 and self.target_cell:
+			self.status = 1
+			self.last_pos = self.pos
+			cell = self.agent_get_cell(self.target_cell)
+			self.exploration_treshold = 6 * int(Decimal(0.5 * cell.difficulty).to_integral_value(rounding = ROUND_HALF_UP)) * 2
+			self.model.grid.move_agent(self, self.target_cell)
+			return
+		'''
+		
+		# Assumiamo che la persona o il mezzo con cui vengono trasportati i robot abbiano con loro un bean per 
+		# permettere la comunicazione iniziale tra i robot
+		
 		# if the agent has a move to get closer to the target, move towards it
 		if self.out_of_range:
 			if not self.deploy_status:
@@ -190,6 +218,7 @@ class Robot(Agent):
 				self.number_bean_deployed += 1
 		else:
 			if self.target_path:
+				print("dentro target path")
 				self.status = 1
 				# if a cell has been traversed, go to the next one
 				if self.travel_status == self.travel_treshold:

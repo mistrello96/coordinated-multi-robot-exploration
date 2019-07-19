@@ -130,6 +130,12 @@ class ExplorationArea(Model):
 			self.grid.place_agent(a, (column, row))
 			cell = [e for e in self.grid.get_cell_list_contents(tuple([column, row])) if isinstance(e, Cell)][0]
 			cell.explored = 42
+			# Dove viene deployato il robot viene deployato anche un bean (uno solo)
+			cell.wifi_bean = True
+			for index in self.grid.get_neighborhood(cell.pos, "moore", include_center = False, radius = (self.wifi_range // 3)):
+				# cell = self.agent_get_cell(index)
+				cell = [e for e in self.grid.get_cell_list_contents(index) if isinstance(e, Cell)][0]
+				cell.wifi_covered = True
 
 	# what the model does at each time step
 	def step(self):
