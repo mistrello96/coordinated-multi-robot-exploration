@@ -259,7 +259,8 @@ class Robot(Agent):
 								cell2 = self.agent_get_cell(element)
 								if cell2.explored == 0:
 									#cell.utility -= (1 - self.distance(self.target_cell, element) / self.radar_radius)
-									cell2.utility *= (1 - self.distance(self.target_cell, element) / self.radar_radius)
+									cell2.utility *= self.distance(self.target_cell, element) / self.radar_radius
+									# maybe a stornger influence, also exceding the radar radius, can mantain the robot more far away
 						## WARNING
 						# this approach, proposed in the paper, leads to a pathological situation where a robot after the exploration has a cell in front
 						# of him with utility 1 and cost to get there 1, so it will always pich that cell
