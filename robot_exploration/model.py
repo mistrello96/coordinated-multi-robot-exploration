@@ -117,6 +117,8 @@ class ExplorationArea(Model):
 		rnd.seed()
 		row = 0
 		starting_coord = []
+		# data collection number of beans requested
+		self.deployed_beans_at_start = 0
 		# generating the list for the starting position of robots
 		for c in range(self.grid.width):
 			# take the agent cell
@@ -131,12 +133,14 @@ class ExplorationArea(Model):
 			cell = [e for e in self.grid.get_cell_list_contents(tuple([column, row])) if isinstance(e, Cell)][0]
 			cell.explored = 42
 			# Dove viene deployato il robot viene deployato anche un bean (uno solo)
-			cell.wifi_bean = True
-			for index in self.grid.get_neighborhood(cell.pos, "moore", include_center = False, radius = (self.wifi_range // 3)):
-				# cell = self.agent_get_cell(index)
-				cell = [e for e in self.grid.get_cell_list_contents(index) if isinstance(e, Cell)][0]
-				cell.wifi_covered = True
-
+			if not cell.wifi_bean:
+				cell.wifi_bean = True
+				for index in self.grid.get_neighborhood(cell.pos, "moore", include_center = False, radius = (self.wifi_range // 3)):
+					# cell = self.agent_get_cell(index)
+					cell = [e for e in self.grid.get_cell_list_contents(index) if isinstance(e, Cell)][0]
+					cell.wifi_covered = True
+				self.deployed_beans_at_start += 1
+		print(self.deployed_beans_at_start)
 	# what the model does at each time step
 	def step(self):
 		# call step function for all of the robots in random order
@@ -265,4 +269,4 @@ class ExplorationArea(Model):
 
 	@staticmethod
 	def get_number_bean_deployed(m):
-		return sum([x.number_bean_deployed for x in m.schedule.agents if isinstance(x, Robot)])
+		return sum([x.number_bean_deployed for x in m.schedule.agents if isinstance(x, Robot)]) + m.deployed_beans_at_start
