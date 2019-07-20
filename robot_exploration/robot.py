@@ -48,6 +48,13 @@ class Robot(Agent):
 		cell = [obj for obj in tmp if isinstance(obj, Cell)][0]
 		return cell
 
+	def agent_get_injured(self, index):
+		tmp = self.model.grid.get_cell_list_contents(index)
+		try:
+			return [obj for obj in tmp if isinstance(obj, Injured)][0]
+		except:
+			return None
+
 	# return cells of the supercover line between 2 cells
 	def line_of_sight(self, source, destination):
 		y0, x0 = source
@@ -149,9 +156,11 @@ class Robot(Agent):
 				pass
 		# pick the most convinient cell
 		bids_sort_cost = sorted(bids, key = lambda x: x[1])
-		bids_sort_gain = sorted(bids_sort_cost, key = lambda x: (1000 * self.agent_get_cell(x[0]).priority + self.agent_get_cell(x[0]).utility - (self.model.alpha * x[1])), reverse = True)
+		bids_sort_gain = sorted(bids_sort_cost, key = lambda x: (self.agent_get_cell(x[0]).priority + self.agent_get_cell(x[0]).utility - (self.model.alpha * x[1])), reverse = True)
 		
 		# if bids_sort_gain is not None and every cell has -inf utility, no valid target is found
+		if not bids_sort_gain:
+			return tuple()
 		if bids_sort_gain and self.agent_get_cell(bids_sort_gain[0][0]).utility == -math.inf: 
 			# in order to avoid two robots exploring the same cell
 			return tuple()
@@ -217,7 +226,7 @@ class Robot(Agent):
 			cell = self.agent_get_cell(self.pos)
 			cell.wifi_bean = True
 			# update wifi signal
-			for index in self.model.grid.get_neighborhood(self.pos, "moore", include_center = False, radius = (self.model.wifi_range // 3)):
+			for index in self.model.grid.get_neighborhood(self.pos, "moore", include_center = False, radius = self.model.wifi_range):
 				cell = self.agent_get_cell(index)
 				cell.wifi_covered = True
 			# reset deploy variables
@@ -266,6 +275,10 @@ class Robot(Agent):
 			self.target_cell = ()
 			cell = self.agent_get_cell(self.pos)
 			cell.explored = 2
+			injured = self.agent_get_injured(self.pos)
+			if injured:
+				injured.status = 1
+
 		
 	def pick_target(self):
 		# update robot status

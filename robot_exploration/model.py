@@ -1,5 +1,6 @@
 from .robot import Robot
 from .cell import Cell
+from .injured import Injured
 from mesa import Model
 from mesa.time import RandomActivation
 from mesa.space import MultiGrid
@@ -15,7 +16,7 @@ exploration_percentage_csv = "./robot_exploration/results/percentage_exploration
 robot_status_csv = "./robot_exploration/results/robots_status_simulation_step.csv"
 
 class ExplorationArea(Model):
-	def __init__(self, nrobots, radar_radius, ncells, obstacles_dist, wifi_range, alpha, 
+	def __init__(self, nrobots, radar_radius, ncells, obstacles_dist, wifi_range, alpha, ninjured,
 		time_csv = number_of_steps_csv, exploration_percentage_csv = exploration_percentage_csv, 
 		robot_status_csv = robot_status_csv):
 		# used in server start
@@ -26,6 +27,7 @@ class ExplorationArea(Model):
 		self.obstacles_dist = obstacles_dist
 		self.wifi_range = wifi_range
 		self.alpha = alpha
+		self.ninjured = ninjured
 
 		# Data collection tools
 		# it represents the sum of the difficulties of every cell
@@ -130,15 +132,30 @@ class ExplorationArea(Model):
 			# Dove viene deployato il robot viene deployato anche un bean (uno solo)
 			if not cell.wifi_bean:
 				cell.wifi_bean = True
-				for index in self.grid.get_neighborhood(cell.pos, "moore", include_center = False, radius = (self.wifi_range // 3)):
+				for index in self.grid.get_neighborhood(cell.pos, "moore", include_center = False, radius = self.wifi_range):
 					# cell = self.agent_get_cell(index)
 					cell = [e for e in self.grid.get_cell_list_contents(index) if isinstance(e, Cell)][0]
 					cell.wifi_covered = True
 				self.deployed_beans_at_start += 1
+
+		# create injured agents
+		valid_coord = []
+		for i in self.grid.coord_iter():
+			cell = [e for e in self.grid.get_cell_list_contents(i[1:]) if isinstance(e, Cell)][0]
+			if cell.explored == 0:
+				valid_coord.append(cell.pos)
+		for i in range(self.nrobots + self.agent_counter, self.nrobots + self.agent_counter + self.ninjured):
+			inj_index = rnd.choice(starting_coord)
+			a = Injured(i, self, valid_coord[inj_index])
+			self.schedule.add(a)
+			self.grid.place_agent(a, valid_coord[inj_index])			
+
 	# what the model does at each time step
 	def step(self):
 		# call step function for all of the robots in random order
 		self.schedule.step()
+
+		'''
 		# possible call from help
 		# note that we only can know from whitch bean the call comed from, so we prioritize all the cells in the bean radius
 		rand = np.random.random_sample()
@@ -149,7 +166,7 @@ class ExplorationArea(Model):
 				candidate_bean = [obj for obj in self.grid.get_cell_list_contents(bean_index[1:]) if isinstance(obj, Cell)][0]
 				# pick a bean
 				if candidate_bean.wifi_bean:
-					for covered_index in self.grid.get_neighborhood(bean_index[1:], "moore", include_center = False, radius = (self.wifi_range // 3)):
+					for covered_index in self.grid.get_neighborhood(bean_index[1:], "moore", include_center = False, radius = self.wifi_range ):
 						covered_cell = [obj for obj in self.grid.get_cell_list_contents(covered_index) if isinstance(obj, Cell)][0]
 						# if it has some unexolored cell, mark them as priority cell
 						if covered_cell.explored == 0:
@@ -159,7 +176,7 @@ class ExplorationArea(Model):
 				if found:
 					break
 
-		'''
+		
 		legacy code, there's a function which does this work
 		# compute percentage of explored over total 
 		count_explored = 0

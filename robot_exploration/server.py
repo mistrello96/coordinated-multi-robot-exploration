@@ -22,11 +22,13 @@ def agent_portrayal(agent):
         if agent.wifi_bean:
             portrayal = {"Shape": "circle", "Color": "yellow", "Filled": "false", "Layer": 1, "r": 0.4}
     # if robot, represent corresponding status
-    else:
+    if type(agent) is Robot:
         if agent.exploration_status != 0:
             portrayal = {"Shape": "circle", "Color": "blue", "Filled": "true", "Layer": 0.5, "r": 0.6}
         else:
             portrayal = {"Shape": "circle", "Color": "#505050", "Filled": "true", "Layer": 0.5, "r": 0.6}
+    if type(agent) is Injured:
+        portrayal = None
     return portrayal
 
 ## Parameters of the model
@@ -41,10 +43,12 @@ model_params = {
     "ncells": UserSettableParameter('number', "Number of rows/columns of cells", value = 10),
     "obstacles_dist": UserSettableParameter('slider', "Obstacle probability", 0.1, 0, 1, 0.01,
                                         description = "Choose how many obstacle there are in the map"),
-    "wifi_range": UserSettableParameter('slider', "Wifi range", 10, 10, 1000, 10,
-                                        description = "Choose how many cells around the robot can see"), # DP number of cells or meters?
+    "wifi_range": UserSettableParameter('slider', "Wifi range", 3, 2, 150, 1,
+                                        description = "Choose how many cells the wifi signal is propagated"),
     "alpha": UserSettableParameter('number', "Alpha value", value = 0.1,
-                                        description = "Importance of path cost in target selection")
+                                        description = "Importance of path cost in target selection"),
+    "ninjured": UserSettableParameter('slider', "Number of injured", 3, 1, 30, 1,
+                                        description = "Choose how many injured are in the map"),
 }
 
 #grid representation
