@@ -135,7 +135,6 @@ class ExplorationArea(Model):
 					cell = [e for e in self.grid.get_cell_list_contents(index) if isinstance(e, Cell)][0]
 					cell.wifi_covered = True
 				self.deployed_beans_at_start += 1
-		print(self.deployed_beans_at_start)
 	# what the model does at each time step
 	def step(self):
 		# call step function for all of the robots in random order
