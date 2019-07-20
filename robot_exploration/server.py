@@ -32,6 +32,8 @@ def agent_portrayal(agent):
 ## Parameters of the model
 model_params = {
 # order of values is default, min, max, step
+# TODO: the default values should be infered by the server_grid file, in order to make the map visible
+# at the launch, rember that the map has to more rows/columns than ncells to be explored
     "nrobots": UserSettableParameter('slider', "Number of agents", 3, 1, 100, 1,
                                         description = "Choose how many agents to include in the model"),
     "radar_radius": UserSettableParameter('slider', "Radar radius", 3, 0, 10, 1,
@@ -40,13 +42,16 @@ model_params = {
     "obstacles_dist": UserSettableParameter('slider', "Obstacle probability", 0.1, 0, 1, 0.01,
                                         description = "Choose how many obstacle there are in the map"),
     "wifi_range": UserSettableParameter('slider', "Wifi range", 10, 10, 1000, 10,
-                                        description = "Choose how many cells around the robot can see"),
+                                        description = "Choose how many cells around the robot can see"), # DP number of cells or meters?
     "alpha": UserSettableParameter('number', "Alpha value", value = 0.1,
                                         description = "Importance of path cost in target selection")
 }
 
 #grid representation
-grid = CanvasGrid(agent_portrayal, 22, 22, 800, 800)
+with open("./robot_exploration/server_grid.txt") as f: # the path starts from the run.py directory not from this file directory
+    l = f.readlines()
+params = l[0].split()
+grid = CanvasGrid(agent_portrayal, params[0], params[1], params[2], params[3])
 
 #server = ModularServer(ExplorationArea, [grid, chart], "Search and Rescue simulation", model_params)
 server = ModularServer(ExplorationArea, [grid], "Search and Rescue simulation", model_params)
