@@ -1,0 +1,7 @@
+- Utilizzare per processo di ottimizzazione fare run sia con mappe generate casualmente che mappe fisse
+(- Movimento automatico dei robot a step zero) <- forse ci ripenserò su
+- Data visualization con file sorgente e file/cartella di destinazione presi da riga di comando
+- Verificare batch run come raccoglie dati
+
+- pensare come sistemare formula info gain
+- studiare i comportamenti del modello al variare del valore dei singoli parametri
