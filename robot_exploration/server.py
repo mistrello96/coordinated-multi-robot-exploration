@@ -49,7 +49,7 @@ model_params = {
     "alpha": UserSettableParameter('number', "Alpha value", value = 0.1,
                                         description = "Importance of path cost in target selection"),
     "ninjured": UserSettableParameter('slider', "Number of injured", 3, 1, 30, 1,
-                                        description = "Choose how many injured are in the map"),
+                                        description = "Choose how many injured are in the map")
 }
 
 #grid representation
@@ -57,6 +57,7 @@ with open("./robot_exploration/server_grid.txt") as f: # the path starts from th
     l = f.readlines()
 params = l[0].split()
 grid = CanvasGrid(agent_portrayal, params[0], params[1], params[2], params[3])
+
 exploratio_chart = ChartModule([{"Label": "explored",
                       "Color": "Black"}],
                     data_collector_name='dc_percentage_step')
@@ -66,5 +67,6 @@ robort_chart = ChartModule([{"Label": "idling", "Color": "#505050"}, {"Label" : 
 
 #server = ModularServer(ExplorationArea, [grid, chart], "Search and Rescue simulation", model_params)
 server = ModularServer(ExplorationArea, [grid, exploratio_chart, robort_chart], "Search and Rescue simulation", model_params)
+#server = ModularServer(ExplorationArea, [grid], "Search and Rescue simulation", model_params)
 server.port = 8521
 server.launch()
