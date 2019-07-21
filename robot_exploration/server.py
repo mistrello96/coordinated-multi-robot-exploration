@@ -3,6 +3,7 @@ from .model import *
 from mesa.visualization.ModularVisualization import ModularServer
 from mesa.visualization.UserParam import UserSettableParameter
 from mesa.visualization.modules import CanvasGrid
+from mesa.visualization.modules import ChartModule
 
 def agent_portrayal(agent):
 	# if cell, represent the corresponding colour
@@ -56,8 +57,14 @@ with open("./robot_exploration/server_grid.txt") as f: # the path starts from th
     l = f.readlines()
 params = l[0].split()
 grid = CanvasGrid(agent_portrayal, params[0], params[1], params[2], params[3])
+exploratio_chart = ChartModule([{"Label": "explored",
+                      "Color": "Black"}],
+                    data_collector_name='dc_percentage_step')
+
+robort_chart = ChartModule([{"Label": "idling", "Color": "#505050"}, {"Label" : "travelling", "Color" : "Blue"}, {"Label" : "exploring", "Color" : "Green"}, {"Label" : "deploying_bean", "Color" : "Yellow"}],
+                    data_collector_name='dc_robot_status')
 
 #server = ModularServer(ExplorationArea, [grid, chart], "Search and Rescue simulation", model_params)
-server = ModularServer(ExplorationArea, [grid], "Search and Rescue simulation", model_params)
+server = ModularServer(ExplorationArea, [grid, exploratio_chart, robort_chart], "Search and Rescue simulation", model_params)
 server.port = 8521
 server.launch()
