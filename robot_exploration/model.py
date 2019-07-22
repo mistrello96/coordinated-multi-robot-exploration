@@ -17,7 +17,8 @@ robot_status_csv = "./robot_exploration/results/robots_status_simulation_step.cs
 
 class ExplorationArea(Model):
 	def __init__(self, nrobots, radar_radius, ncells, obstacles_dist, wifi_range, alpha, ninjured,
-		dump_datas = True, # enable data collection
+		dump_datas = True, # enable data collection 
+		optimization_task = False, # enable a small part of data collection for optimization task
 		time_csv = number_of_steps_csv, exploration_percentage_csv = exploration_percentage_csv, 
 		robot_status_csv = robot_status_csv):
 		# used in server start
@@ -30,7 +31,8 @@ class ExplorationArea(Model):
 		self.alpha = alpha
 		self.ninjured = ninjured
 		self.dump_datas = dump_datas
-
+		self.optimization_task = optimization_task
+		print("\n" + str(self.optimization_task))
 		# Data collection tools
 		if self.dump_datas:
 			# it represents the sum of the difficulties of every cell
@@ -49,6 +51,9 @@ class ExplorationArea(Model):
 			self.time_csv = number_of_steps_csv
 			self.exploration_percentage_csv = exploration_percentage_csv
 			self.robot_status_csv = robot_status_csv
+
+		if self.optimization_task:
+			self.total_idling_time = 0
 
 		# grid and schedule representation
 		self.grid = MultiGrid(ncells + 2, ncells + 2, torus = False)
@@ -197,6 +202,8 @@ class ExplorationArea(Model):
 			# result = self.get_explored(self)
 			self.dc_percentage_step.collect(self)
 			self.dc_robot_status.collect(self)
+		if self.optimization_task:
+			self.total_idling_time += self.get_number_robots_status(self, "idling")
 		# if all seen cells have benn explored, stop the simulation
 		# we do this so if there are unreachable cells, the cannot be seen, so the simulation stops anyway
 		stop = True
