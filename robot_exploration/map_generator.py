@@ -39,15 +39,15 @@ class Map(Model):
 					utility = 1.0
 				# if obstacle
 				else:
-					difficulty = math.inf
+					difficulty = "inf"
 					explored = -1
 					priority = 0
-					utility = -math.inf
+					utility = "-inf"
 			else:
   				difficulty = np.random.randint(low = 1, high = 13)
   				explored = -2
-  				priority = -math.inf
-  				utility = -math.inf
+  				priority = "-inf"
+  				utility = "-inf"
 			# place the agent in the grid
 			out_grid["Cell"][i[1:]]= [self.agent_counter, i[1:], difficulty, explored, priority, utility]
 			a = Cell(self.agent_counter, self, i[1:], difficulty, explored, priority, utility)
@@ -68,8 +68,10 @@ class Map(Model):
 			a = Injured(i, self, inj_index)
 			self.schedule.add(a)
 			self.grid.place_agent(a, inj_index)	
-		with open('robot_exploration/maps/mymap.txt', 'w') as f:
-			print(out_grid, file=f)		
+		with open('robot_exploration/maps/mymap.py', 'w') as f:
+			f.writelines(["exported_map = ", str(out_grid), '\n'])
+			#print(out_grid, file=f)
+		
 
 	# what the model does at each time step
 	def step(self):
