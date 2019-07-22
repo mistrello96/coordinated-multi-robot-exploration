@@ -60,6 +60,8 @@ class ExplorationArea(Model):
 		# unique counter for agents 
 		self.agent_counter = 1
 		self.nobstacle = 0
+	  	# graph of seen cells
+		self.seen_graph = nx.DiGraph()
 
 		# place a cell agent for store data and visualization on each cell of the grid
 		for i in self.grid.coord_iter():
@@ -92,9 +94,18 @@ class ExplorationArea(Model):
 			self.grid.place_agent(a, i[1:])
 			self.agent_counter += 1
 
-  		# graph of seen cells
-		self.seen_graph = nx.DiGraph()
-
+		# create injured agents
+		valid_coord = []
+		for i in self.grid.coord_iter():
+			cell = [e for e in self.grid.get_cell_list_contents(i[1:]) if isinstance(e, Cell)][0]
+			if cell.explored == 0:
+				valid_coord.append(cell.pos)
+		for i in range(0, ninjured):
+			inj_index = rnd.choice(valid_coord)
+			a = Injured(self.agent_counter, self, inj_index)
+			self.schedule.add(a)
+			self.grid.place_agent(a, inj_index)
+			self.agent_counter += 1	
 		'''
 		legacy code
 		# create robotic agents
@@ -131,11 +142,12 @@ class ExplorationArea(Model):
 			cell = [e for e in self.grid.get_cell_list_contents(tuple([c, row])) if isinstance(e, Cell)][0]
 			if cell.explored != -1:
 				starting_coord.append(c)
-		for i in range(self.agent_counter, self.nrobots + self.agent_counter):
+		for i in range(0, self.nrobots):
 			column = rnd.choice(starting_coord)
-			a = Robot(i, self, tuple([column, row]), self.radar_radius)
+			a = Robot(self.agent_counter, self, tuple([column, row]), self.radar_radius)
 			self.schedule.add(a)
 			self.grid.place_agent(a, (column, row))
+			self.agent_counter += 1
 			cell = [e for e in self.grid.get_cell_list_contents(tuple([column, row])) if isinstance(e, Cell)][0]
 			cell.explored = 42
 			# Dove viene deployato il robot viene deployato anche un bean (uno solo)
@@ -146,19 +158,7 @@ class ExplorationArea(Model):
 					cell = [e for e in self.grid.get_cell_list_contents(index) if isinstance(e, Cell)][0]
 					cell.wifi_covered = True
 				if self.dump_datas:
-					self.deployed_beans_at_start += 1
-
-		# create injured agents
-		valid_coord = []
-		for i in self.grid.coord_iter():
-			cell = [e for e in self.grid.get_cell_list_contents(i[1:]) if isinstance(e, Cell)][0]
-			if cell.explored == 0:
-				valid_coord.append(cell.pos)
-		for i in range(self.nrobots + self.agent_counter, self.nrobots + self.agent_counter + self.ninjured):
-			inj_index = rnd.choice(starting_coord)
-			a = Injured(i, self, valid_coord[inj_index])
-			self.schedule.add(a)
-			self.grid.place_agent(a, valid_coord[inj_index])			
+					self.deployed_beans_at_start += 1		
 
 	# what the model does at each time step
 	def step(self):

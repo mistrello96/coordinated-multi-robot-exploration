@@ -17,7 +17,7 @@ class Injured(Agent):
 
 	def sos(self, cell):
 		rand = np.random.random_sample()
-		if rand > 0.99:
+		if rand > 0.999:
 			cell.priority = 1
 			for close_index in self.model.grid.get_neighborhood(self.pos, "moore", include_center = False, radius = 1):
 				close_cell = self.agent_get_cell(close_index)
