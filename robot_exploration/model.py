@@ -64,7 +64,7 @@ class ExplorationArea(Model):
 		self.seen_graph = nx.DiGraph()
 
 		# place a cell agent for store data and visualization on each cell of the grid
-		if load_map:
+		if not load_map:
 			self.grid = MultiGrid(ncells + 2, ncells + 2, torus = False)
 			for i in self.grid.coord_iter():
 				if i[1] != 0 and i[2] != 0 and i[1] != self.ncells + 1 and i[2] != self.ncells + 1:
