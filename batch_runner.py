@@ -1,7 +1,16 @@
 from mesa.batchrunner import BatchRunner
 from robot_exploration.model import ExplorationArea
 
-def fitness(nrobots, radar_radius, alpha):
+def fitness(list_params):
+	'''
+	list_params[0] is the number of the robots which has to be an integer
+	list_params[1] is the radar radius which has to be an integer
+	list_params[2] is the alpha
+	'''
+	nrobots = int(round(list_params[0]))
+	radar_radius = int(round(list_params[1]))
+	alpha = list_params[2]
+	
 	fixed_params = {
 		"nrobots": nrobots,
 		"radar_radius": radar_radius, 
@@ -14,7 +23,7 @@ def fitness(nrobots, radar_radius, alpha):
 		"optimization_task": True
 	}
 
-	
+	print(str(list_params[0]) + " " + str(list_params[1]) + " " + str(list_params[2]))
 
 	batch_run = BatchRunner(
 		ExplorationArea,
@@ -27,7 +36,8 @@ def fitness(nrobots, radar_radius, alpha):
 	)
 
 	batch_run.run_all()
-	run_data = batch_run.get_model_vars_dataframe()
+	run_data = batch_run.get_model_vars_dataframe() # it is actually one row
 	#print("tempo da sum" + str(sum(run_data["step"])))
 	#print(sum(run_data["total_idling"]))
-	return run_data["step"] + (run_data["total_idling"] / nrobots)
+	#print(run_data["step"].iloc[0] + (run_data["total_idling"].iloc[0] / nrobots))
+	return run_data["step"].iloc[0] + (run_data["total_idling"].iloc[0] / nrobots)

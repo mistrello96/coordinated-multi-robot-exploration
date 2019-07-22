@@ -89,7 +89,7 @@ class Robot(Agent):
 	# add the sorrundings of the cell to the graph used for SP computation
 	def percept(self):
 		# iterate over the neighborhood
-		robot_seen = set(self.model.grid.get_neighborhood(self.pos, "moore", include_center = True, radius = self.radar_radius // 3))
+		robot_seen = set(self.model.grid.get_neighborhood(self.pos, "moore", include_center = True, radius = self.radar_radius))
 		for percepted_cell in robot_seen:
 			cell_neigh = set(self.model.grid.get_neighborhood(percepted_cell, "moore", include_center = False, radius = 1))
 			cell_neigh_percepted = set.intersection(robot_seen, cell_neigh) # DP inter isn't definetely a clear variable name
