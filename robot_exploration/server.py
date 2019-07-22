@@ -37,7 +37,7 @@ model_params = {
 # order of values is default, min, max, step
 # TODO: the default values should be infered by the server_grid file, in order to make the map visible
 # at the launch, rember that the map has to more rows/columns than ncells to be explored
-    "nrobots": UserSettableParameter('slider', "Number of agents", 3, 1, 100, 1,
+    "nrobots": UserSettableParameter('slider', "Number of robots", 3, 1, 100, 1,
                                         description = "Choose how many agents to include in the model"),
     "radar_radius": UserSettableParameter('slider', "Radar radius", 3, 0, 10, 1,
                                         description = "Choose how many cells around the robot can see"),

@@ -34,7 +34,6 @@ class ExplorationArea(Model):
 		self.ninjured = ninjured
 		self.dump_datas = dump_datas
 		self.optimization_task = optimization_task
-		print("\n" + str(self.optimization_task))
 		# Data collection tools
 		if self.dump_datas:
 			# it represents the sum of the difficulties of every cell
@@ -195,6 +194,7 @@ class ExplorationArea(Model):
 	# what the model does at each time step
 	def step(self):
 		# call step function for all of the robots in random order
+		print("step")
 		self.schedule.step()
 
 		'''
