@@ -151,10 +151,10 @@ class ExplorationArea(Model):
 			if cell.explored == 0:
 				valid_coord.append(cell.pos)
 		for i in range(self.nrobots + self.agent_counter, self.nrobots + self.agent_counter + self.ninjured):
-			inj_index = rnd.choice(starting_coord)
-			a = Injured(i, self, valid_coord[inj_index])
+			inj_index = rnd.choice(valid_coord)
+			a = Injured(i, self, inj_index)
 			self.schedule.add(a)
-			self.grid.place_agent(a, valid_coord[inj_index])			
+			self.grid.place_agent(a, inj_index)			
 
 	# what the model does at each time step
 	def step(self):
