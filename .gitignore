@@ -2,3 +2,5 @@
 __pycache__/
 *.py[cod]
 *$py.class
+optimization/best_fitness.txt
+optimization/best_solution.txt
