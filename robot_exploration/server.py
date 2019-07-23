@@ -48,6 +48,8 @@ model_params = {
                                         description = "Choose how many cells the wifi signal is propagated"),
     "alpha": UserSettableParameter('number', "Alpha value", value = 0.1,
                                         description = "Importance of path cost in target selection"),
+    "gamma": UserSettableParameter('number', "Gamma value", value = 1,
+                                        description = "Influence on utility reduction on the neighborhood of the target"),
     "ninjured": UserSettableParameter('slider', "Number of injured", 3, 1, 30, 1,
                                         description = "Choose how many injured are in the map")
 }

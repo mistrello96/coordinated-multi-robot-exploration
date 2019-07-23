@@ -10,6 +10,7 @@ def fitness(list_params):
 	nrobots = int(round(list_params[0]))
 	radar_radius = int(round(list_params[1]))
 	alpha = list_params[2]
+	gamma = list_params[3]
 	
 	fixed_params = {
 		"nrobots": nrobots,
@@ -18,6 +19,7 @@ def fitness(list_params):
 		"obstacles_dist": 0.01, 
 		"wifi_range": 10, 
 		"alpha": alpha,
+		"gamma" : gamma
 		"ninjured": 4,
 		"dump_datas": False,
 		"optimization_task": True

@@ -17,7 +17,7 @@ exploration_percentage_csv = "./robot_exploration/results/percentage_exploration
 robot_status_csv = "./robot_exploration/results/robots_status_simulation_step.csv"
 
 class ExplorationArea(Model):
-	def __init__(self, nrobots, radar_radius, ncells, obstacles_dist, wifi_range, alpha, ninjured,
+	def __init__(self, nrobots, radar_radius, ncells, obstacles_dist, wifi_range, alpha, gamma, ninjured,
 		dump_datas = True, # enable data collection 
 		optimization_task = False, # enable a small part of data collection for optimization task
 		time_csv = number_of_steps_csv, exploration_percentage_csv = exploration_percentage_csv, 
@@ -31,6 +31,7 @@ class ExplorationArea(Model):
 		self.obstacles_dist = obstacles_dist
 		self.wifi_range = wifi_range
 		self.alpha = alpha
+		self.gamma = gamma
 		self.ninjured = ninjured
 		self.dump_datas = dump_datas
 		self.optimization_task = optimization_task

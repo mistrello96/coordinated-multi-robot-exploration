@@ -13,7 +13,7 @@ if __name__ == "__main__":
 	
 	Please, note that the cast to integer is done in the fitness function
 	'''
-	FP.set_search_space([[1, 15], [1, 10], [0.01, 0.3]])
+	FP.set_search_space([[1, 15], [1, 10], [0.001, 10], [0, 1]])
 	FP.set_fitness(fitness, skip_test = False)
 	result =  FP.solve_with_fstpso(dump_best_fitness = dump_best_fitness, 
 								   dump_best_solution = dump_best_solution)
