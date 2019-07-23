@@ -4,3 +4,6 @@ __pycache__/
 *$py.class
 optimization/best_fitness.txt
 optimization/best_solution.txt
+#images
+robot_exploration/results/pdf/*.pdf
+robot_exploration/results/png/*.png
