@@ -20,7 +20,7 @@ robot_status_csv = "./robot_exploration/results/robots_status_simulation_step.cs
 
 class ExplorationArea(Model):
 	def __init__(self, nrobots, radar_radius, ncells, obstacles_dist, wifi_range, alpha, gamma, ninjured,
-		load_file = "",
+		load_file = None,
 		dump_datas = True, # enable data collection 
 		optimization_task = False, # enable a small part of data collection for optimization task
 		time_csv = number_of_steps_csv, exploration_percentage_csv = exploration_percentage_csv, 
@@ -67,7 +67,7 @@ class ExplorationArea(Model):
 		self.seen_graph = nx.DiGraph()
 
 		# place a cell agent for store data and visualization on each cell of the grid
-		if load_file == "":
+		if load_file == None:
 			self.grid = MultiGrid(ncells + 2, ncells + 2, torus = False)
 			for i in self.grid.coord_iter():
 				if i[1] != 0 and i[2] != 0 and i[1] != self.ncells + 1 and i[2] != self.ncells + 1:

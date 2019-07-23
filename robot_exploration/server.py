@@ -67,6 +67,9 @@ exploratio_chart = ChartModule([{"Label": "explored",
 robort_chart = ChartModule([{"Label": "idling", "Color": "#505050"}, {"Label" : "travelling", "Color" : "Blue"}, {"Label" : "exploring", "Color" : "Green"}, {"Label" : "deploying_bean", "Color" : "Yellow"}],
                     data_collector_name='dc_robot_status')
 
+if params[4] != "None":
+    model_params["load_file"] = params[4] 
+
 #server = ModularServer(ExplorationArea, [grid, chart], "Search and Rescue simulation", model_params)
 server = ModularServer(ExplorationArea, [grid, exploratio_chart, robort_chart], "Search and Rescue simulation", model_params)
 #server = ModularServer(ExplorationArea, [grid], "Search and Rescue simulation", model_params)
