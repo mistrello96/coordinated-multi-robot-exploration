@@ -70,22 +70,22 @@ class ExplorationArea(Model):
 			for i in self.grid.coord_iter():
 				if i[1] != 0 and i[2] != 0 and i[1] != self.ncells + 1 and i[2] != self.ncells + 1:
 					rand = np.random.random_sample()
-					obstacle = True if rand > self.obstacles_dist else False
-					# if free
+					obstacle = True if rand < self.obstacles_dist else False
+					# if obstacle
 					if obstacle:
+						self.nobstacle += 1
+						difficulty = math.inf
+						explored = -1
+						priority = 0
+						utility = -math.inf
+					# if free
+					else:
 						difficulty = np.random.randint(low = 1, high = 13)
 						if self.dump_datas:
 							self.total_exploration_time_required += difficulty
 						explored = 0
 						priority = 0
 						utility = 1.0
-					# if obstacle
-					else:
-						self.nobstacle += 1
-						difficulty = math.inf
-						explored = -1
-						priority = 0
-						utility = -math.inf
 				else:
 	  				difficulty = np.random.randint(low = 1, high = 13)
 	  				explored = -2
