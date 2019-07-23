@@ -1,6 +1,6 @@
 from robot_exploration.map_generator import * 
 
-model = Map(20, 0.1, 5)
+model = Map(333, 0.1, 20)
 
 #from robot_exploration.model import ExplorationArea
 

@@ -11,6 +11,8 @@ import math
 import networkx as nx
 import pandas as pd
 import random as rnd
+from ast import literal_eval
+import sys
 
 number_of_steps_csv = "./robot_exploration/results/number_of_steps.csv"
 exploration_percentage_csv = "./robot_exploration/results/percentage_exploration_simulation_step.csv"
@@ -18,11 +20,11 @@ robot_status_csv = "./robot_exploration/results/robots_status_simulation_step.cs
 
 class ExplorationArea(Model):
 	def __init__(self, nrobots, radar_radius, ncells, obstacles_dist, wifi_range, alpha, gamma, ninjured,
+		load_file = "",
 		dump_datas = True, # enable data collection 
 		optimization_task = False, # enable a small part of data collection for optimization task
 		time_csv = number_of_steps_csv, exploration_percentage_csv = exploration_percentage_csv, 
-		robot_status_csv = robot_status_csv,
-		load_map = True):
+		robot_status_csv = robot_status_csv):
 		# used in server start
 		self.running = True
 		self.nrobots = nrobots
@@ -65,7 +67,7 @@ class ExplorationArea(Model):
 		self.seen_graph = nx.DiGraph()
 
 		# place a cell agent for store data and visualization on each cell of the grid
-		if not load_map:
+		if load_file == "":
 			self.grid = MultiGrid(ncells + 2, ncells + 2, torus = False)
 			for i in self.grid.coord_iter():
 				if i[1] != 0 and i[2] != 0 and i[1] != self.ncells + 1 and i[2] != self.ncells + 1:
@@ -110,7 +112,13 @@ class ExplorationArea(Model):
 				self.grid.place_agent(a, inj_index)
 				self.agent_counter += 1	
 		else:
-			from .maps.currentmap.mymap import exported_map
+			try:
+				with open(load_file, 'r') as f:
+					file = f.read()
+			except:
+				print("file not found")
+				sys.exit(-1)
+			exported_map = literal_eval(file)
 			self.ncells = int(math.sqrt(len(exported_map["Cell"].keys())))
 			self.grid = MultiGrid(self.ncells, self.ncells, torus = False)
 			for index in exported_map["Cell"].keys():

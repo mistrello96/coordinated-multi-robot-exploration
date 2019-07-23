@@ -30,24 +30,34 @@ class Map(Model):
 		for i in self.grid.coord_iter():
 			if i[1] != 0 and i[2] != 0 and i[1] != self.ncells + 1 and i[2] != self.ncells + 1:
 				rand = np.random.random_sample()
-				obstacle = True if rand > self.obstacles_dist else False
-				# if free
+				obstacle = True if rand < self.obstacles_dist else False
 				if obstacle:
-					difficulty = np.random.randint(low = 1, high = 13)
-					explored = 0
-					priority = 0
-					utility = 1.0
-				# if obstacle
-				else:
 					difficulty = "inf"
 					explored = -1
 					priority = 0
 					utility = "-inf"
+				else:
+					difficulty = np.random.randint(low = 1, high = 13)
+					explored = 0
+					priority = 0
+					utility = 1.0
 			else:
-  				difficulty = np.random.randint(low = 1, high = 13)
-  				explored = -2
-  				priority = "-inf"
-  				utility = "-inf"
+				difficulty = np.random.randint(low = 1, high = 13)
+				explored = -2
+				priority = "-inf"
+				utility = "-inf"
+
+			_, y, x = i
+			if x == 200:
+				difficulty = "inf"
+				explored = -1
+				priority = 0
+				utility = "-inf"
+			if x == 200 and y == 150:
+				difficulty = np.random.randint(low = 1, high = 13)
+				explored = 0
+				priority = 0
+				utility = 1.0				
 			# place the agent in the grid
 			out_grid["Cell"][i[1:]]= [self.agent_counter, i[1:], difficulty, explored, priority, utility]
 			a = Cell(self.agent_counter, self, i[1:], difficulty, explored, priority, utility)
@@ -69,7 +79,7 @@ class Map(Model):
 			self.schedule.add(a)
 			self.grid.place_agent(a, inj_index)	
 		with open('robot_exploration/maps/mymap.py', 'w') as f:
-			f.writelines(["exported_map = ", str(out_grid), '\n'])
+			f.writelines([str(out_grid), '\n'])
 			#print(out_grid, file=f)
 		
 

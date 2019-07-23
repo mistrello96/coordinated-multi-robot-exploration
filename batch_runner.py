@@ -23,6 +23,7 @@ def fitness(list_params):
 		"ninjured": 4,
 		"dump_datas": False,
 		"optimization_task": True
+		"load_file" : ""
 	}
 
 	print(str(list_params[0]) + " " + str(list_params[1]) + " " + str(list_params[2]))
