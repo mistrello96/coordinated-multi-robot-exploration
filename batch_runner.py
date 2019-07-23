@@ -5,7 +5,8 @@ def fitness(list_params):
 	'''
 	list_params[0] is the number of the robots which has to be an integer
 	list_params[1] is the radar radius which has to be an integer
-	list_params[2] is the alpha
+	list_params[2] is the alpha - it represents how much the cost of the 
+				   path 
 	'''
 	nrobots = int(round(list_params[0]))
 	radar_radius = int(round(list_params[1]))
