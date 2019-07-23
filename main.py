@@ -9,7 +9,10 @@ if __name__ == "__main__":
 	'''
 	list_params[0] is the number of the robots which has to be an integer
 	list_params[1] is the radar radius which has to be an integer
-	list_params[2] is the alpha
+	list_params[2] is the alpha - it represents how much the cost of the 
+				   path influences the chosen cell by the robot
+	list_params[3] is the gamma - it represents how much the utility of 
+				   the neighborood is reduced when a robot reaches a cell
 	
 	Please, note that the cast to integer is done in the fitness function
 	'''
