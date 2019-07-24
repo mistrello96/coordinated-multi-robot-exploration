@@ -1,1 +1,4 @@
 nrobots,ncells,steps,total_exploration_time_required,beans_deployed
+5,7,500,300,3
+5,8,600,400,2
+5,9,700,500,8
