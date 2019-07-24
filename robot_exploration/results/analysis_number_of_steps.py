@@ -55,6 +55,7 @@ if __name__ == "__main__":
 	plt.xlabel("Dimensions", fontsize = 15)
 	plt.ylabel("Number of beans deployed", fontsize = 15)
 	plt.title("Number of beans deployed for a NxN map")
+	plt.legend()
 	plt.tight_layout()
 	plt.savefig("./images/png/{}.png".format(plot_beans_deployed))
 	plt.savefig("./images/pdf/{}.pdf".format(plot_beans_deployed))
