@@ -136,17 +136,17 @@ class Robot(Agent):
 		return frontier_cells
 
 	# find the most convinient cell to explore for a robot
-	def find_best_cell(self, frontier_cells):
+	def find_best_cell(self):
 		# NB we are computing path to not explored cells that are near explored cells.
 		# Since they are close, the unexplored cell has already been seen at least one time and added to the graph
 		# only consider seen cells that are not obstacles for the SP computation
 		
 		# if there are no cells in the frontier, there can't be a valid target
-		if not frontier_cells:
+		if self.model.frontier == set():
 			return tuple()
 		# list of tuples, the first element is the indexes of the cell, the second is the cost to get there
 		bids = list()
-		for i in frontier_cells:
+		for i in list(self.model.frontier):
 			# try to compute the shortest path to get to the cell. If the operation succedes, add the tuple to the bids list
 			try:
 				dist = nx.astar_path_length(self.model.seen_graph, self.pos, i, weight = 'weight')
@@ -167,7 +167,7 @@ class Robot(Agent):
 		else:
 			# if find cells, pick the most convinient one			
 			result = bids_sort_gain[0][0]
-
+			self.model.frontier.remove(result)
 			# reduce the utility of all the sorrundings cell if not visited yet
 			for element in self.model.grid.get_neighborhood(result, "moore", include_center = False, radius = self.radar_radius):
 				# only if the cell is in lof with the robot
@@ -176,7 +176,13 @@ class Robot(Agent):
 					if cell2.explored == 0:
 						#cell.utility -= (1 - self.distance(self.target_cell, element) / self.radar_radius)
 						cell2.utility *= self.model.gamma * (self.distance(result, element) / self.radar_radius)
-						# maybe a stornger influence, also exceding the radar radius, can mantain the robot more far away
+			# expand frontier
+			for element in self.model.grid.get_neighborhood(result, "moore", include_center = False, radius = 1):
+				# only if the cell is in lof with the robot
+				if self.line_of_sight(self.pos, element):
+					cell2 = self.agent_get_cell(element)
+					if cell2.explored == 0:
+						self.model.frontier.add(cell2.pos)
 			## WARNING
 			# this approach, proposed in the paper, leads to a pathological situation where a robot after the exploration has a cell in front
 			# of him with utility 1 and cost to get there 1, so it will always pich that cell
@@ -284,9 +290,9 @@ class Robot(Agent):
 		# update robot status
 		self.status = 0
 		# find frontier's cells
-		frontier_cells = self.find_frontier_cells()
+		#frontier_cells = self.find_frontier_cells()
 		# find best cell
-		self.target_cell = self.find_best_cell(frontier_cells)
+		self.target_cell = self.find_best_cell()
 		# if no frontier is avaiable, just stand still
 		# else, update the self data
 		if self.target_cell:
