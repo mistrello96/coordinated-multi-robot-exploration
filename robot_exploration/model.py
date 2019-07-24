@@ -37,6 +37,7 @@ class ExplorationArea(Model):
 		self.ninjured = ninjured
 		self.dump_datas = dump_datas
 		self.optimization_task = optimization_task
+		self.frontier = set()
 		# Data collection tools
 		if self.dump_datas:
 			# it represents the sum of the difficulties of every cell
@@ -95,7 +96,7 @@ class ExplorationArea(Model):
 	  				utility = -math.inf
 				# place the agent in the grid
 				a = Cell(self.agent_counter, self, i[1:], difficulty, explored, priority, utility)
-				self.schedule.add(a)
+				#self.schedule.add(a)
 				self.grid.place_agent(a, i[1:])
 				self.agent_counter += 1
 
@@ -134,7 +135,7 @@ class ExplorationArea(Model):
 				if utility == "-inf":
 					utility = -math.inf
 				a = Cell(self.agent_counter, self, index, difficulty, explored, priority, utility)
-				self.schedule.add(a)
+				#self.schedule.add(a)
 				self.grid.place_agent(a, index)
 				self.agent_counter += 1
 
@@ -188,6 +189,22 @@ class ExplorationArea(Model):
 			self.schedule.add(a)
 			self.grid.place_agent(a, (column, row))
 			self.agent_counter += 1
+			cell = [e for e in self.grid.get_cell_list_contents(tuple([column, row + 1])) if isinstance(e, Cell)][0]
+			if cell.explored == 0:
+				self.frontier.add(tuple([column, row +  1]))
+			try:
+				cell = [e for e in self.grid.get_cell_list_contents(tuple([column + 1, row + 1])) if isinstance(e, Cell)][0]
+				if cell.explored == 0:
+					self.frontier.add(tuple([column + 1, row +  1]))
+			except:
+				pass
+			try:
+				cell = [e for e in self.grid.get_cell_list_contents(tuple([column - 1, row + 1])) if isinstance(e, Cell)][0]
+				if cell.explored == 0:
+					self.frontier.add(tuple([column - 1, row +  1]))
+			except:
+				pass
+
 			cell = [e for e in self.grid.get_cell_list_contents(tuple([column, row])) if isinstance(e, Cell)][0]
 			cell.explored = 42
 			# Dove viene deployato il robot viene deployato anche un bean (uno solo)
