@@ -115,7 +115,8 @@ class Robot(Agent):
 					w = int(Decimal(0.5 * source_cell.difficulty).to_integral_value(rounding = ROUND_HALF_UP))
 					if tuple([source_index, destination_index]) not in self.model.seen_graph.edges():
 						self.model.seen_graph.add_edge(source_index, destination_index, weight = w)
-	
+	'''
+	LEGACY
 	# return a list of tuples that represents the indexes of all the frontier cells
 	def find_frontier_cells(self):
 		frontier_cells = list()
@@ -134,6 +135,7 @@ class Robot(Agent):
 						frontier_cells.append(coord)
 						break
 		return frontier_cells
+	'''
 
 	# find the most convinient cell to explore for a robot
 	def find_best_cell(self):
@@ -149,7 +151,7 @@ class Robot(Agent):
 		for i in list(self.model.frontier):
 			# try to compute the shortest path to get to the cell. If the operation succedes, add the tuple to the bids list
 			try:
-				dist = nx.astar_path_length(self.model.seen_graph, self.pos, i, weight = 'weight')
+				dist = nx.shortest_path_length(self.model.seen_graph, source = self.pos, target = i, weight = 'weight', method='dijkstra')
 				bids.append((i, dist))
 			except:
 				# if the path is not found, the cell is not considered
@@ -302,7 +304,7 @@ class Robot(Agent):
 			# make the cell disgusting for other robots
 			cell.utility = -math.inf
 			# compute and store the most convinient path to get there
-			self.target_path = nx.astar_path(self.model.seen_graph, self.pos, self.target_cell, weight = 'weight')
+			self.target_path = nx.shortest_path(self.model.seen_graph, source = self.pos, target = self.target_cell, weight = 'weight', method='dijkstra')
 			# the first element is the cell itself, so pop it
 			self.target_path = self.target_path[1:]
 
