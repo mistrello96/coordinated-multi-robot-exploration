@@ -21,7 +21,7 @@ robot_status_csv = "./robot_exploration/results/robots_status_simulation_step.cs
 class ExplorationArea(Model):
 	def __init__(self, nrobots, radar_radius, ncells, obstacles_dist, wifi_range, alpha, gamma, ninjured,
 		load_file = None,
-		dump_datas = False, # enable data collection 
+		dump_datas = True, # enable data collection 
 		optimization_task = False, # enable a small part of data collection for optimization task
 		time_csv = number_of_steps_csv, exploration_percentage_csv = exploration_percentage_csv, 
 		robot_status_csv = robot_status_csv):
@@ -189,7 +189,7 @@ class ExplorationArea(Model):
 			self.schedule.add(a)
 			self.grid.place_agent(a, (column, row))
 			self.agent_counter += 1
-			cell = [e for e in self.grid.get_cell_list_contents(tuple([column, row + 1])) if isinstance(e, Cell)][0]
+			cell = [e for e in self.grid.get_cell_list_contents(tuple([column, row + 1])) if isinstance(e, Cell)][0] # maybe this list comprehension can become a function for simple reading
 			if cell.explored == 0:
 				self.frontier.add(tuple([column, row +  1]))
 			try:

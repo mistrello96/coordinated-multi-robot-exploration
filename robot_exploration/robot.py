@@ -142,7 +142,7 @@ class Robot(Agent):
 		# only consider seen cells that are not obstacles for the SP computation
 		
 		# if there are no cells in the frontier, there can't be a valid target
-		if self.model.frontier == set():
+		if self.model.frontier == set(): # ci sarà sicuramente una funzione is empty
 			return tuple()
 		# list of tuples, the first element is the indexes of the cell, the second is the cost to get there
 		bids = list()
@@ -161,13 +161,13 @@ class Robot(Agent):
 		# if bids_sort_gain is not None and every cell has -inf utility, no valid target is found
 		if not bids_sort_gain:
 			return tuple()
-		if bids_sort_gain and self.agent_get_cell(bids_sort_gain[0][0]).utility == -math.inf: 
+		if bids_sort_gain and self.agent_get_cell(bids_sort_gain[0][0]).utility == -math.inf: # il primo membro dell'and non dovrebbe servire se ho capito quello che verifichi sopra
 			# in order to avoid two robots exploring the same cell
 			return tuple()
 		else:
 			# if find cells, pick the most convinient one			
 			result = bids_sort_gain[0][0]
-			self.model.frontier.remove(result)
+			self.model.frontier.remove(result) # siamo sicuri che lo tolga sempre?
 			# reduce the utility of all the sorrundings cell if not visited yet
 			for element in self.model.grid.get_neighborhood(result, "moore", include_center = False, radius = self.radar_radius):
 				# only if the cell is in lof with the robot

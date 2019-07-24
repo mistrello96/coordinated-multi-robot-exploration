@@ -83,7 +83,7 @@ else:
 #grid representation
 grid = CanvasGrid(agent_portrayal, params[0], params[1], params[2], params[3])
 
-exploratio_chart = ChartModule([{"Label": "explored",
+exploration_chart = ChartModule([{"Label": "explored",
                       "Color": "Black"}],
                     data_collector_name='dc_percentage_step')
 
@@ -94,7 +94,7 @@ if params[4] != "None":
     model_params["load_file"] = params[4] 
 
 #server = ModularServer(ExplorationArea, [grid, chart], "Search and Rescue simulation", model_params)
-server = ModularServer(ExplorationArea, [grid, exploratio_chart, robort_chart], "Search and Rescue simulation", model_params)
+server = ModularServer(ExplorationArea, [grid, exploration_chart, robort_chart], "Search and Rescue simulation", model_params)
 #server = ModularServer(ExplorationArea, [grid], "Search and Rescue simulation", model_params)
 server.port = 8521
 server.launch()
