@@ -19,10 +19,10 @@ def fitness(list_params):
 		"obstacles_dist": 0.01, 
 		"wifi_range": 10, 
 		"alpha": alpha,
-		"gamma" : gamma
+		"gamma" : gamma,
 		"ninjured": 4,
 		"dump_datas": False,
-		"optimization_task": True
+		"optimization_task": True,
 		"load_file" : ""
 	}
 
