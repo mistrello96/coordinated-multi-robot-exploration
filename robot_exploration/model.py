@@ -324,6 +324,7 @@ class ExplorationArea(Model):
 	def get_step(m):
 		return m.schedule.steps
 
+	# this should be the bottlenck of data collection
 	@staticmethod
 	def get_explored(m):
 		count_explored = 0
@@ -334,6 +335,7 @@ class ExplorationArea(Model):
 		result = count_explored / (m.ncells * m.ncells - m.nobstacle)
 		return result
 
+	# these two should go faster since cells are not in the scheduler anymore
 	@staticmethod
 	def get_number_robots_status(m, status):
 		status_value = {"idling": 0, "travelling": 1, "exploring": 2, "deploying_bean": 3}
