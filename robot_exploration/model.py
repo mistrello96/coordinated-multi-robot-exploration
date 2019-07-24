@@ -40,7 +40,7 @@ class ExplorationArea(Model):
 		# Data collection tools
 		if self.dump_datas:
 			# it represents the sum of the difficulties of every cell
-			self.total_exploration_time_required = 0
+			self.total_difficulty = 0
 			self.dc_percentage_step = DataCollector(
 				{"step": lambda m: self.get_step(m),
 				 "explored": lambda m: self.get_explored(m)}
@@ -84,7 +84,7 @@ class ExplorationArea(Model):
 					else:
 						difficulty = np.random.randint(low = 1, high = 13)
 						if self.dump_datas:
-							self.total_exploration_time_required += difficulty
+							self.total_difficulty += difficulty
 						explored = 0
 						priority = 0
 						utility = 1.0
@@ -258,7 +258,7 @@ class ExplorationArea(Model):
 				df = df.append({"nrobots": self.nrobots, "ncells": self.ncells, 
 								"steps": self.schedule.steps, 
 								"beans_deployed": self.get_number_bean_deployed(self),
-								"total_exploration_time_required": self.total_exploration_time_required},
+								"total_difficulty": self.total_difficulty},
 								ignore_index = True)
 				df.to_csv(self.time_csv, index = False)
 				
