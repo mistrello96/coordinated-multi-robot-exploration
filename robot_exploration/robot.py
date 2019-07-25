@@ -178,13 +178,6 @@ class Robot(Agent):
 					if cell2.explored == 0:
 						#cell.utility -= (1 - self.distance(self.target_cell, element) / self.radar_radius)
 						cell2.utility *= self.model.gamma * (self.distance(result, element) / self.radar_radius)
-			# expand frontier
-			for element in self.model.grid.get_neighborhood(result, "moore", include_center = False, radius = 1):
-				# only if the cell is in lof with the robot
-				if self.line_of_sight(self.pos, element):
-					cell2 = self.agent_get_cell(element)
-					if cell2.explored == 0:
-						self.model.frontier.add(cell2.pos)
 			## WARNING
 			# this approach, proposed in the paper, leads to a pathological situation where a robot after the exploration has a cell in front
 			# of him with utility 1 and cost to get there 1, so it will always pich that cell
@@ -268,6 +261,14 @@ class Robot(Agent):
 	def explore(self):
 		# update robot status
 		self.status = 2
+		if self.exploration_status == 0:
+			# expand frontier
+			for element in self.model.grid.get_neighborhood(self.pos, "moore", include_center = False, radius = 1):
+				# only if the cell is in lof with the robot
+				if self.line_of_sight(self.pos, element):
+					cell2 = self.agent_get_cell(element)
+					if cell2.explored == 0:
+						self.model.frontier.add(cell2.pos)
 		# if the cell is not yet full explored, keep going
 		if self.exploration_status < self.exploration_treshold:
 			# if first step of exploration, update cell status
