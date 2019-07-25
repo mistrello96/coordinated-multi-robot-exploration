@@ -68,6 +68,7 @@ class ExplorationArea(Model):
 		self.seen_graph = nx.DiGraph()
 
 		# place a cell agent for store data and visualization on each cell of the grid
+		# if map is not taken from file, create it
 		if load_file == None:
 			self.grid = MultiGrid(ncells + 2, ncells + 2, torus = False)
 			for i in self.grid.coord_iter():
@@ -89,6 +90,7 @@ class ExplorationArea(Model):
 						explored = 0
 						priority = 0
 						utility = 1.0
+				# if contour cell
 				else:
 	  				difficulty = np.random.randint(low = 1, high = 13)
 	  				explored = -2
@@ -96,7 +98,6 @@ class ExplorationArea(Model):
 	  				utility = -math.inf
 				# place the agent in the grid
 				a = Cell(self.agent_counter, self, i[1:], difficulty, explored, priority, utility)
-				#self.schedule.add(a)
 				self.grid.place_agent(a, i[1:])
 				self.agent_counter += 1
 
@@ -113,6 +114,7 @@ class ExplorationArea(Model):
 				self.grid.place_agent(a, inj_index)
 				self.agent_counter += 1	
 		else:
+			# load map from file
 			try:
 				with open(load_file, 'r') as f:
 					file = f.read()
@@ -135,7 +137,6 @@ class ExplorationArea(Model):
 				if utility == "-inf":
 					utility = -math.inf
 				a = Cell(self.agent_counter, self, index, difficulty, explored, priority, utility)
-				#self.schedule.add(a)
 				self.grid.place_agent(a, index)
 				self.agent_counter += 1
 
@@ -144,32 +145,7 @@ class ExplorationArea(Model):
 				self.schedule.add(a)
 				self.grid.place_agent(a, index)
 				self.agent_counter += 1	
-			
-			# LOAD MAP FROM FILE PASSED
 		
-		'''
-		legacy code
-		# create robotic agents
-		for i in range(self.agent_counter, self.nrobots + self.agent_counter):
-			y = self.random.randrange(self.grid.height)
-			# DP There should be a way to avoi that while, 
-			# in Python there's a function which randomize an element from
-			# a list; we can use that updating the list every time we place a robot
-			x = 0
-			# take the agent Cell in the grid cell x,y
-			cell = [obj for obj in self.grid.get_cell_list_contents(tuple([x,y])) if isinstance(obj, Cell)][0]
-			# do-while structure, place agents only in free cells
-			while(cell.explored == -1):
-				y = self.random.randrange(self.grid.height)
-				cell = self.grid.get_cell_list_contents(tuple([x,y]))
-				cell = [obj for obj in cell if isinstance(obj, Cell)][0]
-			# place robotic agens in the grid
-			a = Robot(i, self, tuple([x,y]), self.radar_radius)
-			self.schedule.add(a)
-			self.grid.place_agent(a, (x, y))
-			cell.explored = 2
-		'''
-
 		# create robotic agents
 		rnd.seed()
 		row = 0
@@ -189,6 +165,7 @@ class ExplorationArea(Model):
 			self.schedule.add(a)
 			self.grid.place_agent(a, (column, row))
 			self.agent_counter += 1
+			# create initial frontier: add cell in front of the robot if valid and not obstacles
 			cell = [e for e in self.grid.get_cell_list_contents(tuple([column, row + 1])) if isinstance(e, Cell)][0] # maybe this list comprehension can become a function for simple reading
 			if cell.explored == 0:
 				self.frontier.add(tuple([column, row +  1]))
@@ -206,7 +183,6 @@ class ExplorationArea(Model):
 				pass
 
 			cell = [e for e in self.grid.get_cell_list_contents(tuple([column, row])) if isinstance(e, Cell)][0]
-			cell.explored = 42
 			# Dove viene deployato il robot viene deployato anche un bean (uno solo)
 			if not cell.wifi_bean:
 				cell.wifi_bean = True
@@ -221,39 +197,8 @@ class ExplorationArea(Model):
 	def step(self):
 		# call step function for all of the robots in random order
 		self.schedule.step()
-		print("step " + str(self.schedule.steps))
-		'''
-		# possible call from help
-		# note that we only can know from whitch bean the call comed from, so we prioritize all the cells in the bean radius
-		rand = np.random.random_sample()
-		found = False
-		if rand > 0.999:
-			print("Someone connected to wifi and asked for help")
-			for bean_index in self.grid.coord_iter():
-				candidate_bean = [obj for obj in self.grid.get_cell_list_contents(bean_index[1:]) if isinstance(obj, Cell)][0]
-				# pick a bean
-				if candidate_bean.wifi_bean:
-					for covered_index in self.grid.get_neighborhood(bean_index[1:], "moore", include_center = False, radius = self.wifi_range ):
-						covered_cell = [obj for obj in self.grid.get_cell_list_contents(covered_index) if isinstance(obj, Cell)][0]
-						# if it has some unexolored cell, mark them as priority cell
-						if covered_cell.explored == 0:
-							covered_cell.priority = 1
-							# stop the search of another bean that has some free cells in his radius
-							found = True
-				if found:
-					break
+		#print("step " + str(self.schedule.steps))
 
-		
-		legacy code, there's a function which does this work
-		# compute percentage of explored over total 
-		count_explored = 0
-		# iterate over cells
-		for i in self.grid.coord_iter():
-			cell = [obj for obj in self.grid.get_cell_list_contents(i[1:]) if isinstance(obj, Cell)][0]
-			if cell.explored == 2:
-				count_explored += 1
-		result = count_explored / (self.ncells * self.ncells - self.nobstacle)
-		'''
 		if self.dump_datas:		
 			# result = self.get_explored(self)
 			self.dc_percentage_step.collect(self)
@@ -268,6 +213,7 @@ class ExplorationArea(Model):
 			if cell.explored == 0 or cell.explored == 1:
 				stop = False
 		if stop:
+			# print("Simultation ended in " + str(self.schedule.step()) + " steps")
 			# Data collection
 			if self.dump_datas:
 				df = pd.read_csv(self.time_csv)
@@ -297,15 +243,10 @@ class ExplorationArea(Model):
 				df.to_csv(self.robot_status_csv, index = False)
 
 			self.running = False
-		# keep going with the exploration
-		# else:
-		#	print("Step number: " + str(self.schedule.steps)) # debug print, DP
-		#	print(result)
 
 	def run_model(self):
 		while(True):
 			# search for unexplored cells
-			#debug print, DP
 			stop = True
 			for node in self.seen_graph.nodes():
 				cell = [obj for obj in self.grid.get_cell_list_contents(node) if isinstance(obj, Cell)][0]
