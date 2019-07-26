@@ -6,22 +6,29 @@ from mesa.time import RandomActivation
 from mesa.space import MultiGrid
 from mesa.datacollection import DataCollector
 import numpy as np
-from numpy import inf
+from numpy import inf # why do we import something we do not use? and which is already imported in the line before?
 import math
 import networkx as nx
 import pandas as pd
 import random as rnd
 from ast import literal_eval
 import sys
+from scipy.spatial import distance
 
 number_of_steps_csv = "./robot_exploration/results/number_of_steps.csv"
 exploration_percentage_csv = "./robot_exploration/results/percentage_exploration_simulation_step.csv"
 robot_status_csv = "./robot_exploration/results/robots_status_simulation_step.csv"
+alpha_csv = "./robot_exploration/results/alpha_variation.csv"
+gamma_csv = "./robot_exploration/results/gamma_variation.csv"
 
 class ExplorationArea(Model):
 	def __init__(self, nrobots, radar_radius, ncells, obstacles_dist, wifi_range, alpha, gamma, ninjured,
 		load_file = None,
-		dump_datas = True, # enable data collection 
+		dump_datas = True, # enable data collection
+		alpha_variation = False, # record datas for alpha variation studies
+		alpha_csv = alpha_csv,
+		gamma_variation = False, # record datas for gamma variation studies
+		gamma_csv = gamma_csv,
 		optimization_task = False, # enable a small part of data collection for optimization task
 		time_csv = number_of_steps_csv, exploration_percentage_csv = exploration_percentage_csv, 
 		robot_status_csv = robot_status_csv):
@@ -59,6 +66,14 @@ class ExplorationArea(Model):
 
 		if self.optimization_task:
 			self.total_idling_time = 0
+
+		self.alpha_variation = alpha_variation
+		self.gamma_variation = gamma_variation
+		if self.alpha_variation:
+			self.costs_each_path = list()
+
+		if self.gamma_variation:
+			self.gamma_df = pd.DataFrame(columns = ["step", "mean", "std"])
 
 		self.schedule = RandomActivation(self)
 		# unique counter for agents 
@@ -205,6 +220,11 @@ class ExplorationArea(Model):
 			self.dc_robot_status.collect(self)
 		if self.optimization_task:
 			self.total_idling_time += self.get_number_robots_status(self, "idling")
+		if self.gamma_variation:
+			distances = self.compute_robot_distances(self)
+			gamma_df = gamma_df.append({"step": self.get_step(self), 
+									   "mean": distances[0], "std": distances[1]},
+									   ignore_index = True, sort = False)
 		# if all seen cells have benn explored, stop the simulation
 		# we do this so if there are unreachable cells, the cannot be seen, so the simulation stops anyway
 		stop = True
@@ -241,6 +261,28 @@ class ExplorationArea(Model):
 					df_robots_status["sim_id"] = df["sim_id"][df.index[-1]] + 1
 				df = df.append(df_robots_status, ignore_index = True, sort = False)
 				df.to_csv(self.robot_status_csv, index = False)
+
+			if self.alpha_variation:
+				mean = np.mean(self.costs_each_path)
+				std = np.std(self.costs_each_path)
+				df = pd.read_csv(self.alpha_csv)
+				df = df.append({"nrobots": self.nrobots, "radar_radius": self.radar_radius,
+							   "alpha": self.alpha, "gamma": self.gamma, "mean": mean,
+							   "std": std}, ignore_index = True)
+				df.to_csv(self.alpha_csv, index = False)
+
+			if self.gamma_variation:
+				df = pd.read_csv(self.gamma_csv)
+				if len(df["sim_id"]) == 0:
+					gamma_df["sim_id"] = 0
+				else:
+					gamma_df["sim_id"] = df["sim_id"][df.index[-1]] + 1
+				gamma_df["nrobots"] = self.nrobots
+				gamma_df["radar_radius"] = self.radar_radius
+				gamma_df["alpha"] = self.alpha
+				gamma_df["gamma"] = self.gamma
+				df = df.append(gamma_df, ignore_index = True, sort = False)
+				df.to_csv(self.gamma_csv, index = False)
 
 			self.running = False
 
@@ -285,3 +327,34 @@ class ExplorationArea(Model):
 	@staticmethod
 	def get_number_bean_deployed(m):
 		return sum([x.number_bean_deployed for x in m.schedule.agents if isinstance(x, Robot)]) + m.deployed_beans_at_start
+
+	# function for gamma variation	
+	@staticmethod
+	def compute_robot_distances(m):
+		nrobots = m.nrobots
+		T_up = np.full((nrobots, nrobots), 0) 
+		# didn't dig deep in numpy doc but it looks like it handles triangualr matrices as "normal" matrices, so 
+		# i just initilize a full matrix and then i'll use it as a triangular.
+		robots = [x for x in m.schedule.agents if isinstance(x, Robot)]
+		# the order of the robots in robots can change from step to step (due to the random scheduler),
+		# This shouldn't create any type of problem, but to avoid a lot of problems with indexes later on
+		# we sort them basing on the unique_id
+		robots.sort(key = lambda x: x.unique_id)
+		# I need the lowest id to shift back the ids to fit the matrices coordinations
+		lowest_id = robots[0].unique_id
+		for r in robots:
+			matrix_id_row = r.unique_id - lowest_id
+			# the distance of a robot to itself is zero by definition
+			y1, x1 = r.pos
+			for i in range(matrix_id_row + 1, nrobots):
+				r2 = robots[i] # i can do this because they are sorted
+				y2, x2 = r2.pos
+				T_up[matrix_id_row][i] = distance.euclidean([x1, y1], [x2, y2])
+		print(T_up)
+		mean_dist_robots = list()
+		mean_robot_zero = sum(T_up[0, 1 : nrobots])
+		mean_dist_robots.append(mean_robot_zero)
+		for i in range(1, nrobots - 1): # the last row has no values, i iters the rows
+			mean_robot = (sum(T_up[0 : i, i]) + sum(T_up[i, i + 1 : nrobots])) / (nrobots - 1)
+			mean_dist_robots.append(mean_robot)
+		return tuple([np.mean(mean_dist_robots), np.std(mean_dist_robots)])

@@ -1,5 +1,9 @@
-- Utilizzare per processo di ottimizzazione fare run sia con mappe generate casualmente che mappe fisse
-(- Movimento automatico dei robot a step zero) <- forse ci ripenserò su
 - Data visualization con file sorgente e file/cartella di destinazione presi da riga di comando
 - pensare come sistemare formula info gain
 - studiare i comportamenti del modello al variare del valore dei singoli parametri
+	variare di alpha -> costo medio del percorso in termini di step 
+	variare di gamma -> distanza media tra un robot e tutti gli altri ad ogni step
+	quanto prioritizzano le celle da cui è partito un segnale non è un altro parametro da indagare?
+- script che stampano tali dati
+- registrare come i robot si comportano in situazioni particolari (ponte, lunghi muri, zone in cui non possono entrare ...)
+- introdurre probabilità di fallimento da parte dei robot o ripetitori wi-fi (distribuzione poisson ?)

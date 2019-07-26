@@ -132,13 +132,13 @@ class Robot(Agent):
 		for i in list(self.model.frontier):
 			# try to compute the shortest path to get to the cell. If the operation succedes, add the tuple to the bids list
 			try:
-				dist = nx.shortest_path_length(self.model.seen_graph, source = self.pos, target = i, weight = 'weight', method='dijkstra')
+				dist = nx.shortest_path_length(self.model.seen_graph, source = self.pos, target = i, weight = 'weight', method = 'dijkstra')
 				bids.append((i, dist))
 			except:
 				# if the path is not found, the cell is not considered
 				pass
 		# pick the most convinient cell
-		bids_sort_cost = sorted(bids, key = lambda x: x[1])
+		bids_sort_cost = sorted(bids, key = lambda x: x[1]) # DP, i still don't get why we sort twice
 		bids_sort_gain = sorted(bids_sort_cost, key = lambda x: (self.agent_get_cell(x[0]).priority + self.agent_get_cell(x[0]).utility - (self.model.alpha * x[1])), reverse = True)
 		
 		# if bids_sort_gain is not None and every cell has -inf utility, no valid target is found
@@ -148,12 +148,15 @@ class Robot(Agent):
 			# in order to avoid two robots exploring the same cell
 			return tuple()
 		else:
-			# if find cells, pick the most convinient one			
+			# if find cells, pick the most convinient one
 			result = bids_sort_gain[0][0]
+			if self.model.alpha_variation:
+				print(bids_sort_gain[0][1])
+				self.model.costs_each_path.append(bids_sort_gain[0][1]) # DP, Il costo è già calcolato in termini di step necessari?
 			self.model.frontier.remove(result) # siamo sicuri che lo tolga sempre?
 			# reduce the utility of all the sorrundings cell if not visited yet
 			for element in self.model.grid.get_neighborhood(result, "moore", include_center = False, radius = self.radar_radius):
-				# only if the cell is in lof with the robot
+				# only if the cell is in lof with the robot,  lof stands for?
 				if self.line_of_sight(self.pos, element):
 					cell2 = self.agent_get_cell(element)
 					if cell2.explored == 0:
@@ -272,7 +275,8 @@ class Robot(Agent):
 			# make the cell disgusting for other robots
 			cell.utility = -math.inf
 			# compute and store the most convinient path to get there
-			self.target_path = nx.shortest_path(self.model.seen_graph, source = self.pos, target = self.target_cell, weight = 'weight', method='dijkstra')
+			# DP, ma perché lo ricalcoliamo? non possiamo farcelo mandare a sopra in qualche modo? 
+			self.target_path = nx.shortest_path(self.model.seen_graph, source = self.pos, target = self.target_cell, weight = 'weight', method = 'dijkstra')
 			# the first element is the cell itself, so pop it
 			self.target_path = self.target_path[1:]
 
