@@ -16,7 +16,7 @@ def agent_portrayal(agent):
             portrayal = {"Shape": "rect", "Color": "orange", "Filled": "false", "Layer": 0, "w": 1, "h" : 1}
         if agent.explored == 2 :
             portrayal = {"Shape": "rect", "Color": "green", "Filled": "false", "Layer": 0, "w": 1, "h" : 1}
-        if agent.explored == -2 or agent.explored == 42: # border print
+        if agent.explored == -2 : # border print
             portrayal = {"Shape": "rect", "Color": "white", "Filled": "false", "Layer": 0, "w": 1, "h" : 1}
         if agent.priority and agent.explored == 0:
             portrayal = {"Shape": "rect", "Color": "brown", "Filled": "false", "Layer": 0, "w": 1, "h" : 1}
@@ -38,7 +38,6 @@ with open("./robot_exploration/server_grid.txt") as f: # the path starts from th
 params = l[0].split()
 
 ## Parameters of the model
-
 if params[4] == "None":    
     model_params = {
     # order of values is default, min, max, step
@@ -65,7 +64,7 @@ else:
     # order of values is default, min, max, step
     # TODO: the default values should be infered by the server_grid file, in order to make the map visible
     # at the launch, rember that the map has to more rows/columns than ncells to be explored
-        "nrobots": UserSettableParameter('slider', "Number of robots", 3, 1, 100, 1,
+        "nrobots": UserSettableParameter('slider', "Number of robots", 5, 1, 50, 1,
                                             description = "Choose how many agents to include in the model"),
         "radar_radius": UserSettableParameter('slider', "Radar radius", 3, 0, 10, 1,
                                             description = "Choose how many cells around the robot can see"),
@@ -80,6 +79,7 @@ else:
     model_params["ncells"] = None
     model_params["obstacles_dist"] = None
     model_params["ninjured"] = None
+
 #grid representation
 grid = CanvasGrid(agent_portrayal, params[0], params[1], params[2], params[3])
 
@@ -93,8 +93,7 @@ robort_chart = ChartModule([{"Label": "idling", "Color": "#505050"}, {"Label" : 
 if params[4] != "None":
     model_params["load_file"] = params[4] 
 
-#server = ModularServer(ExplorationArea, [grid, chart], "Search and Rescue simulation", model_params)
 server = ModularServer(ExplorationArea, [grid, exploration_chart, robort_chart], "Search and Rescue simulation", model_params)
-#server = ModularServer(ExplorationArea, [grid], "Search and Rescue simulation", model_params)
+
 server.port = 8521
 server.launch()

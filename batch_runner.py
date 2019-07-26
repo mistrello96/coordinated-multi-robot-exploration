@@ -29,7 +29,7 @@ def fitness(list_params):
 		"load_file" : ""
 	}
 
-	print(str(list_params[0]) + " " + str(list_params[1]) + " " + str(list_params[2]))
+	print(str(list_params[0]) + " " + str(list_params[1]) + " " + str(list_params[2]) + " " + str(list_params[3]))
 
 	batch_run = BatchRunner(
 		ExplorationArea,

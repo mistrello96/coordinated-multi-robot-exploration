@@ -46,6 +46,8 @@ class Map(Model):
 				explored = -2
 				priority = "-inf"
 				utility = "-inf"
+
+			# generate big wall all across the map
 			'''
 			_, y, x = i
 			if x == 200 or x == 199:
@@ -65,6 +67,8 @@ class Map(Model):
 			self.schedule.add(a)
 			self.grid.place_agent(a, i[1:])
 			self.agent_counter += 1
+
+		# generate buildings structure	
 		'''
 		for i in range(0, 50):
 			x = rnd.randint(20,300)
@@ -106,9 +110,6 @@ class Map(Model):
 			self.grid.place_agent(a, inj_index)	
 		with open('robot_exploration/maps/mymap.py', 'w') as f:
 			f.writelines([str(out_grid), '\n'])
-			#print(out_grid, file=f)
-		
 
-	# what the model does at each time step
 	def step(self):
 		pass

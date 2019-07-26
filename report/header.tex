@@ -1,0 +1,70 @@
+\documentclass[a4paper,12pt]{report} % modello del documento
+% \usepackage[top=1.8cm, bottom=2cm, left=2cm, right=2cm]{geometry} % margini aumentati
+\usepackage[toc,page]{appendix}
+\usepackage[italian]{babel} % imposta lingua
+\usepackage[babel]{csquotes} % imposta lingua
+\usepackage[utf8]{inputenc} % imposta lingua
+\usepackage[T1]{fontenc} % imposta lingua
+\usepackage{amsmath, amssymb, amsfonts} % pachetto per formule
+% \usepackage[parfill]{parskip} % non si dovrebbe fare, ma sostituisce le rientranze dei paragrafi con interlinea
+\usepackage{listings} % per poter far riconoscere e colorare codice 
+\usepackage{subfig}
+\usepackage{xcolor} % pacchetto per testo colorato
+\usepackage{float} % pachetto per figure, per posizionamento
+\usepackage{booktabs} % pacchetto per tabelle
+\usepackage{graphicx, wrapfig} % pachetto per tabelle
+\usepackage{tcolorbox} % riquadri colorati
+\usepackage[Listato]{algorithm} % pseudocodice
+\usepackage{algpseudocode} % pseudocodice
+\usepackage[hidelinks]{hyperref} % indice e riferimenti cliccabili e senza riquadro rosso
+\frenchspacing %spaziatura italiana per accenti
+\usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes} % note TODO
+\usepackage{blindtext} %loreipsum
+% CONFIGURAZIONE LINK E RIFERIMENTI
+\hypersetup{%
+	pdfpagemode={UseOutlines},
+	bookmarksopen,
+	pdfstartview={FitH},
+	colorlinks,
+	linkcolor={black}, %COLORE DEI RIFERIMENTI AL TESTO
+	citecolor={blue}, %COLORE DEI RIFERIMENTI ALLE CITAZIONI
+	urlcolor={blue} %COLORI DEGLI URL
+}
+
+\usepackage{color} %definizione colori
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\lstset{%
+	frame=tb,
+	language=Python,
+	aboveskip=3mm,
+	belowskip=3mm,
+	showstringspaces=false,
+	columns=flexible,
+	basicstyle=\ttm,
+	numbers=none,
+	numberstyle=\tiny\color{gray},
+	keywords=[2]{self},
+	keywordstyle=\color{deepblue},
+	keywordstyle={[2]\color{deepblue}},
+	commentstyle=\color{dkgreen},
+	stringstyle=\color{mauve},
+	breaklines=true,
+	breakatwhitespace=true,
+	tabsize=3,
+	showstringspaces=false
+}{}
+
+\begin{document} %inizio del documento, va chuso alla fine
+
+\title{Esplorazione di una mappa tramite l'utilizzo di una flotta di robot coordinati in ambito \textit{search and rescue}} 
+\author{Matteo Mistri 808097\\ Daniele Maria Papetti 808027}
+
+\maketitle %comando di creazione della prima pagina
+\tableofcontents %comando per creare l'indice
+
+\input{Introduction}
+\input{Conclusion}
+
+\end{document}

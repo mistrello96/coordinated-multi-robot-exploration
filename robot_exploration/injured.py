@@ -15,9 +15,11 @@ class Injured(Agent):
 		cell = [obj for obj in tmp if isinstance(obj, Cell)][0]
 		return cell
 
+	# possibility to send sos signal
 	def sos(self, cell):
 		rand = np.random.random_sample()
 		if rand > 0.999:
+			# if so, set the priority of the cell to 1 and also increment priority of the neighborhood
 			cell.priority = 1
 			for close_index in self.model.grid.get_neighborhood(self.pos, "moore", include_center = False, radius = 1):
 				close_cell = self.agent_get_cell(close_index)
@@ -25,7 +27,9 @@ class Injured(Agent):
 					close_cell.priority = 0.3
 
 	def step(self):
+		# if not found
 		if self.status == 0:
 			cell = self.agent_get_cell(self.pos)
+			# if cell not explored and in wifi range, can send a help request
 			if cell.explored == 0 and cell.wifi_covered:
 				self.sos(cell)

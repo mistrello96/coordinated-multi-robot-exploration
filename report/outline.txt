@@ -1,0 +1,11 @@
+Introduzione
+Stato dell'arte
+Modello
+Metodi
+-mesa
+-pso
+Risultati
+-Metriche utilizzate
+-Variare di un parametro
+-Variare delle mappe
+Conclusioni

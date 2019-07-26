@@ -7,3 +7,12 @@ optimization/best_solution.txt
 #images
 robot_exploration/results/images/pdf/*.pdf
 robot_exploration/results/images/png/*.png
+# report
+*.log
+*.aux
+*.gz
+*.toc
+*.out
+*.bbl
+*.bib
+*.run.xml

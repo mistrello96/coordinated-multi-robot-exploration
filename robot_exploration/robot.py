@@ -4,17 +4,12 @@ import math
 import networkx as nx
 from decimal import Decimal, ROUND_HALF_UP
 
-# TODO
-# optimize utility value
-# optimize info gain 
-# optimize utility reduction
-
-
 class Robot(Agent):
 	def __init__(self, unique_id, model, pos, radar_radius):
 		super().__init__(unique_id, model)
 		self.last_pos = tuple()
 		self.pos = pos
+		# seen radius of the robot
 		self.radar_radius = radar_radius
 		# queue with the path to the target
 		self.target_path = list()
@@ -22,22 +17,27 @@ class Robot(Agent):
 		self.target_cell = ()
 		# store the number of steps needed to explore the cell
 		self.exploration_treshold = math.inf
+		# progress of the exploration process
 		self.exploration_status = 0
-		self.can_move = False # DP unused variable?
-		cell = self.agent_get_cell(self.pos)
 		# store the number of steps needed to explore the cell
-		self.travel_status = 0
+		cell = self.agent_get_cell(self.pos)
 		self.travel_treshold = 1 + (cell.difficulty // 4)
+		# progress of the crossing process
+		self.travel_status = 0
+
 		self.percept()
+
 		# store the status of the Robot
 		# 0 picking target / not moving
 		# 1 travelling
 		# 2 exploring
 		# 3 deploying wifi bean
 		self.status = 0
+		# if covered by a wifi bean
 		self.out_of_range = False # all'inizio la persona o il mezzo che li deploya porta con sè un bean
-		# store the number of steps for a wifi bean deploy
+		# store the number of steps needed for a wifi bean deploy
 		self.deploy_threshold = 15
+		# progress of the deploy process
 		self.deploy_status = 0
 		# used for data collection
 		self.number_bean_deployed = 0
@@ -48,6 +48,7 @@ class Robot(Agent):
 		cell = [obj for obj in tmp if isinstance(obj, Cell)][0]
 		return cell
 
+	# return the injured agent at the index given
 	def agent_get_injured(self, index):
 		tmp = self.model.grid.get_cell_list_contents(index)
 		try:
@@ -115,27 +116,7 @@ class Robot(Agent):
 					w = int(Decimal(0.5 * source_cell.difficulty).to_integral_value(rounding = ROUND_HALF_UP))
 					if tuple([source_index, destination_index]) not in self.model.seen_graph.edges():
 						self.model.seen_graph.add_edge(source_index, destination_index, weight = w)
-	'''
-	LEGACY
-	# return a list of tuples that represents the indexes of all the frontier cells
-	def find_frontier_cells(self):
-		frontier_cells = list()
-		# iterate over all cells of the grid
-		for i in self.model.grid.coord_iter():
-			# pick the unexplored cell
-			coord = i[1:]
-			cell = self.agent_get_cell(coord)
-			if cell.explored == 0:
-				# iterate over the 1-radius neighborhood searching for an xplored cell
-				for neighbor_coord in self.model.grid.get_neighborhood(coord, "moore", include_center = False, radius = 1):
-					neighbor_cell = self.agent_get_cell(neighbor_coord)
-					# maybe is more correct leave only == 2
-					if neighbor_cell.explored == 1 or neighbor_cell.explored == 2 or neighbor_cell.explored == 42:
-						# if found, the unexplored cell is a frontier cell
-						frontier_cells.append(coord)
-						break
-		return frontier_cells
-	'''
+
 
 	# find the most convinient cell to explore for a robot
 	def find_best_cell(self):
@@ -176,27 +157,8 @@ class Robot(Agent):
 				if self.line_of_sight(self.pos, element):
 					cell2 = self.agent_get_cell(element)
 					if cell2.explored == 0:
-						#cell.utility -= (1 - self.distance(self.target_cell, element) / self.radar_radius)
 						cell2.utility *= self.model.gamma * (self.distance(result, element) / self.radar_radius)
-			# expand frontier
-			for element in self.model.grid.get_neighborhood(result, "moore", include_center = False, radius = 1):
-				# only if the cell is in lof with the robot
-				if self.line_of_sight(self.pos, element):
-					cell2 = self.agent_get_cell(element)
-					if cell2.explored == 0:
-						self.model.frontier.add(cell2.pos)
-			## WARNING
-			# this approach, proposed in the paper, leads to a pathological situation where a robot after the exploration has a cell in front
-			# of him with utility 1 and cost to get there 1, so it will always pich that cell
-			'''
-			# reduce the utility of the FRONTIERS (and only frontiers) cells nearby the target cell
-			for element in self.model.grid.get_neighborhood(self.target_cell, "moore", include_center=False, radius=self.radar_radius):
-				if element in frontier_cells:
-					cell2 = self.agent_get_cell(element)
-					#cell.utility -= (1 - self.distance(self.target_cell, element) / self.radar_radius)
-					cell2.utility *= (1 - self.distance(self.target_cell, element) / self.radar_radius)
 
-			'''
 			return result
 
 	# return distance between 2 cells (ignore diagonal distortion)
@@ -268,6 +230,14 @@ class Robot(Agent):
 	def explore(self):
 		# update robot status
 		self.status = 2
+		if self.exploration_status == 0:
+			# expand frontier
+			for element in self.model.grid.get_neighborhood(self.pos, "moore", include_center = False, radius = 1):
+				# only if the cell is in lof with the robot
+				if self.line_of_sight(self.pos, element):
+					cell2 = self.agent_get_cell(element)
+					if cell2.explored == 0:
+						self.model.frontier.add(cell2.pos)
 		# if the cell is not yet full explored, keep going
 		if self.exploration_status < self.exploration_treshold:
 			# if first step of exploration, update cell status
@@ -291,8 +261,6 @@ class Robot(Agent):
 	def pick_target(self):
 		# update robot status
 		self.status = 0
-		# find frontier's cells
-		#frontier_cells = self.find_frontier_cells()
 		# find best cell
 		self.target_cell = self.find_best_cell()
 		# if no frontier is avaiable, just stand still
@@ -309,28 +277,6 @@ class Robot(Agent):
 			self.target_path = self.target_path[1:]
 
 	def step(self):
-		'''
-		# at the first step the robot can move directly, it is deployed of the 
-		# edge of the first cell of interest
-		if self.model.schedule.steps == 0:
-			self.status = 0
-			# find frontier's cells
-			frontier_cells = self.find_frontier_cells()
-			# find best cell
-			self.target_cell = self.find_best_cell(frontier_cells)
-			# make the cell disgusting for other robots
-			cell = self.agent_get_cell(self.target_cell)
-			cell.utility = -math.inf
-			return 
-		if self.model.schedule.steps == 1 and self.target_cell:
-			self.status = 1
-			self.last_pos = self.pos
-			cell = self.agent_get_cell(self.target_cell)
-			self.exploration_treshold = 6 * int(Decimal(0.5 * cell.difficulty).to_integral_value(rounding = ROUND_HALF_UP)) * 2
-			self.model.grid.move_agent(self, self.target_cell)
-			return
-		'''
-		
 		# Assumiamo che la persona o il mezzo con cui vengono trasportati i robot abbiano con loro un bean per 
 		# permettere la comunicazione iniziale tra i robot
 		
