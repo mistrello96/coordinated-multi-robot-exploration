@@ -3,6 +3,7 @@ from mesa import Agent
 import math
 import networkx as nx
 from decimal import Decimal, ROUND_HALF_UP
+import time
 
 class Robot(Agent):
 	def __init__(self, unique_id, model, pos, radar_radius):
@@ -129,13 +130,15 @@ class Robot(Agent):
 			return tuple()
 		# list of tuples, the first element is the indexes of the cell, the second is the cost to get there
 		bids = list()
+		try:
+			dist = nx.shortest_path_length(self.model.seen_graph, source = self.pos, weight = 'weight', method = 'dijkstra')
+		except:
+			# if the path is not found, the cell is not considered
+			pass
 		for i in list(self.model.frontier):
-			# try to compute the shortest path to get to the cell. If the operation succedes, add the tuple to the bids list
 			try:
-				dist = nx.shortest_path_length(self.model.seen_graph, source = self.pos, target = i, weight = 'weight', method = 'dijkstra')
-				bids.append((i, dist))
+				bids.append((i, dist[i]))
 			except:
-				# if the path is not found, the cell is not considered
 				pass
 		# pick the most convinient cell
 		bids_sort_cost = sorted(bids, key = lambda x: x[1]) # DP, i still don't get why we sort twice
