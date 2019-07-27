@@ -22,7 +22,7 @@ alpha_csv = "./robot_exploration/results/alpha_variation.csv"
 gamma_csv = "./robot_exploration/results/gamma_variation.csv"
 
 class ExplorationArea(Model):
-	def __init__(self, nrobots, radar_radius, ncells=None, obstacles_dist=None, wifi_range, alpha, gamma, ninjured=None,
+	def __init__(self, nrobots, radar_radius, wifi_range, alpha, gamma, ninjured=None, ncells=None, obstacles_dist=None,
 		load_file = None,
 		dump_datas = True, # enable data collection
 		alpha_variation = False, # record datas for alpha variation studies
@@ -220,7 +220,7 @@ class ExplorationArea(Model):
 	def step(self):
 		# call step function for all of the robots in random order
 		self.schedule.step()
-		#print("step " + str(self.schedule.steps))
+		print("step " + str(self.schedule.steps))
 
 		if self.dump_datas:		
 			# result = self.get_explored(self)
@@ -241,7 +241,7 @@ class ExplorationArea(Model):
 			if cell.explored == 0 or cell.explored == 1:
 				stop = False
 		if stop:
-			# print("Simultation ended in " + str(self.schedule.step()) + " steps")
+			print("Simultation ended in " + str(self.schedule.step()) + " steps")
 			# Data collection
 			if self.dump_datas:
 				df = pd.read_csv(self.time_csv)
