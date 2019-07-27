@@ -1,3 +1,3 @@
 from robot_exploration.map_generator import * 
 
-model = Map(333, 0.05, 20)
+model = Map(30, 0.05, 5)

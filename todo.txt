@@ -4,6 +4,7 @@
 	variare di alpha -> costo medio del percorso in termini di step 
 	variare di gamma -> distanza media tra un robot e tutti gli altri ad ogni step
 	quanto prioritizzano le celle da cui è partito un segnale non è un altro parametro da indagare?
+- studiare i comportamenti in mappe particolari
 - script che stampano tali dati
 - registrare come i robot si comportano in situazioni particolari (ponte, lunghi muri, zone in cui non possono entrare ...)
 - introdurre probabilità di fallimento da parte dei robot o ripetitori wi-fi (distribuzione poisson ?)
