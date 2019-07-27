@@ -1,4 +1,4 @@
-from batch_runner import fitness
+from pso_batch_runner import fitness
 from fstpso import FuzzyPSO
 
 if __name__ == "__main__":
