@@ -71,9 +71,10 @@ class ExplorationArea(Model):
 		self.gamma_variation = gamma_variation
 		if self.alpha_variation:
 			self.costs_each_path = list()
-
+			self.alpha_csv = alpha_csv
 		if self.gamma_variation:
 			self.gamma_df = pd.DataFrame(columns = ["step", "mean", "std"])
+			self.gamma_csv = gamma_csv
 
 		self.schedule = RandomActivation(self)
 		# unique counter for agents 
@@ -222,7 +223,7 @@ class ExplorationArea(Model):
 			self.total_idling_time += self.get_number_robots_status(self, "idling")
 		if self.gamma_variation:
 			distances = self.compute_robot_distances(self)
-			gamma_df = gamma_df.append({"step": self.get_step(self), 
+			self.gamma_df = self.gamma_df.append({"step": self.get_step(self), 
 									   "mean": distances[0], "std": distances[1]},
 									   ignore_index = True, sort = False)
 		# if all seen cells have benn explored, stop the simulation
@@ -263,8 +264,8 @@ class ExplorationArea(Model):
 				df.to_csv(self.robot_status_csv, index = False)
 
 			if self.alpha_variation:
-				mean = np.mean(self.costs_each_path)
-				std = np.std(self.costs_each_path)
+				mean = round(np.mean(self.costs_each_path), 3)
+				std = round(np.std(self.costs_each_path), 3)
 				df = pd.read_csv(self.alpha_csv)
 				df = df.append({"nrobots": self.nrobots, "radar_radius": self.radar_radius,
 							   "alpha": self.alpha, "gamma": self.gamma, "mean": mean,
@@ -274,14 +275,14 @@ class ExplorationArea(Model):
 			if self.gamma_variation:
 				df = pd.read_csv(self.gamma_csv)
 				if len(df["sim_id"]) == 0:
-					gamma_df["sim_id"] = 0
+					self.gamma_df["sim_id"] = 0
 				else:
-					gamma_df["sim_id"] = df["sim_id"][df.index[-1]] + 1
-				gamma_df["nrobots"] = self.nrobots
-				gamma_df["radar_radius"] = self.radar_radius
-				gamma_df["alpha"] = self.alpha
-				gamma_df["gamma"] = self.gamma
-				df = df.append(gamma_df, ignore_index = True, sort = False)
+					self.gamma_df["sim_id"] = df["sim_id"][df.index[-1]] + 1
+				self.gamma_df["nrobots"] = self.nrobots
+				self.gamma_df["radar_radius"] = self.radar_radius
+				self.gamma_df["alpha"] = self.alpha
+				self.gamma_df["gamma"] = self.gamma
+				df = df.append(self.gamma_df, ignore_index = True, sort = False)
 				df.to_csv(self.gamma_csv, index = False)
 
 			self.running = False
@@ -332,7 +333,7 @@ class ExplorationArea(Model):
 	@staticmethod
 	def compute_robot_distances(m):
 		nrobots = m.nrobots
-		T_up = np.full((nrobots, nrobots), 0) 
+		T_up = np.full((nrobots, nrobots), 0.0) # if it's only zero, numpy represents only integers 
 		# didn't dig deep in numpy doc but it looks like it handles triangualr matrices as "normal" matrices, so 
 		# i just initilize a full matrix and then i'll use it as a triangular.
 		robots = [x for x in m.schedule.agents if isinstance(x, Robot)]
@@ -357,4 +358,4 @@ class ExplorationArea(Model):
 		for i in range(1, nrobots - 1): # the last row has no values, i iters the rows
 			mean_robot = (sum(T_up[0 : i, i]) + sum(T_up[i, i + 1 : nrobots])) / (nrobots - 1)
 			mean_dist_robots.append(mean_robot)
-		return tuple([np.mean(mean_dist_robots), np.std(mean_dist_robots)])
+		return tuple([round(np.mean(mean_dist_robots), 3), round(np.std(mean_dist_robots), 3)])

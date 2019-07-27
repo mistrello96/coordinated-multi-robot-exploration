@@ -8,3 +8,4 @@
 - script che stampano tali dati
 - registrare come i robot si comportano in situazioni particolari (ponte, lunghi muri, zone in cui non possono entrare ...)
 - introdurre probabilità di fallimento da parte dei robot o ripetitori wi-fi (distribuzione poisson ?)
+- default values of server infered by the file
