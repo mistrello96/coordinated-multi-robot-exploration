@@ -20,7 +20,7 @@ def fitness(list_params):
 		"radar_radius": radar_radius, 
 		"ncells": 5, 
 		"obstacles_dist": 0.01, 
-		"wifi_range": 10, 
+		"wifi_range": 3, 
 		"alpha": alpha,
 		"gamma" : gamma,
 		"ninjured": 4,

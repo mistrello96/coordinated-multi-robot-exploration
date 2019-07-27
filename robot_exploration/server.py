@@ -50,7 +50,7 @@ if params[4] == "None":
         "ncells": UserSettableParameter('number', "Number of rows/columns of cells", value = 30),
         "obstacles_dist": UserSettableParameter('slider', "Obstacle probability", 0.05, 0, 1, 0.01,
                                             description = "Choose how many obstacle there are in the map"),
-        "wifi_range": UserSettableParameter('slider', "Wifi range", 10, 2, 150, 1,
+        "wifi_range": UserSettableParameter('slider', "Wifi range", 3, 2, 150, 1,
                                             description = "Choose how many cells the wifi signal is propagated"),
         "alpha": UserSettableParameter('number', "Alpha value", value = 8.175,
                                             description = "Importance of path cost in target selection"),

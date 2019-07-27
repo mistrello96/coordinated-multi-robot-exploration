@@ -220,7 +220,7 @@ class ExplorationArea(Model):
 	def step(self):
 		# call step function for all of the robots in random order
 		self.schedule.step()
-		print("step " + str(self.schedule.steps))
+		#print("step " + str(self.schedule.steps))
 
 		if self.dump_datas:		
 			# result = self.get_explored(self)
@@ -241,7 +241,7 @@ class ExplorationArea(Model):
 			if cell.explored == 0 or cell.explored == 1:
 				stop = False
 		if stop:
-			print("Simultation ended in " + str(self.schedule.step()) + " steps")
+			print("Simultation ended")
 			# Data collection
 			if self.dump_datas:
 				df = pd.read_csv(self.time_csv)

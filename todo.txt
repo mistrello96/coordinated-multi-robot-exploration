@@ -1,5 +1,4 @@
 - Data visualization con file sorgente e file/cartella di destinazione presi da riga di comando
-- pensare come sistemare formula info gain
 - studiare i comportamenti del modello al variare del valore dei singoli parametri
 	variare di alpha -> costo medio del percorso in termini di step 
 	variare di gamma -> distanza media tra un robot e tutti gli altri ad ogni step
@@ -9,3 +8,8 @@
 - registrare come i robot si comportano in situazioni particolari (ponte, lunghi muri, zone in cui non possono entrare ...)
 - introdurre probabilità di fallimento da parte dei robot o ripetitori wi-fi (distribuzione poisson ?)
 - default values of server infered by the file
+
+- analizzare su una 30*30 il valore della fitness al crescere dei robot (step 5 robot)
+
+#DONE
+scalato anche il numero dei wifi bean range (assimilabile)
