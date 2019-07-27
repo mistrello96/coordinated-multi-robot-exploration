@@ -43,20 +43,20 @@ if params[4] == "None":
     # order of values is default, min, max, step
     # TODO: the default values should be infered by the server_grid file, in order to make the map visible
     # at the launch, rember that the map has to more rows/columns than ncells to be explored
-        "nrobots": UserSettableParameter('slider', "Number of robots", 3, 1, 100, 1,
+        "nrobots": UserSettableParameter('slider', "Number of robots", 6, 1, 50, 1,
                                             description = "Choose how many agents to include in the model"),
-        "radar_radius": UserSettableParameter('slider', "Radar radius", 3, 0, 10, 1,
+        "radar_radius": UserSettableParameter('slider', "Radar radius", 6, 0, 10, 1,
                                             description = "Choose how many cells around the robot can see"),
-        "ncells": UserSettableParameter('number', "Number of rows/columns of cells", value = 10),
-        "obstacles_dist": UserSettableParameter('slider', "Obstacle probability", 0.1, 0, 1, 0.01,
+        "ncells": UserSettableParameter('number', "Number of rows/columns of cells", value = 30),
+        "obstacles_dist": UserSettableParameter('slider', "Obstacle probability", 0.05, 0, 1, 0.01,
                                             description = "Choose how many obstacle there are in the map"),
-        "wifi_range": UserSettableParameter('slider', "Wifi range", 3, 2, 150, 1,
+        "wifi_range": UserSettableParameter('slider', "Wifi range", 10, 2, 150, 1,
                                             description = "Choose how many cells the wifi signal is propagated"),
-        "alpha": UserSettableParameter('number', "Alpha value", value = 0.1,
+        "alpha": UserSettableParameter('number', "Alpha value", value = 8.175,
                                             description = "Importance of path cost in target selection"),
-        "gamma": UserSettableParameter('number', "Gamma value", value = 1,
+        "gamma": UserSettableParameter('number', "Gamma value", value = 0.65,
                                             description = "Influence on utility reduction on the neighborhood of the target"),
-        "ninjured": UserSettableParameter('slider', "Number of injured", 3, 1, 30, 1,
+        "ninjured": UserSettableParameter('slider', "Number of injured", 5, 1, 30, 1,
                                             description = "Choose how many injured are in the map")
     }
 else:
@@ -64,15 +64,15 @@ else:
     # order of values is default, min, max, step
     # TODO: the default values should be infered by the server_grid file, in order to make the map visible
     # at the launch, rember that the map has to more rows/columns than ncells to be explored
-        "nrobots": UserSettableParameter('slider', "Number of robots", 5, 1, 50, 1,
+        "nrobots": UserSettableParameter('slider', "Number of robots", 6, 1, 50, 1,
                                             description = "Choose how many agents to include in the model"),
-        "radar_radius": UserSettableParameter('slider', "Radar radius", 3, 0, 10, 1,
+        "radar_radius": UserSettableParameter('slider', "Radar radius", 6, 0, 10, 1,
                                             description = "Choose how many cells around the robot can see"),
-        "wifi_range": UserSettableParameter('slider', "Wifi range", 3, 2, 150, 1,
+        "wifi_range": UserSettableParameter('slider', "Wifi range", 10, 2, 150, 1,
                                             description = "Choose how many cells the wifi signal is propagated"),
-        "alpha": UserSettableParameter('number', "Alpha value", value = 0.1,
+        "alpha": UserSettableParameter('number', "Alpha value", value = 8.175,
                                             description = "Importance of path cost in target selection"),
-        "gamma": UserSettableParameter('number', "Gamma value", value = 1,
+        "gamma": UserSettableParameter('number', "Gamma value", value = 0.65,
                                             description = "Influence on utility reduction on the neighborhood of the target")
     }
     model_params["load_file"] = params[4]

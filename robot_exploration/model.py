@@ -22,7 +22,7 @@ alpha_csv = "./robot_exploration/results/alpha_variation.csv"
 gamma_csv = "./robot_exploration/results/gamma_variation.csv"
 
 class ExplorationArea(Model):
-	def __init__(self, nrobots, radar_radius, ncells, obstacles_dist, wifi_range, alpha, gamma, ninjured,
+	def __init__(self, nrobots, radar_radius, ncells=None, obstacles_dist=None, wifi_range, alpha, gamma, ninjured=None,
 		load_file = None,
 		dump_datas = True, # enable data collection
 		alpha_variation = False, # record datas for alpha variation studies
@@ -30,8 +30,15 @@ class ExplorationArea(Model):
 		gamma_variation = False, # record datas for gamma variation studies
 		gamma_csv = gamma_csv,
 		optimization_task = False, # enable a small part of data collection for optimization task
-		time_csv = number_of_steps_csv, exploration_percentage_csv = exploration_percentage_csv, 
+		time_csv = number_of_steps_csv,
+		exploration_percentage_csv = exploration_percentage_csv, 
 		robot_status_csv = robot_status_csv):
+
+		# checking params consistency
+		if not load_file and (not ncells or not obstacles_dist or not ninjured):
+			print("Invalid params")
+			sys.exit(-1)
+
 		# used in server start
 		self.running = True
 		self.nrobots = nrobots
