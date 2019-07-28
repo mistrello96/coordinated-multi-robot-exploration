@@ -52,7 +52,7 @@ if __name__ == "__main__":
 	plt.yticks(fontsize = 12)
 	plt.xlabel("Alpha", fontsize = 15)
 	plt.ylabel("Cost of path chosen (# of steps)", fontsize = 15)
-	plt.title("How alpha infuences the the path chosen")
+	plt.title("How alpha infuences the path chosen")
 	plt.legend()
 	plt.tight_layout()
 	plt.savefig("./images/png/{}.png".format(output_file))
