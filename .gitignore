@@ -7,6 +7,8 @@ optimization/best_solution.txt
 #images
 robot_exploration/results/images/pdf/*.pdf
 robot_exploration/results/images/png/*.png
+robot_exploration/results/gamma_variations/images/png/*.png
+robot_exploration/results/gamma_variations/images/pdf/*.pdf
 # report
 *.log
 *.aux
