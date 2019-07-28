@@ -40,7 +40,7 @@ for gamma in [0, 0.01, 0.1, 0.32, 0.65, 1]:
 		"optimization_task": False,
 		"load_file" : "./robot_exploration/maps/30_maps/random{}.py".format(maps_index),
 		"gamma_variation" : True, # record datas for alpha variation studies
-		"gamma_csv" : "./robot_exploration/results/gamma_variation{}.csv".format(gamma)
+		"gamma_csv" : "./robot_exploration/results/gamma_variations/gamma_variation{}.csv".format(gamma)
 	}
 
 	batch_run = BatchRunner(

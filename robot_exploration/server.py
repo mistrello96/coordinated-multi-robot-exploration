@@ -38,16 +38,18 @@ with open("./robot_exploration/server_grid.txt") as f: # the path starts from th
 params = l[0].split()
 
 ## Parameters of the model
-if params[4] == "None":    
+if params[2] == "None":   
+    ncells = int(params[0]) - 2
+    nrobots = ncells // 6 
     model_params = {
     # order of values is default, min, max, step
     # TODO: the default values should be infered by the server_grid file, in order to make the map visible
     # at the launch, rember that the map has to more rows/columns than ncells to be explored
-        "nrobots": UserSettableParameter('slider', "Number of robots", 6, 1, 50, 1,
+        "nrobots": UserSettableParameter('slider', "Number of robots", nrobots, 1, 50, 1,
                                             description = "Choose how many agents to include in the model"),
         "radar_radius": UserSettableParameter('slider', "Radar radius", 6, 0, 10, 1,
                                             description = "Choose how many cells around the robot can see"),
-        "ncells": UserSettableParameter('number', "Number of rows/columns of cells", value = 30),
+        "ncells": UserSettableParameter('number', "Number of rows/columns of cells", value = ncells),
         "obstacles_dist": UserSettableParameter('slider', "Obstacle probability", 0.05, 0, 1, 0.01,
                                             description = "Choose how many obstacle there are in the map"),
         "wifi_range": UserSettableParameter('slider', "Wifi range", 3, 2, 150, 1,
@@ -75,13 +77,13 @@ else:
         "gamma": UserSettableParameter('number', "Gamma value", value = 0.65,
                                             description = "Influence on utility reduction on the neighborhood of the target")
     }
-    model_params["load_file"] = params[4]
+    model_params["load_file"] = params[2]
     model_params["ncells"] = None
     model_params["obstacles_dist"] = None
     model_params["ninjured"] = None
 
 #grid representation
-grid = CanvasGrid(agent_portrayal, params[0], params[1], params[2], params[3])
+grid = CanvasGrid(agent_portrayal, params[0], params[0], params[1], params[1])
 
 exploration_chart = ChartModule([{"Label": "explored",
                       "Color": "Black"}],
@@ -90,8 +92,8 @@ exploration_chart = ChartModule([{"Label": "explored",
 robort_chart = ChartModule([{"Label": "idling", "Color": "#505050"}, {"Label" : "travelling", "Color" : "Blue"}, {"Label" : "exploring", "Color" : "Green"}, {"Label" : "deploying_bean", "Color" : "Yellow"}],
                     data_collector_name='dc_robot_status')
 
-if params[4] != "None":
-    model_params["load_file"] = params[4] 
+if params[2] != "None":
+    model_params["load_file"] = params[2] 
 
 server = ModularServer(ExplorationArea, [grid, exploration_chart, robort_chart], "Search and Rescue simulation", model_params)
 
