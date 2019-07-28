@@ -34,7 +34,7 @@ for nrobots in range(1, 50, 5):
 	for i in range(0, 10):
 		maps_index = rnd.randint(1, 5)
 		fit = fitness(nrobots, maps_index)
-		df = pd.read_csv("fitness_analysis.csv")
+		df = pd.read_csv("./robot_exploration/results/fitness_analysis.csv")
 		df = df.append({
 		"sim_index" : i,
 		"nrobots" : nrobots,
