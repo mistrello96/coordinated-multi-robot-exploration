@@ -44,4 +44,4 @@ for nrobots in range(1, 50, 5):
 		"alpha": 8.175,
 		"gamma" : 0.65}, ignore_index = True)
 		print(df)
-		df.to_csv("fitness_analysis.csv", index = False)
+		df.to_csv("./robot_exploration/results/fitness_analysis.csv", index = False)
