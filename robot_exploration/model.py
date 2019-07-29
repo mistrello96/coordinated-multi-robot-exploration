@@ -19,14 +19,16 @@ number_of_steps_csv = "./robot_exploration/results/number_of_steps.csv"
 exploration_percentage_csv = "./robot_exploration/results/percentage_exploration_simulation_step.csv"
 robot_status_csv = "./robot_exploration/results/robots_status_simulation_step.csv"
 alpha_csv = "./robot_exploration/results/alpha_variation.csv"
+alpha_step_csv = "./robot_exploration/results/alpha_steps.csv"
 gamma_csv = "./robot_exploration/results/gamma_variation.csv"
 
 class ExplorationArea(Model):
-	def __init__(self, nrobots, radar_radius, wifi_range, alpha, gamma, ninjured=None, ncells=None, obstacles_dist=None,
+	def __init__(self, nrobots, radar_radius, wifi_range, alpha, gamma, ninjured = None, ncells = None, obstacles_dist = None,
 		load_file = None,
 		dump_datas = True, # enable data collection
 		alpha_variation = False, # record datas for alpha variation studies
-		alpha_csv = alpha_csv,
+		alpha_csv = alpha_csv, # aggregate datas
+		alpha_step_csv = alpha_step_csv, # single step datas
 		gamma_variation = False, # record datas for gamma variation studies
 		gamma_csv = gamma_csv,
 		optimization_task = False, # enable a small part of data collection for optimization task
@@ -79,6 +81,8 @@ class ExplorationArea(Model):
 		if self.alpha_variation:
 			self.costs_each_path = list()
 			self.alpha_csv = alpha_csv
+			self.alpha_step = dict()
+			self.alpha_step_csv = alpha_step_csv
 		if self.gamma_variation:
 			self.gamma_df = pd.DataFrame(columns = ["step", "mean", "std"])
 			self.gamma_csv = gamma_csv
@@ -278,6 +282,25 @@ class ExplorationArea(Model):
 							   "alpha": self.alpha, "gamma": self.gamma, "mean": mean,
 							   "std": std}, ignore_index = True)
 				df.to_csv(self.alpha_csv, index = False)
+				
+				self.tmp_df = pd.DataFrame(columns = ["step", "cost"])
+				for s, costs in zip(self.alpha_step.keys(), self.alpha_step.values()):
+					if not v:
+						self.tmp_df = self.tmp_df.append({"step": s, "cost": -1}, 
+														  ignore_index = True, sort = False)
+						continue
+					for c in costs:
+						self.tmp_df = self.tmp_df.append({"step": s, "cost": c}, 
+														  ignore_index = True, sort = False)
+				df = pd.read_csv(self.alpha_step_csv)
+				if len(df["sim_id"]) == 0:
+					self.tmp_df["sim_id"] = 0
+				else:
+					self.tmp_df["sim_id"] = df["sim_id"][df.index[-1]] + 1
+				self.tmp_df["nrobots"] = self.nrobots
+				self.tmp_df["radar_radius"] = self.radar_radius
+				self.tmp_df["alpha"] = self.alpha
+				self.tmp_df["gamma"] = self.gamma
 
 			if self.gamma_variation:
 				df = pd.read_csv(self.gamma_csv)

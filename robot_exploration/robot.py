@@ -144,6 +144,10 @@ class Robot(Agent):
 		bids_sort_cost = sorted(bids, key = lambda x: x[1])
 		bids_sort_gain = sorted(bids_sort_cost, key = lambda x: (self.agent_get_cell(x[0]).priority + self.agent_get_cell(x[0]).utility - (self.model.alpha * x[1])), reverse = True)
 		
+		# data collection for alpha variation
+		if self.model.alpha_variation:
+			sim_step = self.model.get_step(self.model)
+			self.model.alpha_step[sim_step] = list()
 		# if bids_sort_gain is not None and every cell has -inf utility, no valid target is found
 		if not bids_sort_gain:
 			return tuple()
@@ -153,8 +157,12 @@ class Robot(Agent):
 		else:
 			# if find cells, pick the most convinient one
 			result = bids_sort_gain[0][0]
+			
 			if self.model.alpha_variation:
-				self.model.costs_each_path.append(bids_sort_gain[0][1])
+				path_cost = bids_sort_gain[0][1]
+				self.model.costs_each_path.append(path_cost)
+				self.model.alpha_step[sim_step].append(path_cost)
+
 			self.model.frontier.remove(result)
 			# reduce the utility of all the sorrundings cell if not visited yet
 			for element in self.model.grid.get_neighborhood(result, "moore", include_center = False, radius = self.radar_radius):
