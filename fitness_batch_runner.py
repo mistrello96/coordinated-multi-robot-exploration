@@ -43,4 +43,5 @@ for nrobots in range(1, 50, 5):
 		"wifi_range": 3, 
 		"alpha": 8.175,
 		"gamma" : 0.65}, ignore_index = True)
-		df.to_csv("fitness_analysis.csv", index = False)
+		print(df)
+		df.to_csv("./robot_exploration/results/fitness_analysis.csv", index = False)
