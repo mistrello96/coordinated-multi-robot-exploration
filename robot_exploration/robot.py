@@ -141,22 +141,21 @@ class Robot(Agent):
 			except:
 				pass
 		# pick the most convinient cell
-		bids_sort_cost = sorted(bids, key = lambda x: x[1]) # DP, i still don't get why we sort twice
+		bids_sort_cost = sorted(bids, key = lambda x: x[1])
 		bids_sort_gain = sorted(bids_sort_cost, key = lambda x: (self.agent_get_cell(x[0]).priority + self.agent_get_cell(x[0]).utility - (self.model.alpha * x[1])), reverse = True)
 		
 		# if bids_sort_gain is not None and every cell has -inf utility, no valid target is found
 		if not bids_sort_gain:
 			return tuple()
-		if bids_sort_gain and self.agent_get_cell(bids_sort_gain[0][0]).utility == -math.inf: # il primo membro dell'and non dovrebbe servire se ho capito quello che verifichi sopra
+		if self.agent_get_cell(bids_sort_gain[0][0]).utility == -math.inf:
 			# in order to avoid two robots exploring the same cell
 			return tuple()
 		else:
 			# if find cells, pick the most convinient one
 			result = bids_sort_gain[0][0]
 			if self.model.alpha_variation:
-				print(bids_sort_gain[0][1])
-				self.model.costs_each_path.append(bids_sort_gain[0][1]) # DP, Il costo è già calcolato in termini di step necessari?
-			self.model.frontier.remove(result) # siamo sicuri che lo tolga sempre?
+				self.model.costs_each_path.append(bids_sort_gain[0][1])
+			self.model.frontier.remove(result)
 			# reduce the utility of all the sorrundings cell if not visited yet
 			for element in self.model.grid.get_neighborhood(result, "moore", include_center = False, radius = self.radar_radius):
 				# only if the cell is in lof with the robot,  lof stands for?

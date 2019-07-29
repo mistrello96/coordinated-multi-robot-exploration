@@ -358,7 +358,6 @@ class ExplorationArea(Model):
 				r2 = robots[i] # i can do this because they are sorted
 				y2, x2 = r2.pos
 				T_up[matrix_id_row][i] = distance.euclidean([x1, y1], [x2, y2])
-		print(T_up)
 		mean_dist_robots = list()
 		# the robot 0 has only the rows
 		mean_robot_zero = sum(T_up[0, 1 : nrobots])
@@ -369,5 +368,4 @@ class ExplorationArea(Model):
 		# last robot has only the columns
 		mean_last_robot = sum(T_up[0 : nrobots - 1, nrobots - 1])
 		mean_dist_robots.append(mean_last_robot)
-		print(len(mean_dist_robots))
 		return tuple([round(np.mean(mean_dist_robots), 3), round(np.std(mean_dist_robots), 3)])

@@ -14,7 +14,7 @@ for alpha in [0, 0.01, 0.1, 1, 6, 10]:
 		"dump_datas": False,
 		"optimization_task": False,
 		"load_file" : "./robot_exploration/maps/30_maps/random{}.py".format(maps_index),
-		"alpha_variation" : True # record datas for alpha variation studies
+		"alpha_variation": True # record datas for alpha variation studies
 	}
 
 	batch_run = BatchRunner(
