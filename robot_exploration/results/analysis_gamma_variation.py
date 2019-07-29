@@ -21,7 +21,9 @@ if __name__ == "__main__":
 
 		plt.figure(figsize = (8, 6), dpi = 300)
 
-		(vs, bins) = np.histogram(df["mean"], bins = 'fd', density = False) #sturges does not work so well Hyndman, R.J. (1995), fd = Freedman Diaconis Freedman, David; Diaconis, Persi (December 1981)
+		(vs, bins) = np.histogram(df["mean"], bins = int(round(max(df["mean"]) - min(df["mean"]))), density = False)
+		print("bins for gamma {}: {} with number of bins {}".format(g, bins, len(bins) - 2))
+
 		for i in range(len(bins) - 1):
 			m = (bins[i] + bins[i + 1]) / 2
 
@@ -48,7 +50,6 @@ if __name__ == "__main__":
 
 		plt.figure(figsize = (8, 6), dpi = 300)
 		sim_id = rnd.randint(0, 9)
-		sim_id = 0
 		sim_df = df.loc[df["sim_id"] == sim_id]
 		plt.plot(sim_df["step"], sim_df["mean"], linestyle = '-', 
 				 linewidth = 2.5, color = 'black', label = "Average", antialiased = True)
@@ -61,15 +62,15 @@ if __name__ == "__main__":
 						 [m - s for m, s in zip(sim_df["mean"], sim_df["std"])],
 						 [m + s for m, s in zip(sim_df["mean"], sim_df["std"])],
 						 color = 'red', alpha = 0.5)
-		plt.xlim(left = -0.5)
+		plt.xlim(left = -0.5, right = max(sim_df["step"]) + 10)
 		plt.xticks(fontsize = 12)
 		plt.yticks(fontsize = 12)
 		plt.xlabel("Step", fontsize = 15)
 		plt.ylabel("Average distance between robots", fontsize = 15)
 		plt.title("Evolution of distance between robots during the exploration")
 		plt.tight_layout()
-		plt.savefig("./gamma_variations/images/png/dinstance_simulation_gamma_{}.png".format(g))
-		plt.savefig("./gamma_variations/images/pdf/dinstance_simulation_gamma_{}.pdf".format(g))
+		plt.savefig("./gamma_variations/images/png/dinstance_simulation_gamma_{}_simid_{}.png".format(g,sim_id))
+		plt.savefig("./gamma_variations/images/pdf/dinstance_simulation_gamma_{}_simid_{}.pdf".format(g,sim_id))
 		plt.close()
 
 	# aggregating results
@@ -79,7 +80,7 @@ if __name__ == "__main__":
 	for g, color in zip(gammas, colors):
 		df = pd.read_csv(file.format(g))
 
-		(vs, bins) = np.histogram(df["mean"], bins = 'fd', density = False) #sturges does not work so well Hyndman, R.J. (1995), fd = Freedman Diaconis Freedman, David; Diaconis, Persi (December 1981)
+		(vs, bins) = np.histogram(df["mean"], bins = "fd", density = False)
 		for i in range(len(bins) - 1):
 			m = (bins[i] + bins[i + 1]) / 2
 
@@ -91,7 +92,7 @@ if __name__ == "__main__":
 			plt.errorbar(m, vs[i], yerr = mean_std, marker = '.', linestyle = None,
 						 markersize = 10, ecolor = "black", elinewidth = 1.5, 
 						 color = color, barsabove = False, 
-						 label = "gamma = {}".format(g))
+						 label = "gamma = {}".format(g) if i == 0 else None)
 
 			plt.scatter([m, m], [vs[i] - mean_std, vs[i] + mean_std], marker = '_',
 						s = 40, color = "black")
@@ -148,8 +149,8 @@ if __name__ == "__main__":
 			 color = 'black', linestyle = '--', linewidth = 1.5, 
 			 antialiased = True)
 
-	plt.xlim(left = min(gammas) - 0.05)
-	plt.xticks(fontsize = 12)
+	plt.xlim(left = min(gammas) - 10e-3, right = max(gammas) + 1e-3)
+	plt.xticks(gammas[1: ], label = gammas[1: ], fontsize = 12)
 	plt.yticks(fontsize = 12)
 	plt.xlabel("Gamma", fontsize = 15)
 	plt.ylabel("Distance between robots", fontsize = 15)

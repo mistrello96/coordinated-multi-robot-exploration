@@ -360,9 +360,14 @@ class ExplorationArea(Model):
 				T_up[matrix_id_row][i] = distance.euclidean([x1, y1], [x2, y2])
 		print(T_up)
 		mean_dist_robots = list()
+		# the robot 0 has only the rows
 		mean_robot_zero = sum(T_up[0, 1 : nrobots])
 		mean_dist_robots.append(mean_robot_zero)
 		for i in range(1, nrobots - 1): # the last row has no values, i iters the rows
 			mean_robot = (sum(T_up[0 : i, i]) + sum(T_up[i, i + 1 : nrobots])) / (nrobots - 1)
 			mean_dist_robots.append(mean_robot)
+		# last robot has only the columns
+		mean_last_robot = sum(T_up[0 : nrobots - 1, nrobots - 1])
+		mean_dist_robots.append(mean_last_robot)
+		print(len(mean_dist_robots))
 		return tuple([round(np.mean(mean_dist_robots), 3), round(np.std(mean_dist_robots), 3)])

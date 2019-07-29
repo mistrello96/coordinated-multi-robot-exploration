@@ -27,6 +27,7 @@ if __name__ == "__main__":
 		maxs_std.append(max_std)
 
 	plt.figure(figsize = (8, 6), dpi = 300)
+	plt.xscale("log")
 	plt.plot(alpha_values, means_mean, linestyle = '-', 
 		linewidth = 2.5, color = 'black', label = "Average", antialiased = True)
 	# Plot of standard deviation
@@ -47,12 +48,12 @@ if __name__ == "__main__":
 			 color = 'black', linestyle = '--', linewidth = 1.5, 
 			 antialiased = True)
 
-	plt.xlim(left = min(alpha_values) - 0.05)
-	plt.xticks(fontsize = 12)
+	plt.xlim(left = min(alpha_values) - 10e-5, right = max(alpha_values))
+	plt.xticks(alpha_values, labels = alpha_values, fontsize = 12)
 	plt.yticks(fontsize = 12)
 	plt.xlabel("Alpha", fontsize = 15)
 	plt.ylabel("Cost of path chosen (# of steps)", fontsize = 15)
-	plt.title("How alpha infuences the path chosen")
+	plt.title("How alpha influences the path chosen")
 	plt.legend()
 	plt.tight_layout()
 	plt.savefig("./images/png/{}.png".format(output_file))
