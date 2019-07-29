@@ -11,7 +11,7 @@ def fitness(nrobots, maps_index):
 		"alpha": 8.175,
 		"gamma" : 0.65,
 		"dump_datas": True,
-		"optimization_task": False,
+		"optimization_task": True,
 		"load_file" : "./robot_exploration/maps/30_maps/random{}.py".format(maps_index)
 	}
 
