@@ -144,10 +144,6 @@ class Robot(Agent):
 		bids_sort_cost = sorted(bids, key = lambda x: x[1])
 		bids_sort_gain = sorted(bids_sort_cost, key = lambda x: (self.agent_get_cell(x[0]).priority + self.agent_get_cell(x[0]).utility - (self.model.alpha * x[1])), reverse = True)
 		
-		# data collection for alpha variation
-		if self.model.alpha_variation:
-			sim_step = self.model.get_step(self.model)
-			self.model.alpha_step[sim_step] = list()
 		# if bids_sort_gain is not None and every cell has -inf utility, no valid target is found
 		if not bids_sort_gain:
 			return tuple()
@@ -160,6 +156,7 @@ class Robot(Agent):
 			
 			if self.model.alpha_variation:
 				path_cost = bids_sort_gain[0][1]
+				sim_step = self.model.get_step(self.model)
 				self.model.costs_each_path.append(path_cost)
 				self.model.alpha_step[sim_step].append(path_cost)
 

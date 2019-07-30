@@ -224,6 +224,12 @@ class ExplorationArea(Model):
 
 	# what the model does at each time step
 	def step(self):
+
+		# data collection for alpha variation
+		if self.alpha_variation:
+			sim_step = self.get_step(self)
+			self.alpha_step[sim_step] = list()
+		
 		# call step function for all of the robots in random order
 		self.schedule.step()
 		#print("step " + str(self.schedule.steps))
@@ -285,24 +291,26 @@ class ExplorationArea(Model):
 							   "std": std}, ignore_index = True)
 				df.to_csv(self.alpha_csv, index = False)
 				
-				self.tmp_df = pd.DataFrame(columns = ["step", "cost"])
+				tmp_df = pd.DataFrame(columns = ["step", "cost"])
 				for s, costs in zip(self.alpha_step.keys(), self.alpha_step.values()):
-					if not v:
-						self.tmp_df = self.tmp_df.append({"step": s, "cost": -1}, 
-														  ignore_index = True, sort = False)
+					if not costs:
+						tmp_df = tmp_df.append({"step": s, "cost": -1}, 
+												ignore_index = True, sort = False)
 						continue
 					for c in costs:
-						self.tmp_df = self.tmp_df.append({"step": s, "cost": c}, 
-														  ignore_index = True, sort = False)
+						tmp_df = tmp_df.append({"step": s, "cost": c}, 
+												ignore_index = True, sort = False)
 				df = pd.read_csv(self.alpha_step_csv)
 				if len(df["sim_id"]) == 0:
-					self.tmp_df["sim_id"] = 0
+					tmp_df["sim_id"] = 0
 				else:
-					self.tmp_df["sim_id"] = df["sim_id"][df.index[-1]] + 1
-				self.tmp_df["nrobots"] = self.nrobots
-				self.tmp_df["radar_radius"] = self.radar_radius
-				self.tmp_df["alpha"] = self.alpha
-				self.tmp_df["gamma"] = self.gamma
+					tmp_df["sim_id"] = df["sim_id"][df.index[-1]] + 1
+				tmp_df["nrobots"] = self.nrobots
+				tmp_df["radar_radius"] = self.radar_radius
+				tmp_df["alpha"] = self.alpha
+				tmp_df["gamma"] = self.gamma
+				df = df.append(tmp_df, ignore_index = True, sort = False)
+				df.to_csv(self.alpha_step_csv, index = False)
 
 			if self.gamma_variation:
 				df = pd.read_csv(self.gamma_csv)
