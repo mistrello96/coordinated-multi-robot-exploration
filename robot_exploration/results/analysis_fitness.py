@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import sys
+import numpy as np
 
 if __name__ == "__main__":
 	assert len(sys.argv) == 3
@@ -25,11 +26,11 @@ if __name__ == "__main__":
 				 markersize = 10, ecolor = "black", elinewidth = 1.5, 
 				 barsabove = False)
 	for r in fitness_std.keys():
-		plt.scatter([r, r], [fitness_mean[s] - fitness_std[s], fitness_mean[s] + fitness_std[s]], 
+		plt.scatter([r, r], [fitness_mean[r] - fitness_std[r], fitness_mean[r] + fitness_std[r]], 
 					marker = '_', s = 30, color = "black")
 	
 	plt.xlim(left = -1)
-	ticks = [x for x in range(0, nrobots[-1], nrobots[-1] // 10)]
+	ticks = [x for x in range(0, int(nrobots[-1]), int(nrobots[-1]) // 10)]
 	plt.xticks(ticks, label = ticks, fontsize = 12)
 	plt.yticks(fontsize = 12)
 	plt.xlabel("Number of robots", fontsize = 15)
