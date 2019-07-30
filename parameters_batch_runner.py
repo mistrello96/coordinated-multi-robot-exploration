@@ -14,7 +14,8 @@ for alpha in [0, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1, 1, 6, 10]:
 		"dump_datas": False,
 		"optimization_task": False,
 		"load_file" : "./robot_exploration/maps/30_maps/random{}.py".format(maps_index),
-		"alpha_variation" : True # record datas for alpha variation studies
+		"alpha_variation" : True,
+		"alpha_step_csv" : "./robot_exploration/results/alpha_steps/alpha_steps{}.csv".format(alpha)
 	}
 
 	batch_run = BatchRunner(
@@ -22,11 +23,11 @@ for alpha in [0, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1, 1, 6, 10]:
 		None,
 		fixed_params,
 		iterations = 10,
-		max_steps = 20000
+		max_steps = 30000
 	)
 
 	batch_run.run_all()
-
+'''
 for gamma in [0, 0.01, 0.1, 0.32, 0.65, 1]:
 	maps_index = rnd.randint(1, 5)
 
@@ -53,5 +54,4 @@ for gamma in [0, 0.01, 0.1, 0.32, 0.65, 1]:
 
 	batch_run.run_all()
 
-
-
+'''

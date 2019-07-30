@@ -16,19 +16,17 @@ if __name__ == "__main__":
 	gammas = [0, 0.01, 0.1, 0.32, 0.65, 1]
 	colors = ["blue", "red", "green", "orange", "purple", "brown"]
 
-	for g, color in zip(gammas, colors):
+	for g in gammas:
 		df = pd.read_csv(file.format(g))
 
 		plt.figure(figsize = (8, 6), dpi = 300)
-		plt.yscale("log")
+
 		(vs, bins) = np.histogram(df["mean"], bins = int(round(max(df["mean"]) - min(df["mean"]))), density = False)
-		print("bins for gamma {}: {} with number of bins {}".format(g, bins, len(bins) - 1))
-		print(vs)
+		print("bins for gamma {}: {} with number of bins {}".format(g, bins, len(bins) - 2))
 
 		for i in range(len(bins) - 1):
 			m = (bins[i] + bins[i + 1]) / 2
-			plt.scatter(m, vs[i], marker = '.', color = color, s = 50)
-			'''
+
 			rows = df.loc[(df["mean"] >= bins[i]) & (df["mean"] < bins[i + 1])]
 			stds = rows["std"]
 			mean_std = np.mean(stds)
@@ -38,9 +36,8 @@ if __name__ == "__main__":
 
 			plt.scatter([m, m], [vs[i] - mean_std, vs[i] + mean_std], marker = '_',
 						s = 40, color = "black")
-			'''
+
 		plt.xlim(left = bins[0] - 1)
-		# plt.ylim(bottom = 0)
 		plt.xticks(fontsize = 12)
 		plt.yticks(fontsize = 12)
 		plt.xlabel("Average distance", fontsize = 15)
@@ -80,28 +77,26 @@ if __name__ == "__main__":
 	# in theory we could do that during the loop above changing the figure to work on
 	# but for clarity we write that below
 	plt.figure(figsize = (8, 6), dpi = 300)
-	# plt.yscale("log")
 	for g, color in zip(gammas, colors):
 		df = pd.read_csv(file.format(g))
 
-		(vs, bins) = np.histogram(df["mean"], bins = int(round(max(df["mean"]) - min(df["mean"]))), density = False)
-		ms = list()
+		(vs, bins) = np.histogram(df["mean"], bins = "fd", density = False)
 		for i in range(len(bins) - 1):
-			ms.append((bins[i] + bins[i + 1]) / 2)		
-		plt.plot(ms, vs, '-', color = color, antialiased = True,
-				 label = "gamma = {}".format(g))
-		'''
-		rows = df.loc[(df["mean"] >= bins[i]) & (df["mean"] < bins[i + 1])]
-		stds = rows["std"]
-		mean_std = np.mean(stds)
-		plt.errorbar(m, vs[i], yerr = mean_std, marker = '.', linestyle = None,
-					 markersize = 10, ecolor = "black", elinewidth = 1.5, 
-					 color = color, barsabove = False, 
-					 label = "gamma = {}".format(g) if i == 0 else None)
+			m = (bins[i] + bins[i + 1]) / 2
 
-		plt.scatter([m, m], [vs[i] - mean_std, vs[i] + mean_std], marker = '_',
-					s = 40, color = "black")
-		'''
+			rows = df.loc[(df["mean"] >= bins[i]) & (df["mean"] < bins[i + 1])]
+			stds = rows["std"]
+			mean_std = np.mean(stds)
+			# if with errorbar sucks use scatter
+			# plt.scatter(m, vs[i], marker = '.', color = color, s = 10)
+			plt.errorbar(m, vs[i], yerr = mean_std, marker = '.', linestyle = None,
+						 markersize = 10, ecolor = "black", elinewidth = 1.5, 
+						 color = color, barsabove = False, 
+						 label = "gamma = {}".format(g) if i == 0 else None)
+
+			plt.scatter([m, m], [vs[i] - mean_std, vs[i] + mean_std], marker = '_',
+						s = 40, color = "black")
+
 	plt.xlim(left = bins[0] - 1)
 	plt.xticks(fontsize = 12)
 	plt.yticks(fontsize = 12)
