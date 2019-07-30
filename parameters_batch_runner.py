@@ -2,7 +2,7 @@ from mesa.batchrunner import BatchRunner
 from robot_exploration.model import ExplorationArea
 import random as rnd
 
-for alpha in [0, 0.01, 0.1, 1, 6, 10]:
+for alpha in [0, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1, 1, 6, 10]:
 	maps_index = rnd.randint(1, 5)
 
 	fixed_params = {
@@ -14,7 +14,7 @@ for alpha in [0, 0.01, 0.1, 1, 6, 10]:
 		"dump_datas": False,
 		"optimization_task": False,
 		"load_file" : "./robot_exploration/maps/30_maps/random{}.py".format(maps_index),
-		"alpha_variation": True # record datas for alpha variation studies
+		"alpha_variation" : True # record datas for alpha variation studies
 	}
 
 	batch_run = BatchRunner(
@@ -22,7 +22,7 @@ for alpha in [0, 0.01, 0.1, 1, 6, 10]:
 		None,
 		fixed_params,
 		iterations = 10,
-		max_steps = 10000
+		max_steps = 20000
 	)
 
 	batch_run.run_all()

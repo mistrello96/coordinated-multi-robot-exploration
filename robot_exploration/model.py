@@ -163,6 +163,8 @@ class ExplorationArea(Model):
 					priority = -math.inf
 				if utility == "-inf":
 					utility = -math.inf
+				if self.dump_datas and utility == 1:
+					self.total_difficulty += difficulty
 				a = Cell(self.agent_counter, self, index, difficulty, explored, priority, utility)
 				self.grid.place_agent(a, index)
 				self.agent_counter += 1
@@ -249,7 +251,7 @@ class ExplorationArea(Model):
 			# Data collection
 			if self.dump_datas:
 				df = pd.read_csv(self.time_csv)
-				df = df.append({"nrobots": self.nrobots, "ncells": self.ncells, 
+				df = df.append({"nrobots": self.nrobots, "ncells": self.ncells - 2, 
 								"steps": self.schedule.steps, 
 								"beans_deployed": self.get_number_bean_deployed(self),
 								"total_difficulty": self.total_difficulty},
