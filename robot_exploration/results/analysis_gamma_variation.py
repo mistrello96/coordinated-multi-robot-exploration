@@ -112,8 +112,8 @@ if __name__ == "__main__":
 	plt.title("Comparison of distributions of average distance between robots")
 	plt.legend()	
 	plt.tight_layout()
-	plt.savefig("./gamma_variations_high_alpha/images/png/comparison.png")
-	plt.savefig("./gamma_variations_high_alpha/images/pdf/comparison.pdf")
+	plt.savefig(path + "images/png/comparison.png")
+	plt.savefig(path + "images/pdf/comparison.pdf")
 	plt.close()
 
 	# Aggregate all, we need a df containing all datas
@@ -164,6 +164,6 @@ if __name__ == "__main__":
 	plt.title("How gamma infuences the distance between robots")
 	plt.legend()
 	plt.tight_layout()
-	plt.savefig("./gamma_variations_high_alpha/images/png/gamma_vs_distance.png")
-	plt.savefig("./gamma_variations_high_alpha/images/pdf/gamma_vs_distance.pdf")
+	plt.savefig(path + "images/png/gamma_vs_distance.png")
+	plt.savefig(path + "images/pdf/gamma_vs_distance.pdf")
 	plt.close()
