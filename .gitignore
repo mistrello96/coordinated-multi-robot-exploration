@@ -9,6 +9,8 @@ robot_exploration/results/images/pdf/*.pdf
 robot_exploration/results/images/png/*.png
 robot_exploration/results/gamma_variations/images/png/*.png
 robot_exploration/results/gamma_variations/images/pdf/*.pdf
+robot_exploration/results/alpha_steps/images/pdf/*.pdf
+robot_exploration/results/alpha_steps/images/png/*.png
 # report
 *.log
 *.aux
