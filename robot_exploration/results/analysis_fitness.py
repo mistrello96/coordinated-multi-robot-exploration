@@ -30,7 +30,7 @@ if __name__ == "__main__":
 					marker = '_', s = 30, color = "black")
 	
 	plt.xlim(left = -1)
-	ticks = [x for x in range(0, int(nrobots[-1]), int(nrobots[-1]) // 10)]
+	ticks = nrobots
 	plt.xticks(ticks, label = ticks, fontsize = 12)
 	plt.yticks(fontsize = 12)
 	plt.xlabel("Number of robots", fontsize = 15)
