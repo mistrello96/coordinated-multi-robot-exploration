@@ -3,15 +3,7 @@ import matplotlib.pyplot as plt
 import sys
 import numpy as np
 
-if __name__ == "__main__":
-	assert len(sys.argv) == 3
-	file = sys.argv[1]
-	output_file = sys.argv[2]
-
-	df = pd.read_csv(file)
-
-	alpha_values = sorted(list(set(df["alpha"])))
-
+def plot_alphas(df, output_file, alpha_values, ticks_label):
 	means_mean = list()
 	means_std = list()
 	maxs_std = list()
@@ -27,7 +19,6 @@ if __name__ == "__main__":
 		maxs_std.append(max_std)
 
 	plt.figure(figsize = (8, 6), dpi = 300)
-	plt.xscale("log")
 	plt.plot(alpha_values, means_mean, linestyle = '-', 
 		linewidth = 2.5, color = 'black', label = "Average", antialiased = True)
 	# Plot of standard deviation
@@ -48,8 +39,8 @@ if __name__ == "__main__":
 			 color = 'black', linestyle = '--', linewidth = 1.5, 
 			 antialiased = True)
 
-	plt.xlim(left = min(alpha_values) - 10e-5, right = max(alpha_values))
-	plt.xticks(alpha_values, labels = alpha_values, fontsize = 12)
+	plt.xlim(left = min(alpha_values),right = max(alpha_values))
+	plt.xticks(ticks_label, labels = ticks_label, fontsize = 12)
 	plt.yticks(fontsize = 12)
 	plt.xlabel("Alpha", fontsize = 15)
 	plt.ylabel("Cost of path chosen (# of steps)", fontsize = 15)
@@ -59,3 +50,20 @@ if __name__ == "__main__":
 	plt.savefig("./images/png/{}.png".format(output_file))
 	plt.savefig("./images/pdf/{}.pdf".format(output_file))
 	plt.close()
+
+if __name__ == "__main__":
+	assert len(sys.argv) == 3
+	file = sys.argv[1]
+	output_file = sys.argv[2]
+
+	df = pd.read_csv(file)
+
+	alpha_values = sorted(list(set(df["alpha"])))
+	ticks_label = [0, 1, 6, 10]
+	plot_alphas(df, output_file + "_all", alpha_values,ticks_label)
+	small_alphas = [a for a in alpha_values if a <= 0.1]
+	ticks_label = [0, 0.01, 0.05, 0.1]
+	plot_alphas(df, output_file + "_0_1", small_alphas, ticks_label)
+	very_small_alphas = [a for a in alpha_values if a <= 0.005]
+	ticks_label = [0, 1e-4, 5e-4, 1e-3, 5e-3]
+	plot_alphas(df, output_file + "_0_005", very_small_alphas, ticks_label)	
