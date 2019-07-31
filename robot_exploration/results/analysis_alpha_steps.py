@@ -64,7 +64,7 @@ if __name__ == "__main__":
 			costs = rows["cost"].tolist()
 			step_averagecost[s] = np.mean(costs)
 			step_stdcost[s] = np.std(costs)
-		plt.plot(step_averagecost.keys(), step_averagecost.values(),
+		plt.plot(list(step_averagecost.keys()), list(step_averagecost.values()),
 				 color = color, label = "alpha = {}".format(a))
 	
 	plt.xlim(left = -1)
