@@ -16,4 +16,4 @@ optimization/best_solution.txt
 *.bbl
 *.bib
 *.run.xml
-!*./report/images
+!./report/images/*.pdf
