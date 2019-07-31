@@ -16,7 +16,7 @@ import sys
 from scipy.spatial import distance
 
 number_of_steps_csv = "./robot_exploration/results/number_of_steps.csv"
-exploration_percentage_csv = "./robot_exploration/results/percentage_exploration_simulation_step.csv"
+#exploration_percentage_csv = "./robot_exploration/results/percentage_exploration_simulation_step.csv"
 robot_status_csv = "./robot_exploration/results/robots_status_simulation_step.csv"
 alpha_csv = "./robot_exploration/results/alpha_variation.csv"
 alpha_step_csv = "./robot_exploration/results/alpha_steps.csv"
@@ -33,7 +33,7 @@ class ExplorationArea(Model):
 		gamma_csv = gamma_csv,
 		optimization_task = False, # enable a small part of data collection for optimization task
 		time_csv = number_of_steps_csv,
-		exploration_percentage_csv = exploration_percentage_csv, 
+		#exploration_percentage_csv = exploration_percentage_csv, 
 		robot_status_csv = robot_status_csv):
 
 		# checking params consistency
@@ -58,10 +58,12 @@ class ExplorationArea(Model):
 		if self.dump_datas:
 			# it represents the sum of the difficulties of every cell
 			self.total_difficulty = 0
+			'''
 			self.dc_percentage_step = DataCollector(
 				{"step": lambda m: self.get_step(m),
 				 "explored": lambda m: self.get_explored(m)}
 			)
+			'''
 			self.dc_robot_status = DataCollector(
 				{"idling": lambda m: self.get_number_robots_status(m, "idling"),
 				 "travelling": lambda m: self.get_number_robots_status(m, "travelling"),
@@ -70,7 +72,7 @@ class ExplorationArea(Model):
 				 "step": lambda m: self.get_step(m)}
 			)
 			self.time_csv = number_of_steps_csv
-			self.exploration_percentage_csv = exploration_percentage_csv
+			#self.exploration_percentage_csv = exploration_percentage_csv
 			self.robot_status_csv = robot_status_csv
 
 		if self.optimization_task:
@@ -149,8 +151,8 @@ class ExplorationArea(Model):
 				print("file not found")
 				sys.exit(-1)
 			exported_map = literal_eval(file)
-			self.ncells = int(math.sqrt(len(exported_map["Cell"].keys())))
-			self.grid = MultiGrid(self.ncells, self.ncells, torus = False)
+			self.ncells = int(math.sqrt(len(exported_map["Cell"].keys()))) - 2
+			self.grid = MultiGrid(self.ncells + 2 , self.ncells + 2, torus = False)
 			for index in exported_map["Cell"].keys():
 				cell = exported_map["Cell"][index]
 				difficulty = cell[2]
@@ -163,6 +165,8 @@ class ExplorationArea(Model):
 					priority = -math.inf
 				if utility == "-inf":
 					utility = -math.inf
+				if explored == -1:
+					self.nobstacle += 1
 				if self.dump_datas and utility == 1:
 					self.total_difficulty += difficulty
 				a = Cell(self.agent_counter, self, index, difficulty, explored, priority, utility)
@@ -236,7 +240,7 @@ class ExplorationArea(Model):
 
 		if self.dump_datas:		
 			# result = self.get_explored(self)
-			self.dc_percentage_step.collect(self)
+			#self.dc_percentage_step.collect(self)
 			self.dc_robot_status.collect(self)
 		if self.optimization_task:
 			self.total_idling_time += self.get_number_robots_status(self, "idling")
@@ -263,7 +267,7 @@ class ExplorationArea(Model):
 								"total_difficulty": self.total_difficulty},
 								ignore_index = True)
 				df.to_csv(self.time_csv, index = False)
-				
+				'''
 				df_explored = self.dc_percentage_step.get_model_vars_dataframe()
 				df = pd.read_csv(self.exploration_percentage_csv)
 				if len(df["sim_id"]) == 0: # in case the csv has no values
@@ -272,7 +276,7 @@ class ExplorationArea(Model):
 					df_explored["sim_id"] = df["sim_id"][df.index[-1]] + 1 # get the last value of sim_id increase of one
 				df = df.append(df_explored, ignore_index = True, sort = False) # If there are some problems in the csvs, look for this sort, DP
 				df.to_csv(self.exploration_percentage_csv, index = False)
-
+				'''
 				df_robots_status = self.dc_robot_status.get_model_vars_dataframe()
 				df = pd.read_csv(self.robot_status_csv)
 				if len(df["sim_id"]) == 0:
@@ -348,6 +352,7 @@ class ExplorationArea(Model):
 	def get_step(m):
 		return m.schedule.steps
 
+	'''
 	# this should be the bottlenck of data collection
 	@staticmethod
 	def get_explored(m):
@@ -358,6 +363,7 @@ class ExplorationArea(Model):
 				count_explored += 1
 		result = count_explored / (m.ncells * m.ncells - m.nobstacle)
 		return result
+	'''
 
 	# these two should go faster since cells are not in the scheduler anymore
 	@staticmethod
