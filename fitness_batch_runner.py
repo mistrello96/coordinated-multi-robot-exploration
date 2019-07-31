@@ -30,7 +30,7 @@ def fitness(nrobots, maps_index):
 	return run_data["step"].iloc[0] + (run_data["total_idling"].iloc[0] / nrobots)
 
 
-for nrobots in range(51, 80, 5):
+for nrobots in range(1, 96, 5):
 	for i in range(0, 10):
 		maps_index = rnd.randint(1, 5)
 		fit = fitness(nrobots, maps_index)

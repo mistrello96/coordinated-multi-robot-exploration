@@ -27,7 +27,7 @@ for alpha in [0, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1, 1, 6, 10]:
 	)
 
 	batch_run.run_all()
-'''
+
 for gamma in [0, 0.01, 0.1, 0.32, 0.65, 1]:
 	maps_index = rnd.randint(1, 5)
 
@@ -35,7 +35,7 @@ for gamma in [0, 0.01, 0.1, 0.32, 0.65, 1]:
 		"nrobots": 6,
 		"radar_radius": 6,  
 		"wifi_range": 3, 
-		"alpha": 8.175,
+		"alpha": 0.0001,
 		"gamma" : gamma,
 		"dump_datas": False,
 		"optimization_task": False,
@@ -53,5 +53,3 @@ for gamma in [0, 0.01, 0.1, 0.32, 0.65, 1]:
 	)
 
 	batch_run.run_all()
-
-'''
