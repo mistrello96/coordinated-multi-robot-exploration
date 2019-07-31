@@ -5,12 +5,8 @@ __pycache__/
 optimization/best_fitness.txt
 optimization/best_solution.txt
 #images
-robot_exploration/results/images/pdf/*.pdf
-robot_exploration/results/images/png/*.png
-robot_exploration/results/gamma_variations/images/png/*.png
-robot_exploration/results/gamma_variations/images/pdf/*.pdf
-robot_exploration/results/alpha_steps/images/pdf/*.pdf
-robot_exploration/results/alpha_steps/images/png/*.png
+*.pdf
+*.png
 # report
 *.log
 *.aux
@@ -20,3 +16,4 @@ robot_exploration/results/alpha_steps/images/png/*.png
 *.bbl
 *.bib
 *.run.xml
+!*./report/images
