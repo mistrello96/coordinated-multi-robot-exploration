@@ -71,7 +71,7 @@ class ExplorationArea(Model):
 				 "deploying_bean": lambda m: self.get_number_robots_status(m, "deploying_bean"),
 				 "step": lambda m: self.get_step(m)}
 			)
-			self.time_csv = number_of_steps_csv
+			self.time_csv = time_csv
 			#self.exploration_percentage_csv = exploration_percentage_csv
 			self.robot_status_csv = robot_status_csv
 
@@ -263,8 +263,8 @@ class ExplorationArea(Model):
 				df = pd.read_csv(self.time_csv)
 				df = df.append({"nrobots": self.nrobots, "ncells": self.ncells - 2, 
 								"steps": self.schedule.steps, 
-								"beans_deployed": self.get_number_bean_deployed(self),
-								"total_difficulty": self.total_difficulty},
+								"total_difficulty": self.total_difficulty,
+                "beans_deployed": self.get_number_bean_deployed(self)},
 								ignore_index = True)
 				df.to_csv(self.time_csv, index = False)
 				'''
