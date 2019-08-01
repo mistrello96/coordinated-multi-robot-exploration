@@ -9,7 +9,7 @@ if __name__ == "__main__":
 
 
 	colors = ["blue", "red", "green", "orange", "purple", "brown", "darkblue", "forestgreen",
-			  #"silver", "gold", "darkred"]
+			  "silver", "gold", "darkred"]
 	alphas = [0, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1, 1, 6, 10]
 
 	for a, color in zip(alphas, colors):
@@ -66,6 +66,8 @@ if __name__ == "__main__":
 		df = df[df.cost != -1]
 
 		steps = sorted(list(set(df["step"])))
+		if max_step < steps[-1]:
+			max_step = steps[-1]
 		_, bins = np.histogram(steps, bins = int((steps[-1] - steps[0]) // 100), density = False)
 		step_averagecost = dict()
 		for i in range(len(bins) - 2):
@@ -74,7 +76,7 @@ if __name__ == "__main__":
 			costs = rows["cost"].tolist()
 			step_averagecost[m] = np.mean(costs)
 			step_stdcost[m] = np.std(costs)
-		# the last bin has the interval closed do right too
+		# the last bin has the interval both sides closed
 		m = (bins[-2] + bins[-1]) / 2
 		rows = df.loc[(df["step"] >= bins[-2]) & (df["step"] <= bins[-1])]
 		costs = rows["cost"].tolist()
