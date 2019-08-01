@@ -4,12 +4,14 @@ import numpy as np
 import sys
 import random as rnd
 
+
 if __name__ == "__main__":
-	assert len(sys.argv) == 2
+	assert len(sys.argv) == 3
 	# the file name should be ready to handle the format function
 	# use the {} instead of the value of the gamma
 	# same for outputfile
-	file = sys.argv[1]
+	path = sys.argv[1]
+	file = sys.argv[2]
 
 	rnd.seed()
 
@@ -47,8 +49,8 @@ if __name__ == "__main__":
 		plt.ylabel("Number of steps", fontsize = 15)
 		plt.title("Distribution of average distance with gamma value equals to {}".format(g))
 		plt.tight_layout()
-		plt.savefig("./gamma_variations/images/png/distribution_distance_gamma_{}.png".format(g))
-		plt.savefig("./gamma_variations/images/pdf/distribution_distance_gamma_{}.pdf".format(g))
+		plt.savefig(path + "images/png/distribution_distance_gamma_{}.png".format(g))
+		plt.savefig(path + "images/pdf/distribution_distance_gamma_{}.pdf".format(g))
 		plt.close()
 
 		plt.figure(figsize = (8, 6), dpi = 300)
@@ -72,8 +74,8 @@ if __name__ == "__main__":
 		plt.ylabel("Average distance between robots", fontsize = 15)
 		plt.title("Evolution of distance between robots during the exploration")
 		plt.tight_layout()
-		plt.savefig("./gamma_variations/images/png/dinstance_simulation_gamma_{}_simid_{}.png".format(g,sim_id))
-		plt.savefig("./gamma_variations/images/pdf/dinstance_simulation_gamma_{}_simid_{}.pdf".format(g,sim_id))
+		plt.savefig(path + "images/png/dinstance_simulation_gamma_{}_simid_{}.png".format(g,sim_id))
+		plt.savefig(path + "images/pdf/dinstance_simulation_gamma_{}_simid_{}.pdf".format(g,sim_id))
 		plt.close()
 
 	# aggregating results
@@ -110,8 +112,8 @@ if __name__ == "__main__":
 	plt.title("Comparison of distributions of average distance between robots")
 	plt.legend()	
 	plt.tight_layout()
-	plt.savefig("./gamma_variations/images/png/comparison.png")
-	plt.savefig("./gamma_variations/images/pdf/comparison.pdf")
+	plt.savefig(path + "images/png/comparison.png")
+	plt.savefig(path + "images/pdf/comparison.pdf")
 	plt.close()
 
 	# Aggregate all, we need a df containing all datas
@@ -162,6 +164,6 @@ if __name__ == "__main__":
 	plt.title("How gamma infuences the distance between robots")
 	plt.legend()
 	plt.tight_layout()
-	plt.savefig("./gamma_variations/images/png/gamma_vs_distance.png")
-	plt.savefig("./gamma_variations/images/pdf/gamma_vs_distance.pdf")
+	plt.savefig(path + "images/png/gamma_vs_distance.png")
+	plt.savefig(path + "images/pdf/gamma_vs_distance.pdf")
 	plt.close()
