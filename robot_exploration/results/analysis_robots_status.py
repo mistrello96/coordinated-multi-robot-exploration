@@ -6,7 +6,7 @@ import numpy as np
 if __name__ == "__main__":
 	assert len(sys.argv) == 4
 	file = sys.argv[1]
-	path = sys.argv[2] # path before the divsion in png or pdf
+	path = sys.argv[2] # path before the divsion in png or pdf, no last /
 	output_file = sys.argv[3] # further subdirectories and file name
 
 	df = pd.read_csv(file)

@@ -4,9 +4,10 @@ import numpy as np
 import sys
 
 if __name__ == "__main__":
-	assert len(sys.argv) == 3
+	assert len(sys.argv) == 4
 	file = sys.argv[1]
-	plot_beans_deployed = sys.argv[2]
+	path = sys.argv[2] # path before the divsion in png or pdf, no last /
+	plot_beans_deployed = sys.argv[3] # further subdirectories and file name
 
 	df = pd.read_csv(file)
 
@@ -39,6 +40,6 @@ if __name__ == "__main__":
 	plt.title("Number of beans deployed for a NxN map")
 	plt.legend()
 	plt.tight_layout()
-	plt.savefig("{}.png".format(plot_beans_deployed))
-	plt.savefig("{}.pdf".format(plot_beans_deployed))
+	plt.savefig("{}/png/{}.png".format(path, plot_beans_deployed))
+	plt.savefig("{}/pdf/{}.pdf".format(path, plot_beans_deployed))
 	plt.close()
