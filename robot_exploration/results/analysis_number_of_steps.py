@@ -24,8 +24,8 @@ if __name__ == "__main__":
 	plt.ylabel("Time required for exploration (# of steps)", fontsize = 15)
 	plt.title("Total difficulty vs actual time taken")
 	plt.tight_layout()
-	plt.savefig("./images/png/{}.png".format(plot_difficulty_vs_steps))
-	plt.savefig("./images/pdf/{}.pdf".format(plot_difficulty_vs_steps))
+	plt.savefig("{}.png".format(plot_difficulty_vs_steps))
+	plt.savefig("{}.pdf".format(plot_difficulty_vs_steps))
 	plt.close()
 
 	# dimensions vs bean_deployed
@@ -57,8 +57,8 @@ if __name__ == "__main__":
 	plt.title("Number of beans deployed for a NxN map")
 	plt.legend()
 	plt.tight_layout()
-	plt.savefig("./images/png/{}.png".format(plot_beans_deployed))
-	plt.savefig("./images/pdf/{}.pdf".format(plot_beans_deployed))
+	plt.savefig("{}.png".format(plot_beans_deployed))
+	plt.savefig("{}.pdf".format(plot_beans_deployed))
 	plt.close()
 
 	# dimensions vs steps, mean and std as before, we need parameters for optimization to 
