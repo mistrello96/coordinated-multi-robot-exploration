@@ -33,7 +33,7 @@ class ExplorationArea(Model):
 		gamma_csv = gamma_csv,
 		optimization_task = False, # enable a small part of data collection for optimization task
 		time_csv = number_of_steps_csv,
-		exploration_percentage_csv = exploration_percentage_csv, 
+		#exploration_percentage_csv = exploration_percentage_csv, 
 		robot_status_csv = robot_status_csv):
 
 		# checking params consistency
@@ -72,7 +72,7 @@ class ExplorationArea(Model):
 				 "step": lambda m: self.get_step(m)}
 			)
 			self.time_csv = time_csv
-			self.exploration_percentage_csv = exploration_percentage_csv
+			#self.exploration_percentage_csv = exploration_percentage_csv
 			self.robot_status_csv = robot_status_csv
 
 		if self.optimization_task:
@@ -269,6 +269,7 @@ class ExplorationArea(Model):
 				df.to_csv(self.time_csv, index = False)
 				
 				df_explored = self.dc_percentage_step.get_model_vars_dataframe()
+				'''
 				df = pd.read_csv(self.exploration_percentage_csv)
 				if len(df["sim_id"]) == 0: # in case the csv has no values
 					df_explored["sim_id"] = 0
@@ -276,7 +277,7 @@ class ExplorationArea(Model):
 					df_explored["sim_id"] = df["sim_id"][df.index[-1]] + 1 # get the last value of sim_id increase of one
 				df = df.append(df_explored, ignore_index = True, sort = False) # If there are some problems in the csvs, look for this sort, DP
 				df.to_csv(self.exploration_percentage_csv, index = False)
-				
+				'''
 				df_robots_status = self.dc_robot_status.get_model_vars_dataframe()
 				df = pd.read_csv(self.robot_status_csv)
 				if len(df["sim_id"]) == 0:
