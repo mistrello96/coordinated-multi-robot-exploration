@@ -28,7 +28,3 @@ if __name__ == "__main__":
 		plt.savefig("./images/pdf/{}.pdf".format(output_file))
 		plt.close()
 		return
-
-	# have to think about a nice plot for more simulations all together
-	# mean and std for every step? some simulations can end before the others
-	# would be really meaningful?
