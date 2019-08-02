@@ -16,7 +16,7 @@ import sys
 from scipy.spatial import distance
 
 number_of_steps_csv = "./robot_exploration/results/number_of_steps.csv"
-exploration_percentage_csv = "./robot_exploration/results/percentage_exploration_simulation_step.csv"
+#exploration_percentage_csv = "./robot_exploration/results/percentage_exploration_simulation_step.csv"
 robot_status_csv = "./robot_exploration/results/robots_status_simulation_step.csv"
 alpha_csv = "./robot_exploration/results/alpha_variation.csv"
 alpha_step_csv = "./robot_exploration/results/alpha_steps.csv"
@@ -238,9 +238,8 @@ class ExplorationArea(Model):
 		self.schedule.step()
 		#print("step " + str(self.schedule.steps))
 
-		if self.dump_datas:		
-			# result = self.get_explored(self)
-			#self.dc_percentage_step.collect(self)
+		if self.dump_datas:
+			self.dc_percentage_step.collect(self)
 			self.dc_robot_status.collect(self)
 		if self.optimization_task:
 			self.total_idling_time += self.get_number_robots_status(self, "idling")
