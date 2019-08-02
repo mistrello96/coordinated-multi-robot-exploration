@@ -260,7 +260,7 @@ class ExplorationArea(Model):
 			# Data collection
 			if self.dump_datas:
 				df = pd.read_csv(self.time_csv)
-				df = df.append({"nrobots": self.nrobots, "ncells": self.ncells - 2, 
+				df = df.append({"nrobots": self.nrobots, "ncells": self.ncells, 
 								"steps": self.schedule.steps, 
 								"total_difficulty": self.total_difficulty,
                 "beans_deployed": self.get_number_bean_deployed(self)},
