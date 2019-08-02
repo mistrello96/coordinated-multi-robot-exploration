@@ -19,7 +19,6 @@ if __name__ == "__main__":
 
 		steps = sorted(list(set(df["step"])))
 		_, bins = np.histogram(steps, bins = int((steps[-1] - steps[0]) // 100), density = False)
-		print(bins)
 		step_averagecost = dict()
 		step_stdcost = dict()
 		for i in range(len(bins) - 2):
