@@ -20,11 +20,18 @@ class Injured(Agent):
 		rand = np.random.random_sample()
 		if rand > 0.999:
 			# if so, set the priority of the cell to 1 and also increment priority of the neighborhood
-			cell.priority = self.model.alpha * 6 * 2
-			for close_index in self.model.grid.get_neighborhood(self.pos, "moore", include_center = False, radius = 1):
-				close_cell = self.agent_get_cell(close_index)
-				if close_cell.explored == 0:
-					close_cell.priority = self.model.alpha * 6
+			if self.model.alpha == 0:
+				cell.priority = 1
+				for close_index in self.model.grid.get_neighborhood(self.pos, "moore", include_center = False, radius = 1):
+					close_cell = self.agent_get_cell(close_index)
+					if close_cell.explored == 0:
+						close_cell.priority = 0.3
+			else:
+				cell.priority = self.model.alpha * 6 * 2
+				for close_index in self.model.grid.get_neighborhood(self.pos, "moore", include_center = False, radius = 1):
+					close_cell = self.agent_get_cell(close_index)
+					if close_cell.explored == 0:
+						close_cell.priority = self.model.alpha * 6
 
 	def step(self):
 		# if not found

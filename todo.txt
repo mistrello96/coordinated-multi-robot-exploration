@@ -1,6 +1,17 @@
 Ultima cosa da fare
 - introdurre probabilità di fallimento da parte dei robot o ripetitori wi-fi (distribuzione poisson ?)
-- valutare comportamento feriti (valori di utilità / comportamento se non in frontiera)
+	-robot
+		-movimento (riaggiungere cella alla frontiera e comunico guasto)
+		-esplorazione (riaggiungere cella alla frontiera e comunico guasto)
+		NB assumo sempre di poter comunicare il guasto(ridondanza sistema wifi) 
+	-bean
+		sp verso lo spawn di tutti i robot out of range, ogni passo verifico se sono tornato in range, se si deplyo un bean
+		Quando vado fuori range, se toprnando in dietro di uno step lo ritrovo, allora l'hgo perso muovendomi e lascio un bean. se non c'è nemmeno li, allora il bena è morto e inizio la procedura descritta sopra
+
+
+- aggiungere celle prioritarie alla frontiera quando vista
+
+
 
 #DONE
 scalato anche il numero dei wifi bean range (assimilabile)
@@ -10,5 +21,4 @@ lunghezza dello sp cresce sempre negli ultimi step (backtracking).
 Valori bassi portano a cammini molto più lunghi, valori alti portano a cammini sempre più corti fin da subito e lunghi alla fine per completare la mappa
 
 gamma: distribuzione per valori alti spostata in alto e a dx, indica maggiore disatanza
-Grafici a onda i picchi rappresentano la segnalazione di un ferito (alpha basso, quindi priority influenza molto) 
-
+Grafici a onda i picchi rappresentano la segnalazione di un ferito (alpha basso, quindi priority influenza molto)
