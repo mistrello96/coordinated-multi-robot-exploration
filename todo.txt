@@ -1,5 +1,6 @@
 Ultima cosa da fare
 - introdurre probabilità di fallimento da parte dei robot o ripetitori wi-fi (distribuzione poisson ?)
+- valutare comportamento feriti (valori di utilità / comportamento se non in frontiera)
 
 #DONE
 scalato anche il numero dei wifi bean range (assimilabile)

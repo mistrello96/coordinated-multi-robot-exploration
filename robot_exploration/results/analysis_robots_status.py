@@ -13,7 +13,7 @@ if __name__ == "__main__":
 
 	simulations = sorted(list(set(df["sim_id"])))
 	number_of_simulations = len(simulations)
-	print(number_of_simulations)
+	#print(number_of_simulations)
 	
 	for s in simulations:
 		tmp_df = df.loc[df["sim_id"] == s]

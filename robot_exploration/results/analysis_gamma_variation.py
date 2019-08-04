@@ -24,8 +24,8 @@ if __name__ == "__main__":
 		plt.figure(figsize = (8, 6), dpi = 300)
 		plt.yscale("log")
 		(vs, bins) = np.histogram(df["mean"], bins = int(round(max(df["mean"]) - min(df["mean"]))), density = False)
-		print("bins for gamma {}: {} with number of bins {}".format(g, bins, len(bins) - 1))
-		print(vs)
+		#print("bins for gamma {}: {} with number of bins {}".format(g, bins, len(bins) - 1))
+		#print(vs)
 
 		for i in range(len(bins) - 1):
 			m = (bins[i] + bins[i + 1]) / 2

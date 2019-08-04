@@ -4,8 +4,9 @@ import numpy as np
 import sys
 
 if __name__ == "__main__":
-
-	df = pd.read_csv("./aggregate_csvs.csv")
+	assert len(sys.argv) == 2
+	file = sys.argv[1]
+	df = pd.read_csv(file)
 
 	# nrobots vs bean_deployed
 	nrobots = sorted(list(set(df["nrobots"])))
