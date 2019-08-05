@@ -96,6 +96,8 @@ class ExplorationArea(Model):
 	  	# graph of seen cells
 		self.seen_graph = nx.DiGraph()
 
+		rnd.seed()
+
 		# place a cell agent for store data and visualization on each cell of the grid
 		# if map is not taken from file, create it
 		if load_file == None:
@@ -180,7 +182,6 @@ class ExplorationArea(Model):
 				self.agent_counter += 1	
 		
 		# create robotic agents
-		rnd.seed()
 		row = 0
 		starting_coord = []
 		# data collection number of beans requested

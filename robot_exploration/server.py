@@ -25,7 +25,10 @@ def agent_portrayal(agent):
     # if robot, represent corresponding status
     if type(agent) is Robot:
         if agent.exploration_status != 0:
-            portrayal = {"Shape": "circle", "Color": "blue", "Filled": "true", "Layer": 0.5, "r": 0.6}
+            if agent.exploration_status == -1:
+                portrayal = {"Shape": "circle", "Color": "green", "Filled": "true", "Layer": 0.5, "r": 0.6}
+            else:
+                portrayal = {"Shape": "circle", "Color": "blue", "Filled": "true", "Layer": 0.5, "r": 0.6}
         else:
             portrayal = {"Shape": "circle", "Color": "#505050", "Filled": "true", "Layer": 0.5, "r": 0.6}
     if type(agent) is Injured:
@@ -82,9 +85,10 @@ else:
     model_params["obstacles_dist"] = None
     model_params["ninjured"] = None
 
+model_params["dump_datas"] = False
 #grid representation
 grid = CanvasGrid(agent_portrayal, params[0], params[0], params[1], params[1])
-
+'''
 exploration_chart = ChartModule([{"Label": "explored",
                       "Color": "Black"}],
                     data_collector_name='dc_percentage_step')
@@ -94,8 +98,9 @@ robort_chart = ChartModule([{"Label": "idling", "Color": "#505050"}, {"Label" : 
 
 if params[2] != "None":
     model_params["load_file"] = params[2] 
-
-server = ModularServer(ExplorationArea, [grid, exploration_chart, robort_chart], "Search and Rescue simulation", model_params)
+'''
+# server = ModularServer(ExplorationArea, [grid, exploration_chart, robort_chart], "Search and Rescue simulation", model_params)
+server = ModularServer(ExplorationArea, [grid], "Search and Rescue simulation", model_params)
 
 server.port = 8521
 server.launch()

@@ -4,6 +4,7 @@ import math
 import networkx as nx
 from decimal import Decimal, ROUND_HALF_UP
 import time
+import random as rnd
 
 class Robot(Agent):
 	def __init__(self, unique_id, model, pos, radar_radius):
@@ -25,14 +26,17 @@ class Robot(Agent):
 		self.travel_treshold = 1 + (cell.difficulty // 4)
 		# progress of the crossing process
 		self.travel_status = 0
+		# used for failure cases in order to set back correctly the utility of the cell
+		self.former_cell_utility = 0
 
-		self.percept()
+		self.percept() # è ancora utile ? DP
 
 		# store the status of the Robot
 		# 0 picking target / not moving
 		# 1 travelling
 		# 2 exploring
 		# 3 deploying wifi bean
+		# -1 failed
 		self.status = 0
 		# if covered by a wifi bean
 		self.out_of_range = False # all'inizio la persona o il mezzo che li deploya porta con sè un bean
@@ -42,6 +46,7 @@ class Robot(Agent):
 		self.deploy_status = 0
 		# used for data collection
 		self.number_bean_deployed = 0
+		rnd.seed()
 
 	# return the cell agent at the index given
 	def agent_get_cell(self, index):
@@ -280,6 +285,7 @@ class Robot(Agent):
 			# speed is reduced by half when exploring. The cell is divided in 6 lanes
 			self.exploration_treshold = 6 * int(Decimal(0.5 * cell.difficulty).to_integral_value(rounding = ROUND_HALF_UP)) * 2
 			# make the cell disgusting for other robots
+			self.former_cell_utility = cell.utility
 			cell.utility = -math.inf
 			# compute and store the most convinient path to get there
 			# DP, ma perché lo ricalcoliamo? non possiamo farcelo mandare a sopra in qualche modo? 
@@ -288,9 +294,9 @@ class Robot(Agent):
 			self.target_path = self.target_path[1:]
 
 	def step(self):
-		# Assumiamo che la persona o il mezzo con cui vengono trasportati i robot abbiano con loro un bean per 
-		# permettere la comunicazione iniziale tra i robot
-		
+		f = self.failure()
+		if f:
+			return
 		# if the robot has lost wifi signal
 		if self.out_of_range:
 			self.wifi_deploy()
@@ -306,3 +312,15 @@ class Robot(Agent):
 				# if the robot has no target, find one
 				else:
 					self.pick_target()
+
+	def failure(self):
+		failure = rnd.random() > (1 - 10e-5) # should be 0.01%
+		if failure:
+			if self.target_cell:
+				cell = self.agent_get_cell(self.target_cell)
+				cell.explored = 0
+				cell.utility = self.former_cell_utility
+				self.model.frontier.add(self.target_cell)
+			self.model.schedule.remove(self)
+			self.status = -1
+		return failure
