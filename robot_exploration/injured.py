@@ -16,22 +16,42 @@ class Injured(Agent):
 		return cell
 
 	# possibility to send sos signal
-	def sos(self, cell):
+	def sos_low(self, cell):
+		rand = np.random.random_sample()
+		if rand > 0.999:
+			# if so, set the priority of the cell to 1 and also increment priority of the neighborhood
+			cell.priority = 1
+			for close_index in self.model.grid.get_neighborhood(self.pos, "moore", include_center = False, radius = 1):
+				close_cell = self.agent_get_cell(close_index)
+				if close_cell.explored == 0:
+					close_cell.priority = 0.3
+
+
+	# possibility to send sos signal
+	def sos_high(self, cell):
 		rand = np.random.random_sample()
 		if rand > 0.999:
 			# if so, set the priority of the cell to 1 and also increment priority of the neighborhood
 			if self.model.alpha == 0:
-				cell.priority = 1
+				cell.priority = self.model.alpha * 6 * self.model.wifi_range
+				if self.model.seen_graph.has_node(cell.pos):
+					self.model.frontier.add(cell.pos)
 				for close_index in self.model.grid.get_neighborhood(self.pos, "moore", include_center = False, radius = 1):
 					close_cell = self.agent_get_cell(close_index)
 					if close_cell.explored == 0:
 						close_cell.priority = 0.3
+						if self.model.seen_graph.has_node(close_cell.pos):
+							self.model.frontier.add(close_cell.pos)
 			else:
-				cell.priority = self.model.alpha * 6 * 2
+				cell.priority = self.model.alpha * 6 * self.model.wifi_range
 				for close_index in self.model.grid.get_neighborhood(self.pos, "moore", include_center = False, radius = 1):
 					close_cell = self.agent_get_cell(close_index)
+					if self.model.seen_graph.has_node(cell.pos):
+						self.model.frontier.add(cell.pos)
 					if close_cell.explored == 0:
 						close_cell.priority = self.model.alpha * 6
+						if self.model.seen_graph.has_node(close_cell.pos):
+							self.model.frontier.add(close_cell.pos)
 
 	def step(self):
 		# if not found
@@ -39,4 +59,7 @@ class Injured(Agent):
 			cell = self.agent_get_cell(self.pos)
 			# if cell not explored and in wifi range, can send a help request
 			if cell.explored == 0 and cell.wifi_covered:
-				self.sos(cell)
+				if self.model.inj_pri == 0:
+					self.sos_low(cell)
+				else:
+					self.sos_high(cell)

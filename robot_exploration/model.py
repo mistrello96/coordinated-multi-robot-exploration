@@ -23,7 +23,7 @@ alpha_step_csv = "./robot_exploration/results/alpha_steps.csv"
 gamma_csv = "./robot_exploration/results/gamma_variation.csv"
 
 class ExplorationArea(Model):
-	def __init__(self, nrobots, radar_radius, wifi_range, alpha, gamma, ninjured = None, ncells = None, obstacles_dist = None,
+	def __init__(self, nrobots, wifi_range, radar_radius = 6, alpha = 8.175, gamma = 0.65, inj_pri = 0, ninjured = None, ncells = None, obstacles_dist = None,
 		load_file = None,
 		dump_datas = True, # enable data collection
 		alpha_variation = False, # record datas for alpha variation studies
@@ -51,6 +51,7 @@ class ExplorationArea(Model):
 		self.alpha = alpha
 		self.gamma = gamma
 		self.ninjured = ninjured
+		self.inj_pri = inj_pri
 		self.dump_datas = dump_datas
 		self.optimization_task = optimization_task
 		self.frontier = set()

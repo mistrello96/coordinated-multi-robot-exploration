@@ -24,13 +24,14 @@ def agent_portrayal(agent):
             portrayal = {"Shape": "circle", "Color": "yellow", "Filled": "false", "Layer": 1, "r": 0.4}
     # if robot, represent corresponding status
     if type(agent) is Robot:
-        if agent.exploration_status != 0:
-            if agent.exploration_status == -1:
-                portrayal = {"Shape": "circle", "Color": "green", "Filled": "true", "Layer": 0.5, "r": 0.6}
-            else:
-                portrayal = {"Shape": "circle", "Color": "blue", "Filled": "true", "Layer": 0.5, "r": 0.6}
+        if agent.status == -1:
+            portrayal = {"Shape": "circle", "Color": "black", "Filled": "true", "Layer": 0.5, "r": 0.6}
         else:
-            portrayal = {"Shape": "circle", "Color": "#505050", "Filled": "true", "Layer": 0.5, "r": 0.6}
+            if agent.exploration_status != 0:
+                portrayal = {"Shape": "circle", "Color": "blue", "Filled": "true", "Layer": 0.5, "r": 0.6}
+            else:
+                portrayal = {"Shape": "circle", "Color": "#505050", "Filled": "true", "Layer": 0.5, "r": 0.6}
+
     if type(agent) is Injured:
         portrayal = None
     return portrayal
@@ -46,39 +47,39 @@ if params[2] == "None":
     nrobots = ncells // 6 
     model_params = {
     # order of values is default, min, max, step
-    # TODO: the default values should be infered by the server_grid file, in order to make the map visible
-    # at the launch, rember that the map has to more rows/columns than ncells to be explored
-        "nrobots": UserSettableParameter('slider', "Number of robots", nrobots, 1, 50, 1,
+        "nrobots" : UserSettableParameter('slider', "Number of robots", nrobots, 1, 50, 1,
                                             description = "Choose how many agents to include in the model"),
-        "radar_radius": UserSettableParameter('slider', "Radar radius", 6, 0, 10, 1,
+        "radar_radius" : UserSettableParameter('slider', "Radar radius", 6, 0, 10, 1,
                                             description = "Choose how many cells around the robot can see"),
-        "ncells": UserSettableParameter('number', "Number of rows/columns of cells", value = ncells),
-        "obstacles_dist": UserSettableParameter('slider', "Obstacle probability", 0.05, 0, 1, 0.01,
+        "ncells" : UserSettableParameter('number', "Number of rows/columns of cells", value = ncells),
+        "obstacles_dist" : UserSettableParameter('slider', "Obstacle probability", 0.05, 0, 1, 0.01,
                                             description = "Choose how many obstacle there are in the map"),
-        "wifi_range": UserSettableParameter('slider', "Wifi range", 3, 2, 150, 1,
+        "wifi_range" : UserSettableParameter('slider', "Wifi range", 3, 2, 150, 1,
                                             description = "Choose how many cells the wifi signal is propagated"),
-        "alpha": UserSettableParameter('number', "Alpha value", value = 8.175,
+        "alpha" : UserSettableParameter('number', "Alpha value", value = 8.175,
                                             description = "Importance of path cost in target selection"),
-        "gamma": UserSettableParameter('number', "Gamma value", value = 0.65,
+        "gamma" : UserSettableParameter('number', "Gamma value", value = 0.65,
                                             description = "Influence on utility reduction on the neighborhood of the target"),
-        "ninjured": UserSettableParameter('slider', "Number of injured", 5, 1, 30, 1,
-                                            description = "Choose how many injured are in the map")
+        "ninjured" : UserSettableParameter('slider', "Number of injured", 5, 1, 30, 1,
+                                            description = "Choose how many injured are in the map"),
+        "inj_pri" : UserSettableParameter('slider', "Injured Priority", 0, 0, 1, 1,
+                                            description = "Choose how important is to explore cells with injured")
     }
 else:
     model_params = {
     # order of values is default, min, max, step
-    # TODO: the default values should be infered by the server_grid file, in order to make the map visible
-    # at the launch, rember that the map has to more rows/columns than ncells to be explored
-        "nrobots": UserSettableParameter('slider', "Number of robots", 6, 1, 50, 1,
+        "nrobots" : UserSettableParameter('slider', "Number of robots", 6, 1, 50, 1,
                                             description = "Choose how many agents to include in the model"),
-        "radar_radius": UserSettableParameter('slider', "Radar radius", 6, 0, 10, 1,
+        "radar_radius" : UserSettableParameter('slider', "Radar radius", 6, 0, 10, 1,
                                             description = "Choose how many cells around the robot can see"),
-        "wifi_range": UserSettableParameter('slider', "Wifi range", 10, 2, 150, 1,
+        "wifi_range" : UserSettableParameter('slider', "Wifi range", 10, 2, 150, 1,
                                             description = "Choose how many cells the wifi signal is propagated"),
-        "alpha": UserSettableParameter('number', "Alpha value", value = 8.175,
+        "alpha" : UserSettableParameter('number', "Alpha value", value = 8.175,
                                             description = "Importance of path cost in target selection"),
-        "gamma": UserSettableParameter('number', "Gamma value", value = 0.65,
-                                            description = "Influence on utility reduction on the neighborhood of the target")
+        "gamma" : UserSettableParameter('number', "Gamma value", value = 0.65,
+                                            description = "Influence on utility reduction on the neighborhood of the target"),
+        "inj_pri" : UserSettableParameter('slider', "Injured Priority", 0, 0, 1, 1,
+                                            description = "Choose how important is to explore cells with injured")
     }
     model_params["load_file"] = params[2]
     model_params["ncells"] = None

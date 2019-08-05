@@ -62,6 +62,18 @@ class Robot(Agent):
 		except:
 			return None
 
+	def failure(self):
+		failure = rnd.random() > (1 - 10e-8)
+		if failure:
+			if self.target_cell:
+				cell = self.agent_get_cell(self.target_cell)
+				cell.explored = 0
+				cell.utility = self.former_cell_utility
+				self.model.frontier.add(self.target_cell)
+			self.model.schedule.remove(self)
+			self.status = -1
+		return failure
+
 	# return cells of the supercover line between 2 cells
 	def line_of_sight(self, source, destination):
 		y0, x0 = source
@@ -312,15 +324,3 @@ class Robot(Agent):
 				# if the robot has no target, find one
 				else:
 					self.pick_target()
-
-	def failure(self):
-		failure = rnd.random() > (1 - 10e-5) # should be 0.01%
-		if failure:
-			if self.target_cell:
-				cell = self.agent_get_cell(self.target_cell)
-				cell.explored = 0
-				cell.utility = self.former_cell_utility
-				self.model.frontier.add(self.target_cell)
-			self.model.schedule.remove(self)
-			self.status = -1
-		return failure
