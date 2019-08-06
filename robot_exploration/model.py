@@ -55,6 +55,7 @@ class ExplorationArea(Model):
 		self.dump_datas = dump_datas
 		self.optimization_task = optimization_task
 		self.frontier = set()
+		self.broken_beans = 0
 		# Data collection tools
 		if self.dump_datas:
 			# it represents the sum of the difficulties of every cell

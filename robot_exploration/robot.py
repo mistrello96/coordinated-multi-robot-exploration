@@ -220,16 +220,23 @@ class Robot(Agent):
 			self.deploy_status += 1
 		# if the release is completed, update the grid data with the new bean
 		if self.deploy_status == self.deploy_threshold:
-			cell = self.agent_get_cell(self.pos)
-			cell.wifi_bean = True
-			# update wifi signal
-			for index in self.model.grid.get_neighborhood(self.pos, "moore", include_center = False, radius = self.model.wifi_range):
-				cell = self.agent_get_cell(index)
-				cell.wifi_covered = True
-			# reset deploy variables
-			self.out_of_range = False
-			self.deploy_status = 0
-			self.number_bean_deployed += 1
+			failure = rnd.random() > (1 - 10e-8)
+			if not failure:
+				cell = self.agent_get_cell(self.pos)
+				cell.wifi_bean = True
+				# update wifi signal
+				for index in self.model.grid.get_neighborhood(self.pos, "moore", include_center = False, radius = self.model.wifi_range):
+					cell = self.agent_get_cell(index)
+					cell.wifi_covered = True
+				# reset deploy variables
+				self.out_of_range = False
+				self.deploy_status = 0
+				self.number_bean_deployed += 1
+			else:
+				self.out_of_range = False
+				self.deploy_status = 0
+				self.number_bean_deployed += 1
+				self.model.broken_beans += 1
 
 	def move(self):
 		self.status = 1

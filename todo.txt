@@ -1,8 +1,3 @@
-Ultima cosa da fare
--bean
-	sp verso lo spawn di tutti i robot out of range, ogni passo verifico se sono tornato in range, se si deplyo un bean
-	Quando vado fuori range, se toprnando in dietro di uno step lo ritrovo, allora l'hgo perso muovendomi e lascio un bean. se non c'è nemmeno li, allora il bena è morto e inizio la procedura descritta sopra
-
 #DONE
 scalato anche il numero dei wifi bean range (assimilabile)
 -robot
