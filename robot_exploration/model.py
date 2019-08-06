@@ -252,11 +252,16 @@ class ExplorationArea(Model):
 									   ignore_index = True, sort = False)
 		# if all seen cells have benn explored, stop the simulation
 		# we do this so if there are unreachable cells, the cannot be seen, so the simulation stops anyway
-		stop = True
+		stop_exploration_done = True
 		for node in self.seen_graph.nodes():
 			cell = [obj for obj in self.grid.get_cell_list_contents(node) if isinstance(obj, Cell)][0]
 			if cell.explored == 0 or cell.explored == 1:
-				stop = False
+				stop_exploration_done = False
+		stop_no_robots = False
+		if len([x for x in self.schedule.agents if isinstance(x, Robot)]) == 0:
+			stop_no_robots = True
+		stop = stop_exploration_done or stop_no_robots 
+
 		if stop:
 			print("Simultation ended")
 			# Data collection
