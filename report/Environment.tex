@@ -1,0 +1,44 @@
+L'ambiente in cui agiscono gli agenti è una porzione di territorio, tipicamente cittadino e di dimensioni variaibli, dopo che è avvenuto un evento catalogabile come disastro naturale; per questo motivo, porzioni di tale mappa non potranno essere esplorate, poiché inaccessibili e le parti esplorabili non richiederanno tutte lo stesso tempo di esplorazione a causa della complessità di attraversamento del territorio causato dai detriti.
+L'ambiente presenta le seguenti caratteristiche:
+\begin{itemize}
+	\item parzialmente inaccessibile, perché i robot esplorano in modo progressivo il territorio; \textit{i.e.}, all'inizio non conoscono nulla della mappa se non quello che percepiscono con i loro sensori, man mano che l'esplorazione progredisce conoscono sempre una porzione maggiore del territorio fino a conoscere tutto l'ambiente ad esplorazione ultimata;
+	\item stocastico, poiché nonostante il comportamento dei robot è ben definito a priori, quello dei feriti (il secondo tipo di agente) e le probabilità di fallimento dei robot o dei ripetirori \textit{wi-fi} sono stabiliti da regole stocastiche;
+	\item sequenziale, le azioni dei singoli robot dipendono da quelle che hanno effettuato in precedenza, inoltre i feriti possono segnalare la loro presenza solo se non sono già stati individuati dai robot;
+	\item semi-dinamico, i robot e i feriti non agiscono direttamente sull'ambiente modificando il territorio ma possono modificare l'importanza di sue porzioni, che come descritto in seguito, cambieranno il comportamento degli agenti;
+	\item discreto, nonostante la combinatoria sia significativa è possibile stabilire a priori tutte le possibili configurazioni che può assumere l'ambiente con gli agenti al suo interno.
+\end{itemize}
+
+Come già accennato, l'ambiente è rappresentato come una griglia in cui ogni cella rappresenta un'area di 3$\times$3 metri e ogni \textit{step} della simulazione corrisponde ad un secondo di tempi di orologio.
+Inoltre, attorno al territorio da esplorare, vi è un bordo composto da una “cornice di spessore una cella” che rappresenta la porzione di territorio confinante a quello di interesse in cui verranno disposti i robot, e che questi potranno sfruttare per raggiungere più velocemente altre celle all'interno dell'area di interesse.
+Ogni cella è descritta da un insieme di attributi:
+\begin{itemize}
+	\item le sue coordinate all'interno della griglia, per rappresentazione interna del simulatore viene prima esplicitata la colonna e poi la riga;
+	\item un intero che varia nell'intervallo $\\left[1, 12\\right]$ che rappresenta una difficoltà simbolica della cella, più tale valore è alto più il robot impiegherà tempo ad esplorarla e ad attraversarla per raggiungere altre celle (un difficoltà elevata può essere data da un numero maggiore di detriti nella zona o a dei muri che costringerebbero il robot ad effettuare a livello microscopico degli aggiramenti);
+	\item lo stato della cella, ovvero se non è ancora stata esplorata, se sta venendo esplorata, se non è esplorabile oppure se è una cella della “cornice”;
+	\item un valore di priorità, ovvero un parametro che fa aumentare l'importanza della cella favorendola nella scelta della prossima destinazione da parte dei robot, ciò è dovuto al fatto che la cella si trova nel vicinato di una cella in cui il ferito ha segnalato la sua posizione \todo[inline]{in che intervalli di valori varia? DP};
+	\item un valore di utilità, inizilizzato ad uno per ogni cella, che viene sfruttato dai robot per scegliere la cella “migliore” (questo concetto viene meglio delineato nella Sotto-sezione \ref{sub:robots});
+	\item due booleani che stabiliscono se in tale cella è stato posizionato un ripetitore \textit{wi-fi} oppure se la cella è coperta dal segnale \textit{wi-fi}, si sottolinea che la rappresentazione della copertura della rete è effettuata mediante questa tecnica e che non si sono sfruttati ulteriori agenti rendendo quindi tale rappresentazione a stretto contatto con l'ambiente.
+\end{itemize}
+
+Da un punto di vista programmativo, l'ambiente non rappresenta solo l'ambiente in sè ma si preoccupa di far progradire la simulazione, raccogliere i dati di interesse, contenere dei parametri utilizzati dai singoli robot (per comodità di rappresentazione dei dati e di gestione della memoria) e infine di fungere anche come parte della rappresentazione condivisa della mappa da parte dei robot, quest'ultima è discussa in dettaglio nella Sotto-sezione \ref{sub:robots}.
+Di seguito, verranno elencati, e brevemente descritti, solo gli attributi che si riferiscono effettivamente all'ambiente:
+\begin{itemize}
+	\item \texttt{grid} rappresenta la griglia in cui i vari agenti si muoveranno;
+	\item \texttt{schedule} rappresenta uno \textit{scheduler} con ordine di attivazione casuale per l'esecuzione dell'azione degli agenti al relativo \textit{step} della simulazione;
+	\item \texttt{nrobots} il numero di robot che devono esplorare l'area di interesse;
+	\item \texttt{ncells} la lunghezza, in termini di celle, del lato del quadrato che rappresenta il territorio, si è adottata una rappresentazione di un ambiente quadrato per comodità ma tutti i risultati sono estendibili a mappe rettangolari; si sottolinea, inoltre, che tale parametro non tiene contro della “cornice”, questa viene aggiunta in un secondo momento in maniera trasparente all'utente;
+	\item \texttt{obstacles\_dist} indica la probabilità con cui ogni singola cella possa essere un ostacolo e quindi inesplorabile, questo valore risulta determinante nel momento in cui non si utilizzino delle mappe pregenerate;
+	\item \texttt{wifi\_range} indica la lunghezza del raggio del singolo ripetitore \textit{wi-fi} in termini di celle, si considera coperta l'area stabilita dal vicinato di Moore di distanza pari al parametro sopracitato;
+	\item \texttt{ninjured}, ovvero il numero di feriti all'interno della mappa.
+\end{itemize}
+\todo[inline]{da rivedere sicuramente quanto segue perché molto ci giochiamo qui DP}
+Al contempo, come già detto, all'interno della classe che rappresenta l'ambiente sono stati inseriti un insieme di parametri che vengono sfruttati poi dai singoli agenti, a livello programmativo, ma che sono condivisi, o perché sono valori costanti e immutabili o perché li condividono mediante dei sistemi di comunicazione.
+A livello teorico, tali parametri dovrebbero essere personali e rappresentati in ogni singolo agente ma per motivi di memoria e comodità per la parte simulativa sono stati inseriti come parametri della classe che rappresenta l'ambiente poiché tale oggetto è condiviso, per imposizione della libreria, ad essere presente,quindi condiviso, tra i vari agenti.
+Di seguito sono riportati:
+\begin{itemize}
+	\item \texttt{radar\_radius} ovvero la capacità di percezione che ha il robot in termini di quante celle vede di fronte a lui;
+	\item \texttt{alpha} e \texttt{gamma} sono due pesi che vengono sfruttati dai robot rispettivamente per la scelta della cella da esplorare e per la diminuzione dell'utilità delle celle, tali parametri verranno poi ampiamente discussi;
+	\item \texttt{frontier} rappresenta la frontiera delle celle da esplorare, per frontiera si intende l'insieme delle celle non esplorate che sono adiacenti ad una cella che sta venendo esplorata o che è stata esplorata; tale rappresentazione è costantemente aggiornata tra tutti i robot e ogni robot conosce la frontiera completamente, anche quelle celle che non ha mai individuato in personalmente;
+	\item \texttt{seen\_graph} è un grafo diretto in cui ogni nodo rappresenta una cella vista da almeno un robot (ovvero: celle esplorate, di frontiera e celle che sono state individuate ma ancora “distanti” per essere considerate appartenenti alla frontiera) e gli archi sono pesati con il costo per moversi tra le due celle; anche in questo caso, come precedentemente, tale rappresentazione teoricamente è interna ad ogni robot ma rimane sempre aggiornata in maniera concorde alle scelte effettuate dagli altri robot;
+	\item \texttt{inj\_pri} stabilisce quale di due tecniche viene utilizzata per aumentare la priorità del vicinato di una cella in cui un ferito ha segnalato la sua presenza.
+\end{itemize}
