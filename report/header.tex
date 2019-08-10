@@ -56,6 +56,16 @@
 	showstringspaces=false
 }{}
 
+\newcommand*{\MyMarginNoteFormat}{%
+	\scriptsize \bfseries \leavevmode \color{black}%
+}
+\newcommand{\margin}[1]{%
+	\marginpar
+	[\raggedleft  \MyMarginNoteFormat #1]%
+	{\raggedright \MyMarginNoteFormat #1}%
+}
+
+
 \begin{document} 
 
 \title{Esplorazione di una mappa tramite l'utilizzo di una flotta di robot coordinati in ambito \textit{search and rescue}} 

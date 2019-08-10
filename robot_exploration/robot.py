@@ -307,7 +307,6 @@ class Robot(Agent):
 			self.former_cell_utility = cell.utility
 			cell.utility = -math.inf
 			# compute and store the most convinient path to get there
-			# DP, ma perché lo ricalcoliamo? non possiamo farcelo mandare a sopra in qualche modo? 
 			self.target_path = nx.shortest_path(self.model.seen_graph, source = self.pos, target = self.target_cell, weight = 'weight', method = 'dijkstra')
 			# the first element is the cell itself, so pop it
 			self.target_path = self.target_path[1:]

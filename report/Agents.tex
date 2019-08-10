@@ -1,6 +1,11 @@
 \subsection{Robot}
 \label{sub:robots}
+Gli agenti che modellano il comportamento dei robot sono, di fatto, la componenete principale di tutto il sistema.
+Infatti, sono loro, e loro soltanto, a muoversi all'interno del territorio cercando i feriti e costruendo, nel mentre, la rete \textit{mesh}; nonostante abbiano un ruolo così fondamentale, questi agenti sono a tutti gli effetti dei \textit{reflexive agent with internal state}, il cui comportamento verrà descritto di seguito.
+
+% metodo di comunicazione tra i robot
 % metodologie di prioritizzazione
+\todo[inline]{fallimenti parlarne altrove? DP}
 \subsection{Ferito}
 Questo agente rappresenta le persone ferite che sono disperse nell'area di interesse e necessitano di essere individuate e salvate, si noti che il loro salvataggio non fa parte di questo simulatore poiché le metodologie di salvataggio dipendono da troppi fattori che non possono venir considerati complessivamente in un simulatore (\textit{e.g.}, la loro possibilità di muoversi oppure se richiedono un intervento medico sul campo).
 Il loro comportamento è stocastico ma basato su uno stato interno, di conseguenza tali agenti sono stati classificati come \textit{reflexive agent with internal state}, facendo riferimento alla classificazione proposta da Russell e Norvig \cite{russell2016}.
