@@ -7,6 +7,7 @@ optimization/best_solution.txt
 #images
 *.pdf
 *.png
+*.jpg
 # report
 *.log
 *.aux
