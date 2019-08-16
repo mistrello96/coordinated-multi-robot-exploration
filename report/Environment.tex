@@ -16,7 +16,7 @@ Ogni cella è descritta da un insieme di attributi:
 	\item un intero che varia nell'intervallo $\\left[1, 12\\right]$ che rappresenta una difficoltà simbolica della cella, più tale valore è alto più il robot impiegherà tempo ad esplorarla e ad attraversarla per raggiungere altre celle (un difficoltà elevata può essere data da un numero maggiore di detriti nella zona o a dei muri che costringerebbero il robot ad effettuare a livello microscopico degli aggiramenti);
 	\item lo stato della cella, ovvero se non è ancora stata esplorata, se sta venendo esplorata, se non è esplorabile oppure se è una cella della “cornice”;
 	\item un valore di priorità, ovvero un parametro che fa aumentare l'importanza della cella favorendola nella scelta della prossima destinazione da parte dei robot, ciò è dovuto al fatto che la cella si trova nel vicinato di una cella in cui il ferito ha segnalato la sua posizione \todo[inline]{in che intervalli di valori varia? DP};
-	\item un valore di utilità, inizilizzato ad uno per ogni cella, che viene sfruttato dai robot per scegliere la cella “migliore” (questo concetto viene meglio delineato nella Sotto-sezione \ref{sub:robots});
+	\item un valore di utilità, inizilizzato ad uno per ogni cella, che viene sfruttato dai robot per scegliere la cella “migliore” nel momento di stabilire il loro prossimo obiettivo durante l'esplorazione (questo concetto viene meglio delineato nella Sotto-sezione \ref{sub:robots});
 	\item due booleani che stabiliscono se in tale cella è stato posizionato un ripetitore \textit{wi-fi} oppure se la cella è coperta dal segnale \textit{wi-fi}, si sottolinea che la rappresentazione della copertura della rete è effettuata mediante questa tecnica e che non si sono sfruttati ulteriori agenti rendendo quindi tale rappresentazione a stretto contatto con l'ambiente.
 \end{itemize}
 
@@ -33,7 +33,7 @@ Di seguito, verranno elencati, e brevemente descritti, solo gli attributi che si
 \end{itemize}
 \todo[inline]{da rivedere sicuramente quanto segue perché molto ci giochiamo qui DP}
 Al contempo, come già detto, all'interno della classe che rappresenta l'ambiente sono stati inseriti un insieme di parametri che vengono sfruttati poi dai singoli agenti, a livello programmativo, ma che sono condivisi, o perché sono valori costanti e immutabili o perché li condividono mediante dei sistemi di comunicazione.
-A livello teorico, tali parametri dovrebbero essere personali e rappresentati in ogni singolo agente ma per motivi di memoria e comodità per la parte simulativa sono stati inseriti come parametri della classe che rappresenta l'ambiente poiché tale oggetto è condiviso, per imposizione della libreria, ad essere presente,quindi condiviso, tra i vari agenti.
+A livello teorico, tali parametri dovrebbero essere personali e rappresentati in ogni singolo agente ma per motivi di memoria e comodità per la parte simulativa sono stati inseriti come parametri della classe che rappresenta l'ambiente poiché tale oggetto è condiviso, per imposizione della libreria, ad essere presente tra i vari agenti.
 Di seguito sono riportati:
 \begin{itemize}
 	\item \texttt{radar\_radius} ovvero la capacità di percezione che ha il robot in termini di quante celle vede di fronte a lui;
