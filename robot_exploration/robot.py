@@ -180,7 +180,7 @@ class Robot(Agent):
 			self.model.frontier.remove(result)
 			# reduce the utility of all the sorrundings cell if not visited yet
 			for element in self.model.grid.get_neighborhood(result, "moore", include_center = False, radius = self.radar_radius):
-				# only if the cell is in lof with the robot,  lof stands for?
+				# only if the cell is in lof with the robot
 				if self.line_of_sight(self.pos, element):
 					cell2 = self.agent_get_cell(element)
 					if cell2.explored == 0:

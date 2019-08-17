@@ -35,17 +35,23 @@ In tale formula:
 \begin{itemize}
 	\item $\rho$ è la priorità della cella che risulta essere pari a zero tranne nei casi in cui la cella sia adiacente ad una cella in cui una vittima sia riuscita a segnalare la sua presenza;
 	\item $\mu$ è l'utilità della cella;
-	\item $\alpha$ è il parametro, già nominato in precedenza, che indica quanto il costo del percorso per raggiungere la cella d'interesse pesi nella scelta;
+	\item $\alpha$ è il parametro, già nominato in precedenza, che indica quanto il costo del percorso per raggiungere la cella d'interesse pesi nella scelta, più il valore è alto più ci si aspetta che il costo influisca in maniera significativa e viceversa, ovvero valorizzando di più l'utilità e la priorità delle celle ma non il costo per raggiungerle;
 	\item $\omega$ è il costo, in termini di \textit{step} necessari per raggiungere la cella d'interesse.
 \end{itemize}
 Per il calcolo di $\omega$ per ogni cella della frontiera, viene computato il costo del cammino minimo sfruttando la rappresentazione interna del territorio che possegono (e condividono) i robot sotto forma di grafo; \textit{i.e.}, di fatto si calcolano insieme tutti i cammini minimi (e i loro costi) dalla cella in cui è presente il robot verso tutte le altre celle sfruttando l'algoritmo definito da Dijkstra.
 Infine, verrà scelta la cella con \textit{info-gain} maggiore tra tutte le celle della frontiera, diventando così la cella \textit{target} dell'agente.
-Se il robot è riuscito ad individuare la sua prossima cella obiettivo, imposta l'utilità di tale cella pari a $-\infty$ in modo che nessun altro agente scelga tale cella e poi \todo[inline]{perché la rimuoviamo in find best cell la cella dalal frotniera? non dovremmo rimuoverla quando il robot la esplora? per come abbiamo definito la frontiera quella cella è ancora in frotniera, come lo sistemiamo nella relazione? DP}.
-Vi sono dei casi in cui è possibile che l'agente non riesca a stabilire il suo prossimo obiettivo perché non vi sono celle nella frontiera oppure perché tutte le celle hanno utilità pari a meno infinito e quindi stanno già venendo esplorate da un altro robot; in questi casi, i robot aspettano un secondo prima di riaggiornare la rappresentazione del territorio condivisa e poi cercano nuovamente una possibile cella.
-% riduzione dell'utilità attorno alla cella scelta -> gamma
-\todo[inline]{Anche questa riduzione non sarebbe da fare una volta che il robot arriva sulla cella e percepisce attorno? DP}
+Se il robot è riuscito ad individuare la sua prossima cella obiettivo, imposta l'utilità di tale cella pari a $-\infty$ in modo che nessun altro agente scelga tale cella e poi \textit{la rimuoviamo dalla frontiera}.\todo[inline]{perché la rimuoviamo in find best cell la cella dalla frotniera? non dovremmo rimuoverla quando il robot la esplora? per come abbiamo definito la frontiera quella cella è ancora in frontiera, come lo sistemiamo nella relazione? giustificando quello che abbiamo scritto nel codice? Il tappeto può essere una soluzione? DP}.
+Infine, il robot, \textit{quando arriva nella cella obiettivo}, diminuisce l'utilità di tutte le celle del vicinato di \textit{Moore} che riesce a percepire sfruttando i suoi sensori e che sono effettivamente nella linea “visiva” del robot; \textit{i.e.}, tutte le celle che sarebbero in linea teorica visibili dai sensori del robot ma non possono venir percepite perché delle macerie (ovvero le celle con valore di \texttt{explored} pari a $-1$) ne ostacolano la visione.
+La formula di riduzione dell'utilità utilizzata risulta essere differente rispetto a quella proposta nel principale lavoro di riferimento \cite{burgard2005}, ma il principio risulta lo stesso: più la cella è vicina al robot più la sua utilità è minore in modo che gli agenti lontani da essa siano meno invogliati a muoversi in quella direzione.
+La riduzione dell'utilità è definita dalla Formula \ref{math:utility-red}; la differenza rispetto all'articolo è che la riduzione proposta veniva effettuata mediante una sottrazione che poteva portare a valori negativi dell'utilità, dato che tale proposta non ha convinto appieno in termini di “eleganza”, si è optato per una soluzione che sfrutta lo stesso principio ma non rende negativa l'utilità. \todo[inline]{Eviterei una supercazzola lunga tre pagine. Sicuramente è da sistemare l'italiano, ma spero anche che tu ti ricorda perché hai mosso tali obiezioni sulla loro sottrazione ^^ DP}
+\begin{equation}
+	\label{math:utility-red}
+	\textit\mu = \mu\times\gamma(\frac{\textbf{d}}{\textbf{r}})
+\end{equation}
+%descrivere formula
+\todo[inline]{Anche questa riduzione non sarebbe da fare una volta che il robot arriva sulla cella e percepisce attorno? Perché nel codice sfruttiamo la lof ma il robot è ancora nella cella di partenza quando usa find best cell DP}
 \todo[inline]]{Perché proprio diviso il radar radius? Puoi aggiungerlo te? Grazie DP}
-% parametri
+Vi sono dei casi in cui è possibile che l'agente non riesca a stabilire il suo prossimo obiettivo perché non vi sono celle nella frontiera oppure perché tutte le celle hanno utilità pari a meno infinito e quindi stanno già venendo esplorate da un altro robot; in questi casi, i robot aspettano un secondo prima di riaggiornare la rappresentazione del territorio condivisa e poi cercano nuovamente una possibile cella.
 % metodo di comunicazione tra i robot
 % metodologie di prioritizzazione
 \todo[inline]{fallimenti parlarne altrove? DP}
