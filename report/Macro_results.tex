@@ -1,0 +1,63 @@
+Le seguenti analisi hanno lo scopo di rilevare delle possibli relazioni di come alcune caratterisitche (o parametri) del sistema ne possano influire degli altri.
+Per effettuare tali analisi, poiché si tratta di un sistema complesso, è stato necessario effettuare un insieme di simulazioni in modo tale da raccogliere i dati che derivano dal comportamento emergente.
+Poihé in questa Sezione si presentano analisi differenti tra loro, verrà descritto di volta in volta la metodologia utilizzata per la raccolta dati.\\
+Gli studi effettuati sono i seguenti:\begin{itemize}
+	\item come il numero dei robot influisce il numero di ripetitori rilasciati e come fa variare il valore di fitness;
+	\item come la dimensione della mappa influisce il numero di ripetitori che devono venir rilasciati dagli agenti;
+	\item come la difficoltà totale della mappa influenza il numero di step richiesto per completare l'esplorazione.
+\end{itemize}
+\subsection{Studio sul numero di robot}
+\label{subsec:nrobots}
+Come già detto, sul variare del numero dei robot sono state effettuate due analisi riguardo due aspetti diversi del sistema.
+In entrambi i casi, però, la metodologia di raccolta dati è stata analoga: per tutte le simulazioni effettuate si è mantenuta la stessa mappa \todo{siamo sicuri che anche per la fitness la mappa fosse fissa? DP}di dimensioni 30$\times$30 di cui ci si è garantiti che non presentasse al suo interno casi patologici (\textit{e.g.}, zone inesplorabili poiché irraggiungibli).
+Inoltre, i valori di $\alpha$, $\gamma$ e per il raggio dei sensori sono stati utilizzati quelli inferiti dal processo di ottimizzazione, descritto nel Capitolo \ref{chap:pso}, il \textit{range} del ripetitore è stato mantenuto pari a 3 celle in modo da avere risultati scalati correttamente rispetto alle dimensioni che erano state considerate originariamente (mappe 333$\times$333); infine, per ogni valore del numero di robot sono state effettuate 10 simulazioni e i feriti potevano segnalare la loro presenza \todo{confermi? DP}.
+
+Per quanto concerne \margin{Numero di robot \textit{vs} ripetitori rilasciati}il numero di ripetitori rilasciati, come mostrato in Figura \ref{fig:robotsbeans} tale numero aumenta all'aumentare dei robot impiegati nonostante le dimensioni della mappa rimangono costanti.
+Tale comportamento può essere considerato ragionevole perché all'aumentare del numero dei robot aumentano i casi in cui due agenti escono contemporaneamente dalla zona coperta e quindi rilasciano due ripetitori la cui area coperta di uno dei due sarebbe bastata per coprire anche parzialmente l'area dell'altro.
+Di fatto, i robot non hanno alcun meccanismo di coordinamento per la creazione della rete, ognuna pensa a sé e quindi all'aumentare del numero di robot aumentano i casi in cui due robot rilasciano due ripetitori vicini tra loro non ottimizzando l'utilizzo del singolo ripetitore, portando quindi a molte porzioni di territorio coperte da più di un singolo ripetitore.
+Si fa presente, che tale numero non è distorto dal fatto che ogni singolo robot rilascia un ripetitore appena viene disposto sul campo, poiché i robot rilasciano il ripetitore solo se in quella cella non vi è già presente un ripetitore.
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{images/macro_results/robots_beans}
+	\caption{In Figura è rappresentato come il numero di robot influisce il numero di ripetitori rilasciati nel territorio. Sull'asse delle \textit{x} è presente il numero di robot e sull'asse delle \textit{y} il numero di ripetitori disposti. Sono state effettuate 10 simulazioni per ogni valore di numero di robot, in nero è presente la media del numero di ripetitori rilasciati e l'area rossa indica la deviazione standard.}
+	\label{fig:robotsbeans}
+\end{figure}
+
+Invece, rispetto alla seconda analisi effettuata, si evidenzia che il valore di fitness è quello definito nella Formula \ref{math:pso}.
+Per quanto riguarda i risultati ottenuti mostrati in Figura \ref{fig:fitness} si nota come con un numero di robot basso la fitness diminuisce velocemente perché il tempo di esplorazione del territorio diminuisce significativamente; al contrario, con un numero elevato di agenti il valore di fitness diminuisce molto più lentamente perché il tempo di esplorazione non subisce diminuzioni significative e nel mentre vi è un numero sempre maggiore di robot in stato di \textit{idling} mentre ci si approccia al termine dell'esplorazione.
+Si fa presente, che i valori rappresentati dai segni tondi in rosso sono il valore medio di fitness che si ha ottenuto con tale numero di robot, invece, le barre nere (poco visibili) indicano la variazione data dalla deviazione standard; il fatto che spesso non si vedano è dato da fatto che la deviazione standard è molto bassa.
+Considerando il grafico mostrato e concentrandosi sull'intervallo tra i 51 e 76 robot, ci si pone una domanda aperta a cui servirebbero analisi di costi successive e non fattibili nei termini di questo lavoro: “vale la pena utilizzare 10, 15 o addirituttra 25 robot in più se il valore di fitness e il tempo di esplorazione diminuiscono poco significativamente?”.\\
+Pensiamo che per rispondere a questa domanda (escludendo i dibattiti etici a riguardo) sia necessario fare delle analisi tenendo conto il costo di realizzazione dei robot e di quanti robot si hanno a disposizione nella pratica e se sia necessario intervenire su un solo quartiere o più quartieri.
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{images/macro_results/fitness}
+	\caption{Sull'asse delle \textit{x} è indicato il numero di robot, su quello delle \textit{y} il valore di fitness. Poiché per ogni valore sono state effettuate 10 simulazioni, i valori rappresentati sono la media invece in nero sono le barre di errore date dalla deviazione standard, risultano poco visibili poiché i valori di deviazione standard sono molto piccoli rispetto alle scale del grafico.}
+	\label{fig:fitness}
+\end{figure}
+
+\subsection{Dimensioni della mappa \textit{vs} numero di ripetitori rilasciati}
+\todo[inline]{Non ho trovato il csv che ha generato tale immaigne, quindi controlla tutto quello che ho detto, soprattutto che abbiamo fatto 10 simulazioni per ogni dimensioni. Devi esserne certo, non andare a memroia DP}
+Per la produzione di questa analisi, sono state effettuate 10 simulazioni per ogni dimensione della mappa considerata, le mappe sono state generate casualmente ad ogni simulazione, i parametri sono stati utilizzati quelli inferiti dal processo di ottimizzazione (si veda il Capitolo \ref{chap:pso}), il raggio dei ripetitori pari a 3 celle e i feriti erano in grado di poter segnalare la loro presenza. \todo{il numero di robot quant'era? DP}.
+I risultati mostrati in Figura \ref{fig:beans}, dove la linea nera è la media e l'area in rosso rappresenta la deviazione standard, mostrano che all'aumentare della dimensione del territorio il numero di ripetitori aumenta (come ragionevole) in maniera assimilabile qualitativamente ad una crescita quadratica.
+Questo risultato è più che ragionevole considerando che l'aumentare della dimensione del lato dalla mappa fa aumentare la dimensione di un quadrato portando quindi ad una crescita quadratica delle dimensioni che si riflette coerentemente nel numero di ripetitori necessari.
+È interessante notare, aggregando questo dato a quello presentato nella Sotto-sezione \ref{subsec:nrobots}, che l'aumento del numero di ripetitori disposti viene influenzato maggiormente dal numero di agenti impiegati e dal fatto che non si coordinano tra loro rispetto alle dimensioni effettive della mappa che implica una crescita che è intrinseca con l'aumento delle dimensioni della mappa.
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{images/macro_results/beans}
+	\caption{Figura che rappresenta come all'aumentare delle dimensioni del territorio (sull'asse delle \textit{x} è rappresentata la dimensione del lato della mappa) aumenta il numero di ripetitori (sull'asse delle \textit{y}) necessari per coprire tutta l'area. In nero è rappresentato il valore medio, mentre in rosso la deviazione standard.}
+	\label{fig:beans}
+\end{figure}
+
+\subsection{Difficoltà della mappa \textit{vs} tempo richiesto}
+\todo[inline]{Mi confermi che i dati sono quelli nel csv robot\_step\_difficulty.csv? DP}
+Per tale studio, sono state effettuate un totale di 7 simulazioni in cui si è fatto aumentare la dimensione della mappa, e con esso in maniera proporzionale il numero di robot impiegati, in modo tale da far aumentare la difficoltà complessiva; per difficoltà complessiva si intende la somma delle difficoltà di ogni singola cella.
+Le mappe sono state generate casualmente e si è deciso di non effettuare più simulazioni per ogni difficoltà per non complicare inutilmente il grafico e il processo di generazione dati in aggiunta a tutto il tempo richiesto da tali simulazioni; inoltre, i risultati ottenuti da queste poche simulazioni sono stati considerati soddisfacenti per delle analisi di massima.\todo{sicuramente da sistemare. DP}
+Siamo anche convinti che effettuare analisi di fino su queste quantità richiederebbero di prendere in considerazione un numero evelato di fattori e i risultati prodotti potrebbero non risultare altamente interessanti, soprattutto contando che nella pratica ogni situazione sarà unica e poco prevedibile a priori.\\
+Per quanto riguarda i risultati riportati in Figura \ref{fig:difficulty} , si nota che anche in questo caso l'aumento di \textit{step} richiesti per completare l'esplorazione non è lineare rispetto alla difficoltà ma presenta piuttosto un andamento più assimilabile a quello di un logaritmo.
+In aggiunta a tale prima analisi non è possibile trarre altre conclusioni significative, servirebbero molte più simulazioni e sarebbe necessario definire una strategia complicata per poter tenere in considerazioni più fattori per proporre un'analisi approfondita di tale relazione.
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{images/macro_results/difficulty}
+	\caption{Sull'asse delle \textit{x} è presente la difficoltà complessiva di esplorazione della mappa e sull'asse delle \textit{y} il numero di \textit{step} effettuati per completare l'esplorazione.}
+	\label{fig:difficulty}
+\end{figure}
