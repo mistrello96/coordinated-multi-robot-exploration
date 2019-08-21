@@ -19,3 +19,4 @@ optimization/best_solution.txt
 *.run.xml
 !/report/images/*.pdf
 !/report/images/macro_results/*.pdf
+!/report/images/alpha_results/*.pdf
