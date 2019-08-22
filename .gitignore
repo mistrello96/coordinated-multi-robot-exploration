@@ -20,3 +20,5 @@ optimization/best_solution.txt
 !/report/images/*.pdf
 !/report/images/macro_results/*.pdf
 !/report/images/alpha_results/*.pdf
+!/report/images/gamma_results/low_alpha/*.pdf
+!/report/images/gamma_results/high_alpha/*.pdf
