@@ -73,6 +73,7 @@ Inoltre, il numero di particelle della popolazione, che dev'essere utilizzato pe
 Per quanto riguarda questo elaborato e la sua comprensione, basti sapere che FST-PSO ha lo scopo di evitare all'utente la scelta di tutte le costanti sopra descritte, i cui valori sono impostati automaticamente seguendo delle regole di logica Fuzzy e sono relative alla singola particella.
 
 \section{Problemi riscontrati e risultati}
+\label{sec:psoResults}
 \todo[inline]{la segnalazione dei feriti era stata disabilità corretto? DP}
 Dato che lo scopo, semplificando, è quello di minimizzare una funzione e quindi eseguire tante simulazioni con parametri diversi tra loro per scoprire quale configurazione permette di ottenere il minimo, ci si trova a dover affrontare delle problematiche legate ai tempi effettivi della simulazione.
 Originariamente, si era supposto che l'area da esplorare fosse di 1 $Km^2$ ovvero di circa 333$\times$333 celle; da un punto di vista pratico, tali simulazioni richiedono un elevato tempo poiché griglie così grandi vanno ad ingrandire significativamente il grafo sfruttato dai robot e richiedono un numero maggiore di robot, di consegueza l'operazione di calcolo dei cammini minimi aumenta significativamente richiedendo elevati tempi nella pratica: diverse ore per la singola simulazione.
