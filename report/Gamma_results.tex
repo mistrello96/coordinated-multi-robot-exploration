@@ -1,8 +1,8 @@
 \todo[inline]{Questa sezione è stata scritta a più riprese durante la giornata a causa di nipote e parenti, potrei essermi perso qualcosa da dire -> ricontrollare anche la semantica dei risultati e possibili conclusioni perse. DP}
 Le analisi relative al parametro $\gamma$ sono state effettuate in maniera analoga a quelle precedenti: per ogni valore d'interesse di $\gamma$ sono state effettuate 10 simulazioni ognuna delle quali mantenendo invariati tutti gli altri parametri.
-In particolare, le dimensioni della mappa sono state mentenute pari a 30$\times$30 celle, sono stati impiegati 6 robot con un raggio di visione pari a 6 celle, come suggerito dal processo di ottimizzazione descritto nel Capitolo \ref{chap:pso}, e un raggio del ripetitore pari a 3 celle e abilitando i feriti a poter segnalare le loro posizioni.
+In particolare, le dimensioni della mappa sono state mantenute pari a 30$\times$30 celle, sono stati impiegati 6 robot con un raggio di visione pari a 6 celle, come suggerito dal processo di ottimizzazione descritto nel Capitolo \ref{chap:pso}, e un raggio del ripetitore pari a 3 celle e abilitando i feriti a poter segnalare le loro posizioni.
 Per quanto riguarda le mappe utilizzate, sono state sfruttate le 5 mappe generate casualmente e utilizzate per le analisi condotte sul parametro $\alpha$ (Sezione \ref{sec:alpha}).
-Inifine, poiché ci si è accorti che il valore di $\alpha$ possa in qualche modo influenzare la distanza che mantengono tra loro i robot si è deciso di effettuare due batterie di test: una prima in cui si è mantenuto un valore di $\alpha$ basso pari a $10^{-4}$ e poi per uno elevato pari a 8.175.
+Infine, poiché ci si è accorti che il valore di $\alpha$ possa in qualche modo influenzare la distanza che mantengono tra loro i robot si è deciso di effettuare due batterie di test: una prima in cui si è mantenuto un valore di $\alpha$ basso pari a $10^{-4}$ e poi per uno elevato pari a 8.175.
 Le due batterie di test sono state eseguite in modo separato e autonomamente l'una dall'altra non modificando altri parametri (escluso $\gamma$).\\
 La metrica utilizzata per valutare come il parametro influisce nel comportamento del modello è stata la distanza media tra i robot; perché, come già detto, ci si aspetta che per valori alti di $\gamma$ gli agenti tendano a tenersi più distanti tra loro e viceversa.
 Formalmente, la metrica viene calcolata nel seguente modo: per ogni robot si è calcolata la media delle distanze euclidee tra l'agente di interesse e tutti gli altri robot, in seguito, si è computata la media (e relativa deviazione standard) delle distanze medie.
@@ -11,7 +11,7 @@ Di seguito, mostriamo i principali risultati ottenuti in entrambe le batterie di
 
 \subsection{Analisi con valore di $\alpha$ basso}
 \label{subsec:gammaalow}
-Una prima analisi effettuata è stata considerare per ogni valore del parametro la distribuzione della distanza media, ovvero, in quanti \textit{step} si è presentata un determinato valore di distanza media; tali distribuzioni sono state calcolando aggregando i dati di tutte le simulazioni per ogni valore del parametro.
+Una prima analisi effettuata è stata considerare per ogni valore del parametro la distribuzione della distanza media, ovvero, in quanti \textit{step} si è presentato un determinato valore di distanza media; tali distribuzioni sono state calcolando aggregando i dati di tutte le simulazioni per ogni valore del parametro.
 In Figura \ref{fig:gammaDistr} sono mostrate le distribuzioni per due valori di $\gamma$ (le altre sono riportate in Appendice \ref{apx:gamma}), si noti che la scala sull'asse delle \textit{y} è logaritmica e la distribuzione è rappresentata solo da un \textit{marker} che indica il numero di \textit{step} in cui si è verificatè quel valore di distanza; infine, si tenga presente che i valori di distanza sono stati raggruppati per numeri interi.
 Nelle distribuzioni mostrate, si nota come che per un valore di $\gamma$ pari a 0.32 (Figura \ref{sfig:gammaDistr0.32}), gli agenti tendano a mantenere una distanza nell'“intorno” di 30 con pochi casi di distanze pari o superiori a 50; al contempo, con un valore pari a 0.65 (Figura \ref{sfig:gammaDistr0.65}) si nota come non vi sia un valore di distanza che mantengono significativamente più di altri ma presentano una distribuzione più “liscia”.\\
 \begin{figure}
@@ -29,13 +29,13 @@ Poiché effettuare dei confronti solo mediante grafici di distribuzioni realizza
 Il confronto complessivo, riportato in Figura \ref{fig:gammaComparison}, mostra come al crescere de valore $\gamma$ la distanza media tra gli agenti tende ad aumentare per un numero maggiore di \textit{step}.
 In particolare, si nota come che per valori di $\gamma$ pari a 0.32 e 1 si presentino dei veri e propri “picchi”, è interessante che per il valore pari a 0.65 non vi sia un vero e proprio “picco” ma, come già detto, la distribuzione risulti più “liscia” presentando al contempo un numero maggiore di \textit{step} per distanze medie tra 40 e 50 (che risultano essere distanze elevate) e che non compaiono in modo così significativo per nessun altro valore di $\gamma$.
 Invece, per valori bassi non si evidenziano distanze molto più significative di altre ma comunque tendono a concentrarsi con valori di distanza relativamente bassi rispetto agli altri valori di $\gamma$.\\
+Riassumendo quanto valutato fin'ora, si nota come con un valore di $\alpha$ basso, il parametro $\gamma$ influenza come atteso a livello teorico la distanza tra gli agenti, presentando un comportamento particolare per il valore di $\gamma$ pari a 0.65 che è stato quello suggerito dal processo di ottimizzazione, si faccia riferimento al Capitolo \ref{chap:pso}.
 \begin{figure}
 	\centering
 	\includegraphics[width=0.9\linewidth]{images/gamma_results/low_alpha/comparison}
 	\caption{Grafico che riassume tutte le distribuzioni di distanze medie durante le simulazioni per ogni valore di $\gamma$, si noti che l'asse delle \textit{y} non è più logaritmico.}
 	\label{fig:gammaComparison}
 \end{figure}
-Riassumendo quanto valutato fin'ora, si nota come con un valore di $\alpha$ basso, il parametro $\gamma$ influenza come atteso a livello teorico la distanza tra gli agenti, presentando un comportamento particolare per il valore di $\gamma$ pari a 0.65 che è stato quello suggerito dal processo di ottimizzazione, si faccia riferimento al Capitolo \ref{chap:pso}.
 
 Infine, \margin{Come $\alpha$ influenza la distanza tra gli agenti}si è andati a studiare l'evolversi all'interno della singola simulazione (ne è stata scelta una a caso delle dieci per ogni valore di $\gamma$ studiato) della distanza media tra i robot.
 Tali evoluzioni sono mostrate in Figura \ref{fig:gammaSim} per quanto riguarda i valori del parametro pari a 0.32 (Figura \ref{sfig:gammaSim0.32}) e 0.65 (Figura \ref{sfig:gammaSim0.65}), invece per gli altri si faccia riferimento all'Appendice \ref{apx:gamma}.
@@ -56,7 +56,7 @@ Tale fenomeno lo si associa alla possibilità da parte dei feriti di segnalarsi,
 \subsection{Analisi con valore di $\alpha$ alto}
 \label{subsec:gammaahigh}
 Come in precedenza, le prime analisi effettuate si sono concentrate sulla distribuzione delle distanze medie.
-In Figura \ref{fig:gammaHDistr} sono rappresentate le due distribuzioni per i valori di $\gamma$ considerati in precedenza; si può notare che con valori alti di $\alpha$, la distribuzione l'andamento della distribuzione si sia invertita rispetto al caso precedente: per un valore pari a 0.32 (Figura \ref{sfig:gammaHDistr0.32}) la distribuzione sembra essere più “liscia”, invece per un valore pari a 0.65 (Figura \ref{sfig:gammaHDistr0.65}) o superiore sembra concentrarsi per dei valori di distanza.
+In Figura \ref{fig:gammaHDistr} sono rappresentate le due distribuzioni per i valori di $\gamma$ considerati in precedenza; si può notare che con valori alti di $\alpha$, l'andamento della distribuzione si sia invertita rispetto al caso precedente: per un valore pari a 0.32 (Figura \ref{sfig:gammaHDistr0.32}) la distribuzione sembra essere più “liscia”, invece per un valore pari a 0.65 (Figura \ref{sfig:gammaHDistr0.65}) o superiore sembra concentrarsi per dei valori di distanza.
 \begin{figure}
 	\subfloat[Distribuzione della distanza media mantenuta dai robot con un valore di $\gamma$ pari a 0.32.\label{sfig:gammaHDistr0.32}]{
 		\includegraphics[width=.47\linewidth]{images/gamma_results/high_alpha/distribution_distance_gamma_0_32}
@@ -97,6 +97,6 @@ L'evolversi delle distanze è rappresentato in Figura \ref{fig:gammaHSim}
 In questa breve parte, si vogliono evidenziare delle differenze tra come opera il parametro $\gamma$ rispetto al valore di $\alpha$.
 In particolare, si è notato come per valori di $\alpha$ bassi è effettivamente il parametro $\gamma$ ad influire nella distanza tra i robot portando questi a scegliere le celle con utilità maggiore (poiché il peso influisce in maniera insignificativa) e quindi scegliendo le celle viste da meno robot (poiché sono quelle che hanno subito meno riduzioni di utilità).
 In aggiunta, si nota come per valori di $\alpha$ bassi i robot tenderanno a muoversi tutti verso la zona segnalata da un ferito nel momento in cui questi segnalano la loro presenza; al contempo, tale effetto sembra più marginale nel momento in cui $\alpha$ è elevata.
-Nonostante queste considerazioni si nota comunque come per valori di $\gamma$ elevati gli agenti, in entrambi i casi, tendano comunque a rimanere più distanti rispetto a valori bassi, si tenga presente che i “picchi”, per $\alpha$ elevati, sono presenti per valori di distanza minori.
-Ancora una volta, tale fenomeno è dovuto al fatto che quando il costo del cammino è maggiormanete significativo nel calcolo dell'\textit{info-gain} diventa il principale parametro che delinea la scelta e quindi riducendo l'effetto dell'utilità delle celle e di conseguenza del parametro $\gamma$.
+Nonostante queste considerazioni, si nota comunque come per valori di $\gamma$ elevati gli agenti, in entrambi i casi, tendono comunque a rimanere più distanti rispetto a valori bassi, si tenga presente che i “picchi”, per $\alpha$ elevati, sono presenti per valori di distanza minori.
+Ancora una volta, tale fenomeno è dovuto al fatto che quando il costo del cammino è maggiormente significativo nel calcolo dell'\textit{info-gain} diventa il principale parametro che delinea la scelta e quindi riducendo l'effetto dell'utilità delle celle e di conseguenza l'influenza del parametro $\gamma$.
 \todo[inline]{Mi sono perso qualcosa? DP}

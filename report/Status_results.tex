@@ -1,5 +1,5 @@
 Un'ultima analisi effettuata è stata riguardo lo stato degli agenti durante il processo di esplorazione della mappa.
-In particolare, si è studiato per ogni step di una simulazione il numero di agenti che fossero nei seguenti stati:
+In particolare, si è studiato per ogni \textit{step} di una simulazione il numero di agenti che fossero nei seguenti stati:
 \begin{itemize}
 	\item esplorando una cella;
 	\item muovendosi verso una cella;
@@ -7,16 +7,16 @@ In particolare, si è studiato per ogni step di una simulazione il numero di age
 	\item determinando la prossima cella obiettivo o aspettando l'aggiunta di celle obiettivo.
 \end{itemize}
 Per raccogliere tali dati, è stata effettuata una simulazione per mappa, le mappe studiate sono state due casi particolari generate \textit{ad hoc} e 5 mappe generate randomicamente e analizzate in modo che non presentassero casi patologici.
-Tutte le mappe sono state di dimensione 30$\times$30, per questioni di tempo richiesto dalle singole simulazioni, $\alpha$ e $\gamma$ con valori pari ai valori indotti dal processo di ottimizzazione (Sezione \ref{sec:psoResults}), raggio di percezione pari a 6 celle, raggio del ripetitore pari a 3 celle.
+Tutte le mappe sono di dimensione 30$\times$30, per questioni di tempo richiesto dalle singole simulazioni, $\alpha$ e $\gamma$ assumono valori pari ai valori indotti dal processo di ottimizzazione (Sezione \ref{sec:psoResults}), il raggio di percezione pari a 6 cellee quello dei ripetitori pari a 3 celle.
 Inoltre, sono stati utilizzati 6 robot e i feriti potevano segnalare la loro presenza.\\
 Le due mappe particolari sono una che vuole simulare la presenza di un ponte, ovvero si può considerare la mappa divisa in due parti che sono unite solo da una piccola porzione di terra attraversabile.
 L'altra è una mappa che presenta delle zone non raggiungibili e quindi, non esplorabili.
 
 I risultati raccolti sono riportati in Figura \ref{fig:status}, si noti che per rendere i dati leggibili, si sono calcolati 100 intervalli in cui suddividere i dati e aggregarli all'interno di ogni intervallo, per questo motivo in colore si notano le medie e in nero le relative \textit{errorbar}.
 Dai grafici, si può dedurre come la maggior parte dei robot siano sempre impegnati nell'esplorazione e passano poco tempo nelle altre fasi, questo indica che i robot tendono sempre a scegliere le celle più economiche da raggiungere (poiché il valore del parametro $\alpha$ è elevato) e che passano la maggior parte del tempo a esplorare le celle.
-Se così non fosse, ci sarebbe un numero medio di robot minorein fase di esplorazione.
+Se così non fosse, ci sarebbe un numero medio di robot minore in fase di esplorazione.
 Si può, infine, notare come la fase di rilascio dei ripetitori sia un'attività in cui tipicamente solo uno dei robot è impegnato indicando quindi che la costruzione della rete non sia un principale collo di bottiglia che aumenta significativamente i tempi di esplorazione del territorio.
-Infine, si faccia riferimento all'Appendice \ref{apx:status}
+Infine, si faccia riferimento all'Appendice \ref{apx:status} per i grafici non qui rappresentati.
 
 \begin{figure}
 	\begin{tabular}{cc}
