@@ -1,21 +1,21 @@
 Un'ultima analisi effettuata è stata riguardo lo stato degli agenti durante il processo di esplorazione della mappa.
 In particolare, si è studiato per ogni \textit{step} di una simulazione il numero di agenti che fossero nei seguenti stati:
 \begin{itemize}
-	\item esplorando una cella;
-	\item muovendosi verso una cella;
-	\item rilasciando un ripetitore;
-	\item determinando la prossima cella obiettivo o aspettando l'aggiunta di celle obiettivo.
+	\item esplorazione di una cella;
+	\item movimento verso una cella;
+	\item rilascio un ripetitore;
+	\item scelta della prossima cella obiettivo o attesa dell'aggiunta di celle obiettivo.
 \end{itemize}
-Per raccogliere tali dati, è stata effettuata una simulazione per mappa, le mappe studiate sono state due casi particolari generate \textit{ad hoc} e 5 mappe generate randomicamente e analizzate in modo che non presentassero casi patologici.
-Tutte le mappe sono di dimensione 30$\times$30, per questioni di tempo richiesto dalle singole simulazioni, $\alpha$ e $\gamma$ assumono valori pari ai valori indotti dal processo di ottimizzazione (Sezione \ref{sec:psoResults}), il raggio di percezione pari a 6 cellee quello dei ripetitori pari a 3 celle.
+Per raccogliere tali dati, è stata effettuata una singola simulazione su due mappe particolari generate \textit{ad hoc} e 5 mappe casual che non presentassero casi patologici.
+Tutte le mappe sono di dimensione 30$\times$30, per questioni di tempo richiesto dalle singole simulazioni, $\alpha$ e $\gamma$ assumono valori pari ai valori indotti dal processo di ottimizzazione (Sezione \ref{sec:psoResults}), il raggio di percezione pari a 6 celle e quello dei ripetitori pari a 3 celle.
 Inoltre, sono stati utilizzati 6 robot e i feriti potevano segnalare la loro presenza.\\
-Le due mappe particolari sono una che vuole simulare la presenza di un ponte, ovvero si può considerare la mappa divisa in due parti che sono unite solo da una piccola porzione di terra attraversabile.
-L'altra è una mappa che presenta delle zone non raggiungibili e quindi, non esplorabili.
+Le prima delle due mappe particolari rappresenta una situazione che vuole simulare la presenza di un ponte, ovvero si può considerare la mappa divisa in due parti che sono unite solo da una piccola porzione di terra attraversabile.
+La seconda è una mappa che presenta delle zone non raggiungibili, non visibili e, quindi, non esplorabili.
 
-I risultati raccolti sono riportati in Figura \ref{fig:status}, si noti che per rendere i dati leggibili, si sono calcolati 100 intervalli in cui suddividere i dati e aggregarli all'interno di ogni intervallo, per questo motivo in colore si notano le medie e in nero le relative \textit{errorbar}.
-Dai grafici, si può dedurre come la maggior parte dei robot siano sempre impegnati nell'esplorazione e passano poco tempo nelle altre fasi, questo indica che i robot tendono sempre a scegliere le celle più economiche da raggiungere (poiché il valore del parametro $\alpha$ è elevato) e che passano la maggior parte del tempo a esplorare le celle.
+I risultati raccolti sono riportati in Figura \ref{fig:status}; si noti che per rendere i dati leggibili sono stati calcolati 100 intervalli in cui suddividere i dati e questi ultimi sono stati aggregati all'interno di ogni intervallo. Per questo motivo in colore si notano le medie e in nero le relative \textit{errorbar}.
+Dai grafici, si può dedurre come la maggior parte dei robot siano quasi sempre impegnati nell'esplorazione e passano poco tempo nelle altre fasi. Questo indica che i robot tendono sempre a scegliere le celle più economiche da raggiungere (poiché il valore del parametro $\alpha$ è elevato) e che passano la maggior parte del tempo a esplorare le celle.
 Se così non fosse, ci sarebbe un numero medio di robot minore in fase di esplorazione.
-Si può, infine, notare come la fase di rilascio dei ripetitori sia un'attività in cui tipicamente solo uno dei robot è impegnato indicando quindi che la costruzione della rete non sia un principale collo di bottiglia che aumenta significativamente i tempi di esplorazione del territorio.
+Si può, infine, notare come la fase di rilascio dei ripetitori sia un'attività in cui tipicamente solo uno dei robot è impegnato, indicando quindi che la costruzione della rete \textit{mesh} non sia un collo di bottiglia che aumenta significativamente i tempi di esplorazione del territorio.
 Infine, si faccia riferimento all'Appendice \ref{apx:status} per i grafici non qui rappresentati.
 
 \begin{figure}
