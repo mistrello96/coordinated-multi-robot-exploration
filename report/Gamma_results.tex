@@ -39,7 +39,8 @@ Riassumendo quanto valutato fin'ora, si nota come con un valore di $\alpha$ bass
 Infine, \margin{Come $\alpha$ influenza la distanza tra gli agenti}si è andati a studiare l'evolversi all'interno della singola simulazione (ne è stata scelta una casualmente tra le dieci eseguite per ogni valore di $\gamma$ studiato) della distanza media tra i robot.
 Tali evoluzioni sono mostrate in Figura \ref{fig:gammaSim} per quanto riguarda i valori del parametro pari a 0.32 (Figura \ref{sfig:gammaSim0.32}) e 0.65 (Figura \ref{sfig:gammaSim0.65}), per gli altri si faccia riferimento all'Appendice \ref{apx:gamma}.
 In entrambe le simulazioni emerge come più di una volta la distanza tra gli agenti sia diminuita drasticamente e repentinamente per poi, dopo pochi \textit{step}, ricominciare ad aumentare.
-Abbiamo associato tale fenomeno alla possibilità da parte dei feriti di segnalarsi, in particolare, ogni volta che qualcuno si segnala, sappiamo che la priorità delle celle del vicinato viene incrementata, e quindi incrementa l'\textit{info-gain} di tali celle. Poiché il valore di $\alpha$ è basso, i robot non faranno pesare in maniera significativa il costo del cammino e quindi, anche se distanti, tenderanno a scegliere tali celle, portando quindi ad un avvicinamento dei robot con lo scopo di esplorare completamente (e in poco tempo) tutta l'area attorno a dove si è segnalato un ferito.
+Si è associato tale fenomeno alla possibilità da parte dei feriti di segnalarsi, in particolare, ogni volta che qualcuno si segnala, la priorità delle celle del vicinato viene incrementata, e quindi incrementa l'\textit{info-gain} di tali celle.
+Poiché il valore di $\alpha$ è basso, i robot non faranno pesare in maniera significativa il costo del cammino e quindi, anche se distanti, tenderanno a scegliere tali celle, portando quindi ad un avvicinamento dei robot con lo scopo di esplorare completamente (e in poco tempo) tutta l'area attorno a dove si è segnalato un ferito.
 \begin{figure}
 	\subfloat[Evoluzione della distanza media tra gli agenti con un valore di $\gamma$ pari a 0.32.\label{sfig:gammaSim0.32}]{
 		\includegraphics[width=.47\linewidth]{images/gamma_results/low_alpha/dinstance_simulation_gamma_0_32_simid_0}
@@ -68,19 +69,16 @@ In Figura \ref{fig:gammaHDistr} sono rappresentate le due distribuzioni per i va
 	\label{fig:gammaHDistr}
 \end{figure}
 Ancora una volta si è deciso di andare a confrontare tutte le distribuzioni dei valori del parametro analizzati, i risultati sono mostrati in Figura \ref{fig:gammaHComparison}.
-Come si può notare, al contrario del caso precedente, per valori pari a 0.65 o 1 si notano dei “picchi” significativi e anche per valori più bassi (0.1 e 0.32) si nota come i robot mantengano una distanza media maggiore; tale risultato sembra contraddirre quello detto in precedenza.
-\todo[inline]{Di quello che segue sono convinto ma sembra manchi qualcosa. DP}
+Come si può notare, al contrario del caso precedente, per valori pari a 0.65 o 1 si notano dei “picchi” significativi e anche per valori più bassi (0.1 e 0.32) si nota come i robot mantengano una distanza media maggiore; tale risultato sembra contraddirre quello detto in precedenza.\\
 Per analizzare meglio questi risultati e introdurli nel quadro complessivo, bisogna considerare che non è solo $\gamma$ (come avveniva di fatto precedentemente) ad influire sulla scelta della cella obiettivo e degli spostamenti del robot, ma risulta essere vincolante anche il costo del cammino. 
-%Possiamo quindi supporre che gli agenti con valori del parametro bassi ma non eccessivamente abbiano, di fatto, una scelta più ampia tra le possibili celle poiché molte con valori di utilità prossimi tra loro.
-%Quindi, avendo una scelta più ampia è probabile che scelgano quello che più gli conviene in termini di costo poiché il parametro $\alpha$ influisce significativamente e maggiormente rispetto all'utilità e priorità della cella; andando ad inficiare la distanza tra i robot poiché tali scelte non vengono più effettuate dando grande importanza all'utilità della cella quanto al tempo per raggiungerla.
-Poiché il parametro $\alpha$ influisce significativamente e con una magnitudo molto maggiormente rispetto all'utilità e priorità della cella nella scelta del bersaglio, il parametro gamma passa in secondo piano e influisce solo in maniera marginale la scelta. Ciò va ad inficiare la distanza tra i robot, poiché tali scelte non vengono più effettuate dando grande importanza all'utilità della cella quanto al tempo per raggiungerla.
+Poiché il parametro $\alpha$ influisce significativamente e con una magnitudo molto maggiore rispetto all'utilità e priorità della cella nella scelta del bersaglio, il parametro $\gamma$ passa in secondo piano e influisce solo in maniera marginale sulla scelta. Ciò va ad inficiare la distanza tra i robot, poiché tali scelte non vengono più effettuate dando grande importanza all'utilità della cella quanto al tempo necessario per raggiungerla.
 \begin{figure}
 	\centering
 	\includegraphics[width=0.9\linewidth]{images/gamma_results/high_alpha/comparison}
 	\caption{Grafico che riassume tutte le distribuzioni di distanze medie durante le simulazioni per ogni valore di $\gamma$, si noti che l'asse delle \textit{y} non è più logaritmico.}
 	\label{fig:gammaHComparison}
 \end{figure}
-Come ulteriore conferma di tale affermazione, si può notare come durante la singola simulazione non si presentino più quelle situazioni in cui la distanza tra i robot decresceste significativamente a causa della segnalazione da parte dei feriti. Solo durante le fasi finali dell'esplorazione la distanza tra essi alle volte diminuisce.
+Come ulteriore conferma di tale affermazione, si può notare come durante la singola simulazione non si presentino più quelle situazioni in cui la distanza tra i robot decresce significativamente a causa della segnalazione da parte dei feriti. Solo durante le fasi finali dell'esplorazione la distanza tra essi alle volte diminuisce.
 Al fine di evitare che i feriti vengano di fatto ignorati, è stata implementata una seconda tecnica di prioritizzazione delle celle che, al posto di utilizzare un valore fisso stabilito a priori, utilizza un valore dipendente da $\alpha$; i risultati di tale metodo, discusso nella Sezione \todo{finire sta parte} saranno discussi tra breve.
 L'evolversi delle distanze è rappresentato in Figura \ref{fig:gammaHSim}
 \begin{figure}
@@ -95,9 +93,9 @@ L'evolversi delle distanze è rappresentato in Figura \ref{fig:gammaHSim}
 	\label{fig:gammaHSim}
 \end{figure}
 \subsection{Considerazioni conclusive}
-In questa breve sunto, si vogliono evidenziare alcune differenze tra come opera il parametro $\gamma$ rispetto al valore di $\alpha$.
-In particolare, si è notato come per valori di $\alpha$ bassi è effettivamente il parametro $\gamma$ ad influire sulla distanza tra i robot portando, questi a scegliere le celle con utilità maggiore (poiché il peso influisce in maniera poco significativa) e quindi scegliendo le celle viste da meno robot (poiché sono quelle che hanno subito meno riduzioni di utilità).
-In aggiunta, si evidenzia come per valori di $\alpha$ bassi i robot tenderanno a muoversi tutti verso la zona segnalata da un ferito nel momento in cui questi segnalano la loro presenza; al contempo, tale effetto sembra più marginale nel momento in cui $\alpha$ è aumenta.
+In questo breve sunto, si vogliono evidenziare alcune differenze tra come opera il parametro $\gamma$ rispetto al valore di $\alpha$.
+In particolare, si è notato come per valori di $\alpha$ bassi è effettivamente il parametro $\gamma$ ad influire sulla distanza tra i robot portando questi a scegliere le celle con utilità maggiore (poiché il peso influisce in maniera poco significativa) e quindi scegliendo le celle viste da meno robot (poiché sono quelle che hanno subito meno riduzioni di utilità).
+In aggiunta, si evidenzia come per valori di $\alpha$ bassi i robot tenderanno a muoversi tutti verso la zona segnalata da un ferito nel momento in cui questi segnalano la loro presenza; al contempo, tale effetto sembra più marginale nel momento in cui $\alpha$ aumenta.
 Nonostante queste considerazioni, si nota comunque come per valori di $\gamma$ elevati gli agenti, in entrambi i casi, tendono a rimanere più distanti rispetto a valori bassi (si tenga presente che i “picchi” per $\alpha$ elevati sono presenti per valori di distanza minori).
 Ancora una volta, tale fenomeno è dovuto al fatto che quando il costo del cammino è maggiormente significativo nel calcolo dell'\textit{info-gain} diventa il principale parametro che delinea la scelta e quindi riducendo l'effetto dell'utilità delle celle e di conseguenza l'influenza del parametro $\gamma$.
 \todo{test e parlare del metodo di priorità che si basa su alpha}
