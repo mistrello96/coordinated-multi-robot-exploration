@@ -74,7 +74,6 @@ if __name__ == "__main__":
 			rows = df.loc[(df["step"] >= bins[i]) & (df["step"] < bins[i + 1])]
 			costs = rows["cost"].tolist()
 			step_averagecost[m] = np.mean(costs)
-			step_stdcost[m] = np.std(costs)
 		# the last bin has the interval both sides closed
 		m = (bins[-2] + bins[-1]) / 2
 		rows = df.loc[(df["step"] >= bins[-2]) & (df["step"] <= bins[-1])]
