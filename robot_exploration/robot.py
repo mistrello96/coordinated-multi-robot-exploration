@@ -181,10 +181,11 @@ class Robot(Agent):
 			# reduce the utility of all the sorrundings cell if not visited yet
 			for element in self.model.grid.get_neighborhood(result, "moore", include_center = False, radius = self.radar_radius):
 				# only if the cell is in lof with the robot
-				if self.line_of_sight(self.pos, element):
-					cell2 = self.agent_get_cell(element)
-					if cell2.explored == 0:
-						cell2.utility *= self.model.gamma * (self.distance(result, element) / self.radar_radius)
+				#if self.line_of_sight(self.pos, element):
+				cell2 = self.agent_get_cell(element)
+				if cell2.explored == 0:
+					cell2.prev_utility = cell2.utility
+					cell2.utility *= self.model.gamma * (self.distance(result, element) / self.radar_radius)
 
 			return result
 
@@ -265,6 +266,13 @@ class Robot(Agent):
 		# update robot status
 		self.status = 2
 		if self.exploration_status == 0:
+			# correct utility if cell not seen
+			for element in self.model.grid.get_neighborhood(self.pos, "moore", include_center = False, radius = self.radar_radius):
+				# only if the cell is in lof with the robot
+				if not self.line_of_sight(self.pos, element):
+					cell2 = self.agent_get_cell(element)
+					if cell2.explored == 0:
+						cell2.utility = cell2.prev_utility
 			# expand frontier
 			for element in self.model.grid.get_neighborhood(self.pos, "moore", include_center = False, radius = 1):
 				# only if the cell is in lof with the robot

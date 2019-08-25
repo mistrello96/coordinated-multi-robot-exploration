@@ -13,6 +13,7 @@ class Cell(Agent):
 		self.difficulty = difficulty
 		self.explored = explored
 		self.priority = priority
+		self.prev_utility = utility
 		self.utility = utility
 		self.wifi_covered = False
 		self.wifi_bean = False
