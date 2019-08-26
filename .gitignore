@@ -17,9 +17,11 @@ optimization/best_solution.txt
 *.bbl
 *.blg
 *.run.xml
-!/report/images/*.pdf
 !/report/images/macro_results/*.pdf
 !/report/images/alpha_results/*.pdf
 !/report/images/gamma_results/low_alpha/*.pdf
 !/report/images/gamma_results/high_alpha/*.pdf
 !/report/images/status_results/*.pdf
+!/report/images/high_priority_gamma_results/low_alpha/*.pdf
+!/report/images/high_priority_gamma_results/high_alpha/*.pdf
+
