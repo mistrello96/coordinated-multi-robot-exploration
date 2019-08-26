@@ -43,7 +43,4 @@ def fitness(list_params):
 
 	batch_run.run_all()
 	run_data = batch_run.get_model_vars_dataframe() # it is actually one row
-	#print("tempo da sum" + str(sum(run_data["step"])))
-	#print(sum(run_data["total_idling"]))
-	#print(run_data["step"].iloc[0] + (run_data["total_idling"].iloc[0] / nrobots))
 	return run_data["step"].iloc[0] + (run_data["total_idling"].iloc[0] / nrobots)
