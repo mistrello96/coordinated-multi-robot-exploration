@@ -20,6 +20,7 @@
 \frenchspacing %spaziatura italiana per accenti
 \usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes} % note TODO
 \usepackage{blindtext} %loreipsum
+\usepackage{longtable}
 % CONFIGURAZIONE LINK E RIFERIMENTI
 \hypersetup{%
 	pdfpagemode={UseOutlines},
@@ -81,6 +82,9 @@
 \input{Conclusion}
 
 \begin{appendices}
+	\chapter{Valori ottimi ad ogni iterazione durante l'esecuzione di FST-PSO}
+	\label{apx:pso}
+	\input{Appendix_pso}
 	\chapter{Ulteriori risultati su come il parametro $\alpha$ influisce nel costo del cammino}
 	\label{apx:alpha}
 	\input{Appendix_alpha}
