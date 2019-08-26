@@ -105,11 +105,11 @@ Al fine di indagare come il metodo di prioritizzazione alternativo, proposto nel
 Come mostrato nella Figura \ref{fig:NgammaLDistr}, i dati sembrano confermare quanto supposto. Non sono più evidenti decrescite repentine che portano i robot a raggrupparsi in una medesima area, come era invece mostrato nell'analisi corrispettiva eseguita con il precedente metodo di prioritizzazione (Figura \ref{fig:gammaSim})
 \begin{figure}
 	\subfloat[Evoluzione della distanza media tra gli agenti con un valore di $\gamma$ pari a 0.32.]{
-		\includegraphics[width=.47\linewidth]{images/new_gamma_results/low_alpha/dinstance_simulation_gamma_0_32}
+		\includegraphics[width=.47\linewidth]{images/high_priority_gamma_results/low_alpha/dinstance_simulation_gamma_0_32}
 	}
 	\hfill
 	\subfloat[Evoluzione della distanza media tra gli agenti con un valore di $\gamma$ pari a 0.65.]{
-		\includegraphics[width=.47\linewidth]{images/new_gamma_results/low_alpha/dinstance_simulation_gamma_0_65}
+		\includegraphics[width=.47\linewidth]{images/high_priority_gamma_results/low_alpha/dinstance_simulation_gamma_0_65}
 	}
 	\caption{Sull'asse delle \textit{x} si trova il tempo, in termini di \textit{step}, impiegato per l'esplorazione della mappa, mentre sull'asse delle \textit{y} la distanza media tra gli agenti.}
 	\label{fig:NgammaLDistr}
@@ -117,7 +117,7 @@ Come mostrato nella Figura \ref{fig:NgammaLDistr}, i dati sembrano confermare qu
 Al contempo, analizzando il grafico comparativo delle distribuzioni di distanza tra i robot ad ogni \textit{step}, riportato in Figura \ref{fig:NgammaLComparison}, vediamo come vi sia un'effettiva minore distanza media per valori di $\gamma$ prossimi a zero rispetto agli altri casi. Questo avvalora la tesi già enunciata in precedenza che sostiene che valori di gamma prossimi al valore nullo portano tutte le celle nel vicinato della cella obiettivo, anche quelle molto distanti, ad avere utilità simile e prossima a zero. Ciò porta il costo del cammino minimo verso l'obiettivo a diventare nuovamente protagonista nel calcolo dell'\textit{info-gain}, rendendo vana la tecnica di repulsione tra robot così implementata.
 \begin{figure}
 	\centering
-	\includegraphics[width=0.9\linewidth]{images/new_gamma_results/low_alpha/comparison}
+	\includegraphics[width=0.9\linewidth]{images/high_priority_gamma_results/low_alpha/comparison}
 	\caption{Grafico che riassume tutte le distribuzioni di distanze medie durante le simulazioni per ogni valore di $\gamma$, si noti che l'asse delle \textit{y} non è più logaritmico.}
 	\label{fig:NgammaLComparison}
 \end{figure}
