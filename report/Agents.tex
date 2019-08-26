@@ -86,7 +86,7 @@ Dato che ci si è garantiti\todo{forse un po' forte come termine DP} che i robot
 La probabilità con cui un robot presenti dei danneggiamenti è pari a $10^{-8}$; si è deciso di tenere un valore basso perché si suppone che i robot vengano verificati prima del loro dispiego e perché il danneggiamento di ogni robot viene verificato ad ogni \textit{step} della simulazione.
 Si precisa, che per tutte le analisi presentate nel lavoro è stata disabilitata la possibilità di fallimento.
 \subsection{Ferito}
-\label{Ferito}
+\label{subsec:Ferito}
 Questo agente rappresenta una persona ferita che è dispersa nell'area di interesse e necessita di essere individuata e salvata. Si noti che il meccanismo di salvataggio non fa parte di questo simulatore, poiché le metodologie di salvataggio dipendono da fattori esterni che non possono venir considerati complessivamente in un simulatore (\textit{e.g.}, la loro possibilità di muoversi oppure se richiedono un intervento medico sul campo).
 Il loro comportamento è stocastico, ma basato su uno stato interno; di conseguenza tali agenti sono stati classificati come \textit{reflexive agent with internal state}, facendo nuovamente riferimento alla classificazione proposta da Russell e Norvig \cite{russell2016}.
 L'agente è molto semplice, possiede solo due attributi che lo descrivono: la posizione all'interno della griglia e lo stato interno. Lo stato assume valore 0 nel momento in cui il ferito non è ancora stato trovato da un robot e 1 quando invece è stato individuato.
