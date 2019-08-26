@@ -27,7 +27,7 @@ Nelle distribuzioni mostrate, si nota come che per un valore di $\gamma$ pari a 
 Poiché effettuare dei confronti solo mediante grafici di distribuzioni realizzati ognuno per ogni valore analizzato di $\gamma$ risulta complicato e poco significativo, si è deciso di confrontarli unendo tali distribuzioni nello stesso grafico; si noti che l'asse delle \textit{y} non è più a scala logaritmica, in modo da favorire un confronto qualitativo delle distribuzioni.
 Il confronto complessivo, riportato in Figura \ref{fig:gammaComparison}, mostra come al crescere de valore $\gamma$ la distanza media tra gli agenti tende ad aumentare per un numero maggiore di \textit{step}.
 In particolare si può notare come che per valori di $\gamma$ pari a 0.32 e 1 si presentino dei veri e propri “picchi”; è interessante che per il valore pari a 0.65 non vi sia un vero e proprio “picco” ma, come già detto, la distribuzione risulti più “liscia”, presentando al contempo un numero maggiore di \textit{step} con distanze medie tra 40 e 50 (che risultano essere distanze elevate) e che non compaiono in modo così significativo per nessun altro valore di $\gamma$.
-Per valori bassi di $\gamma$ non si evidenziano signoficative differenze in termini di distanza, ma comunque tende ad emergere una concentrazione di valori di distanza relativamente bassi rispetto agli altri valori di $\gamma$.\\
+Per valori bassi di $\gamma$ non si evidenziano significative differenze in termini di distanza, ma comunque tende ad emergere una concentrazione di valori di distanza relativamente bassi rispetto agli altri valori di $\gamma$.\\
 Riassumendo quanto valutato fin'ora, si nota come con un valore di $\alpha$ basso, il parametro $\gamma$ influenza come atteso a livello teorico la distanza tra gli agenti, presentando un comportamento particolare per il valore di $\gamma$ pari a 0.65 che è stato quello suggerito dal processo di ottimizzazione (si faccia riferimento al Capitolo \ref{chap:pso}).
 \begin{figure}
 	\centering
@@ -79,7 +79,7 @@ Poiché il parametro $\alpha$ influisce significativamente e con una magnitudo m
 	\label{fig:gammaHComparison}
 \end{figure}
 Come ulteriore conferma di tale affermazione, si può notare come durante la singola simulazione non si presentino più quelle situazioni in cui la distanza tra i robot decresce significativamente a causa della segnalazione da parte dei feriti. Solo durante le fasi finali dell'esplorazione la distanza tra essi alle volte diminuisce.
-Al fine di evitare che i feriti vengano di fatto ignorati, è stata implementata una seconda tecnica di prioritizzazione delle celle che, al posto di utilizzare un valore fisso stabilito a priori, utilizza un valore dipendente da $\alpha$; i risultati di tale metodo, discusso nella Sezione \todo{finire sta parte} saranno discussi tra breve.
+Al fine di evitare che i feriti vengano di fatto ignorati, è stata implementata una seconda tecnica di prioritizzazione delle celle che, al posto di utilizzare un valore fisso stabilito a priori, utilizza un valore dipendente da $\alpha$; i risultati di tale metodo, discusso nella Sotto-sezione \ref{Ferito} saranno discussi tra breve.
 L'evolversi delle distanze è rappresentato in Figura \ref{fig:gammaHSim}
 \begin{figure}
 	\subfloat[Evoluzione della distanza media tra gli agenti con un valore di $\gamma$ pari a 0.32.]{

@@ -31,9 +31,8 @@ class Injured(Agent):
 	def sos_high(self, cell):
 		rand = np.random.random_sample()
 		if rand > 0.999:
-			# if so, set the priority of the cell to 1 and also increment priority of the neighborhood
 			if self.model.alpha == 0:
-				cell.priority = self.model.alpha * 6 * self.model.wifi_range # this is zero
+				cell.priority = 1
 				if self.model.seen_graph.has_node(cell.pos):
 					self.model.frontier.add(cell.pos)
 				for close_index in self.model.grid.get_neighborhood(self.pos, "moore", include_center = False, radius = 1):
