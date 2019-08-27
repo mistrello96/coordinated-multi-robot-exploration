@@ -31,7 +31,7 @@ Di seguito verranno elencati, e brevemente descritti, solo gli attributi che si 
 	\item \texttt{wifi\_range} indica la l'ampiezza del raggio di copertura del singolo ripetitore \textit{wi-fi} in termini di celle. Viene considerata coperta l'area inclusa nel vicinato di \textit{Moore} di distanza pari al parametro sopracitato di ogni cella in cui è stato rilasciato un ripetitore;
 	\item \texttt{ninjured} rappresenta il numero di feriti all'interno della mappa.
 \end{itemize}
-\todo[inline]{da rivedere sicuramente quanto segue perché molto ci giochiamo qui DP}
+
 Al contempo, come già accennato in precedenza, all'interno della classe che rappresenta l'ambiente sono stati inseriti un insieme di parametri che vengono sfruttati dai singoli agenti.
 A livello teorico, tali parametri dovrebbero essere personali e rappresentati in ogni singolo agente, ma per motivi di efficienza programmativa e comodità, nell'implementazione di questo simulatore sono stati inseriti come parametri della classe che rappresenta l'ambiente, poiché tale oggetto è mandatoriamente ed automaticamente condiviso, da parte della libreria, tra i vari agenti. A livello pratico, la condivisione di tali dati è possibile grazie all'instaurazione di una rete che permette ai robot di comunicare.
 Di seguito sono riportati tali parametri, con una sintetica spiegazione:

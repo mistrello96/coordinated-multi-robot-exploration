@@ -62,7 +62,7 @@ if params[2] == "None":
                                             description = "Influence on utility reduction on the neighborhood of the target"),
         "ninjured" : UserSettableParameter('slider', "Number of injured", 5, 1, 30, 1,
                                             description = "Choose how many injured are in the map"),
-        "inj_pri" : UserSettableParameter('slider', "Injured Priority", 0, 0, 1, 1,
+        "inj_pri" : UserSettableParameter('slider', "Injured Priority", 1, 0, 1, 1,
                                             description = "Choose how important is to explore cells with injured")
     }
 else:
@@ -72,13 +72,13 @@ else:
                                             description = "Choose how many agents to include in the model"),
         "radar_radius" : UserSettableParameter('slider', "Radar radius", 6, 0, 10, 1,
                                             description = "Choose how many cells around the robot can see"),
-        "wifi_range" : UserSettableParameter('slider', "Wifi range", 10, 2, 150, 1,
+        "wifi_range" : UserSettableParameter('slider', "Wifi range", 3, 2, 150, 1,
                                             description = "Choose how many cells the wifi signal is propagated"),
         "alpha" : UserSettableParameter('number', "Alpha value", value = 8.175,
                                             description = "Importance of path cost in target selection"),
         "gamma" : UserSettableParameter('number', "Gamma value", value = 0.65,
                                             description = "Influence on utility reduction on the neighborhood of the target"),
-        "inj_pri" : UserSettableParameter('slider', "Injured Priority", 0, 0, 1, 1,
+        "inj_pri" : UserSettableParameter('slider', "Injured Priority", 1, 0, 1, 1,
                                             description = "Choose how important is to explore cells with injured")
     }
     model_params["load_file"] = params[2]
