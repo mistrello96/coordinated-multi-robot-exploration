@@ -24,4 +24,4 @@ optimization/best_solution.txt
 !/report/images/status_results/*.pdf
 !/report/images/high_priority_gamma_results/low_alpha/*.pdf
 !/report/images/high_priority_gamma_results/high_alpha/*.pdf
-
+|/report/images/*.png
