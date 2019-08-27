@@ -17,9 +17,9 @@ La funzione che si vuole minimizzare è la seguente:
 \end{equation}
 Dove:
 \begin{itemize}
-	\item \textit{S} è il numero totale di step richiesti dalla simulazione;
+	\item \textit{S} è il numero totale di \textit{step} richiesti dalla simulazione;
 	\item n è il numero di robot;
-	\item $n_{\textit{is}}$ è il numero di robot in stato di \textit{idling} al \textit{s}-esimo step.
+	\item $n_{\textit{is}}$ è il numero di robot in stato di \textit{idling} al \textit{s}-esimo \textit{step}.
 \end{itemize}
 In questo modo, si vuole minimizzare il tempo di epslorazione, ma si penalizza la funzione ogni volta che qualche robot è in stato di \textit{idling} perché non vi sono celle nella frontiera.\\
 Poiché tale funzione, anche se espressa in termini matematici, non può essere risolta in modo analitico, si è deciso di utilizzare un processo di ottimizzazione meta-euristico: PSO (Particle Swarm Optimization), in particolare nella sua variante FST-PSO (Fuzzy Self-Tuning Particle Swarm Optimization) \cite{nobile2018} che viene descritta nella Sezione \ref{sec:fstpso}.
