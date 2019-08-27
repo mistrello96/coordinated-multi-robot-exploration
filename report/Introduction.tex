@@ -1,18 +1,17 @@
 \chapter{Introduzione}
 \label{introduction}
 Quando una catastrofe naturale colpisce un centro abitato, il primo scopo dei soccorritori è quello di individuare e salvare delle possibili vittime che sono riuscite a sopravvivere al disastro.
-Come spesso succede, queste operazioni possono richiedere giorni interi di lavoro, perché molte macerie devono venir rimosse nella speranza di individuare ancora delle persone vive.
+Come spesso succede, queste operazioni possono richiedere giorni interi di lavoro, perché molte macerie devono venir rimosse nella speranza di individuare delle persone ancora vive.
 Dato che negli ultimi anni si è iniziato ad impiegare i robot per operazioni di esplorazione di un territorio e situazioni di \textit{search and rescue}, in questo lavoro si propone un'estensione di una tecnica proposta e diffusa in letteratura \cite{burgard2005} che si coniuga con una tecnologia sviluppata negli ultimi anni \cite{OWL}.
-Lo scopo del lavoro è quello di fornire un sistema altamente autonomo in supporto alle forze di soccorittori, che sia in grado di esplorare l'area colpita mediante una flotta di robot muniti di tecnologie per l'individuazione di feriti (\textit{e.g.}, sensori termici) comunicando tra loro le scelte prese singolarmente.
-Brevemente, per far ciò, gli agenti durante l'esplorazione creano una rete \textit{wi-fi mesh} che gli permette di comunicare tra loro e coordinarsi.
-Inoltre, tale rete permette a delle possibili vittime munite di \textit{smartphone} di segnalare la loro condizione e posizione mediante il GPS.
-Nonostante si parli più volte di coordinazione tra robot, bisogna evidenziare che non vi è un algoritmo centrale che stabilisce il movimento dei robot, ma sono questi a prendere singolarmente delle decisioni in base alla configurazione del sistema propostogli, facendo quindi la scelta ritenuta ottimale.
-Il comportamento dei robot è principalmente stabilito dal valore assunto dai parametri interni, che rimangono costanti durante tutta l'esplorazione, e che permettono al robot di effettuare delle scelte su dove muoversi durante l'esplorazione; si capisce che al variare di questi parametri varia il comportamento emergente del sistema.
-In quanto ci si trova in una situazione critica, si vorrebbe che il comportamento emergente del sistema sia quello che permetta l'esplorazione dell'area nel minor tempo possibile; per questo motivo, una buona parte del lavoro si è concentrata nell'analisi di questi parametri.\\
+Lo scopo del lavoro è quello di fornire un sistema altamente autonomo in supporto alle forze di soccorittori, che sia in grado di esplorare l'area colpita mediante una flotta di robot muniti di tecnologie per l'individuazione di feriti (\textit{e.g.}, sensori termici), comunicando tra loro le scelte prese singolarmente.
+Per far ciò, durante l'esplorazione gli agenti creano una rete \textit{wi-fi mesh} che permette di comunicare tra loro e coordinarsi.
+Inoltre, tale rete permette a delle possibili vittime munite di \textit{smartphone} di segnalare la loro condizione e posizione mediante coordinate GPS (ove disponibili).
+Nonostante si parli più volte di coordinazione tra robot, bisogna evidenziare che non vi è un algoritmo centrale che stabilisce il movimento dei robot, ma sono questi ultimi a prendere singolarmente delle decisioni in base alla configurazione del sistema corrente, compiendo quindi la scelta ritenuta ottimale.
+Il comportamento dei robot è principalmente stabilito dal valore assunto alcuni parametri interni, che rimangono costanti durante tutta l'esplorazione, e che permettono al robot di effettuare le scelte su dove muoversi durante l'esplorazione; è quindi sottinteso che al variare di questi parametri varia il comportamento emergente del sistema.
+In quanto le situazioni di disastro naturale sono estremamente critica, si vorrebbe che il comportamento emergente del sistema fosse quello di garantire l'esplorazione dell'area nel minor tempo possibile; per questo motivo, una buona parte del lavoro si è concentrata nell'analisi di come i parametri del sistema modificassero il comportamento dei robot e la durata della simulazione.\\
 In particolare, per questo lavoro ci si è posti i seguenti obiettivi:\begin{itemize}
 	\item adattare il modello proposto dall'articolo al caso di studio e realizzare il simulatore;
-	\item indurre autonomaticamente i valori ottimi dei parametri per minimizzare i tempi di esplorazione;
-	\item valutare l'effetto su aspetti del comportamento emergente al variare del valore dei parametri.
+	\item indurre automaticamente i valori ottimi dei parametri per minimizzare i tempi di esplorazione;
+	\item valutare, al variare del valore di questi parametri, l'effetto su aspetti del comportamento emergente .
 \end{itemize}
-Infine, si sottolinea che il simulatore è stato realizzato sfruttando Mesa \cite{Mesa}.
-Un \textit{framework} per Python che permette la realizzazione, l'analisi e la visualizzazione di modelli ad agenti; tali agenti possono venir definiti \textit{ad hoc} dall'utente.
+Infine, si sottolinea che il simulatore è stato realizzato sfruttando Mesa \cite{Mesa}, un \textit{framework} per Python che permette la realizzazione, l'analisi e la visualizzazione di modelli ad agenti. Tali agenti possono venir definiti \textit{ad hoc} dall'utente, personalizzandone parametri e comportamento ad ogni \textit{step} della simulazione.
