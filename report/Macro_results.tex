@@ -16,7 +16,7 @@ Inoltre, per i valori di $\alpha$, $\gamma$ e per il raggio dei sensori sono sta
 Per quanto concerne \margin{Numero di robot \textit{vs} ripetitori rilasciati}il numero di ripetitori rilasciati, come mostrato in Figura \ref{fig:robotsbeans}, tale numero aumenta all'aumentare dei robot impiegati nonostante le dimensioni della mappa rimangono costanti.
 Tale comportamento può essere considerato ragionevole perché, all'aumentare del numero dei robot, aumentano i casi in cui due agenti escono contemporaneamente dalla zona coperta e quindi rilasciano due ripetitori la cui area coperta di uno dei due sarebbe bastata per coprire anche parzialmente l'area dell'altro.
 Di fatto, i robot non hanno alcun meccanismo di coordinamento per la creazione della rete, ognuna pensa a sé e quindi all'aumentare del numero di robot aumentano i casi in cui due robot rilasciano due ripetitori vicini tra loro, non ottimizzando l'utilizzo del singolo ripetitore e portando quindi a molte porzioni di territorio coperte da più di un singolo ripetitore.
-Si fa presente che tale numero non è distorto dal fatto che ogni singolo robot rilascia un ripetitore appena viene disposto sul campo, poiché i robot rilasciano il ripetitore solo se in quella cella non è già presente un ripetitore.\\
+Si fa presente che tale numero non è distorto dal fatto che ogni singolo robot rilascia un ripetitore appena viene disposto sul campo, poiché i robot rilasciano il ripetitore solo se in quella cella non è già presente un ripetitore.
 \begin{figure}
 	\centering
 	\includegraphics[width=0.9\linewidth]{images/macro_results/robots_beans}
@@ -60,3 +60,4 @@ In aggiunta a tale prima analisi non è possibile trarre ulteriori conclusioni s
 	\caption{Sull'asse delle \textit{x} è presente la difficoltà complessiva di esplorazione della mappa e sull'asse delle \textit{y} il numero di \textit{step} effettuati per completare l'esplorazione.}
 	\label{fig:difficulty}
 \end{figure}
+\newpage

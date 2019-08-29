@@ -65,7 +65,7 @@ In Figura \ref{figapx:gammaHSim} sono rappresentate le distanze medie e deviazio
 \section{Ulteriori grafici derivanti dalle analisi del metodo di prioritizzazione alternativo}
 \subsection{Ulteriori grafici derivanti dalle analisi con valore di $\alpha$ basso}
 In Figura \ref{figapx:ngammaLSim} sono rappresentate le distanze medie e deviazioni standard per ogni \textit{step} di una simulazione, la simulazione è stata scelta casualmente tra le dieci effettuate per la raccolta dei dati.
-\begin{figure}
+\begin{figure}[b!]
 	\begin{tabular}{cc}
 		\subfloat[Evoluzione della distanza media tra gli agenti con un valore di $\gamma$ pari a 0.]{\includegraphics[width = .5\textwidth]{images/high_priority_gamma_results/low_alpha/dinstance_simulation_gamma_0}} &
 		\subfloat[Evoluzione della distanza media tra gli agenti con un valore di $\gamma$ pari a 0.01.]{\includegraphics[width = .5\textwidth]{images/high_priority_gamma_results/low_alpha/dinstance_simulation_gamma_0_01}}\\
@@ -75,8 +75,16 @@ In Figura \ref{figapx:ngammaLSim} sono rappresentate le distanze medie e deviazi
 	\caption{Sull'asse delle \textit{x} si trova il tempo, in termini di \textit{step}, impiegato per l'esplorazione della mappa, mentre sull'asse delle \textit{y} la distanza media tra gli agenti.}
 	\label{figapx:ngammaLSim}
 \end{figure}
+\clearpage
 \subsection{Ulteriori grafici derivanti dalle analisi con valore di $\alpha$ elevato}
-In Figura \ref{figapx:ngammaHSim} sono rappresentate le distanze medie e deviazioni standard per ogni \textit{step} di una simulazione, la simulazione è stata scelta casualmente tra le dieci effettuate per la raccolta dei dati.
+In Figura \ref{fig:NgammaHComparison} è riportata la comparazione delle distribuzioni della distanza tra i robot ad ogni \textit{step}.
+Nella Figura \ref{figapx:ngammaHSim} sono rappresentate le distanze medie e deviazioni standard per ogni \textit{step} di una simulazione, la simulazione è stata scelta casualmente tra le dieci effettuate per la raccolta dei dati.
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.9\linewidth]{images/high_priority_gamma_results/high_alpha/comparison}
+	\caption{Grafico che riassume tutte le distribuzioni di distanze medie durante le simulazioni per ogni valore di $\gamma$, si noti che l'asse delle \textit{y} non è più logaritmico.}
+	\label{fig:NgammaHComparison}
+\end{figure}
 \begin{figure}
 	\begin{tabular}{cc}
 		\subfloat[Evoluzione della distanza media tra gli agenti con un valore di $\gamma$ pari a 0.]{\includegraphics[width = .5\textwidth]{images/high_priority_gamma_results/high_alpha/dinstance_simulation_gamma_0}} &
@@ -88,11 +96,4 @@ In Figura \ref{figapx:ngammaHSim} sono rappresentate le distanze medie e deviazi
 	\end{tabular}
 	\caption{Sull'asse delle \textit{x} si trova il tempo, in termini di \textit{step}, impiegato per l'esplorazione della mappa, mentre sull'asse delle \textit{y} la distanza media tra gli agenti.}
 	\label{figapx:ngammaHSim}
-\end{figure}
-Nella Figura \ref{fig:NgammaHComparison} è riportata la comparazione delle distribuzioni della distanza tra i robot ad ogni \textit{step}.
-\begin{figure}
-	\centering
-	\includegraphics[width=0.9\linewidth]{images/high_priority_gamma_results/high_alpha/comparison}
-	\caption{Grafico che riassume tutte le distribuzioni di distanze medie durante le simulazioni per ogni valore di $\gamma$, si noti che l'asse delle \textit{y} non è più logaritmico.}
-	\label{fig:NgammaHComparison}
 \end{figure}

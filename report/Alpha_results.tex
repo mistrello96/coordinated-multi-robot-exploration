@@ -1,6 +1,5 @@
 Nelle seguenti analisi si è voluto studiare come al variare del parametro $\alpha$ variasse la scelta delle celle obiettivo da parte dei robot (si ricorda la strategia di scelta della cella descritto nella Sotto-sezione \ref{sub:robots} e della Formula \ref{math:info-gain}), ovvero come il peso introdotto da $\alpha$ fa variare l'importanza che gli agenti danno alla scelta dei cammini.
 Come già detto, ci si aspetta che per valori di $\alpha$ elevati si scelgano celle il cui cammino per raggiungerle abbia un costo basso, e per valori di $\alpha$ bassi i robot scelgano principalmente in base all'utilità (e priorità) della cella.\\
-
 In questa parte di lavoro, sono state effettuate due tipi di analisi: in primo luogo, si sono studiati i costi dei cammini scelti durante tutta la durata della simulazione aggregando i risultati di varie simulazioni con lo stesso valore di $\alpha$; in seguito, si è scesi più nel dettaglio andando a valutare come i costi variano all'evolvere del tempo (in termini di \textit{step}) per ogni valore di $\alpha$ studiato in precedenza.
 Tutte le simulazioni effettuate per queste analisi sono state eseguite nel seguente modo:
 \begin{itemize}
@@ -16,8 +15,7 @@ Poiché i valori di $\alpha$ sono stati studiati con ordini di grandezza differe
 Dai grafici si nota che per valori relativamente alti di $\alpha$ il costo medio rimane pressoché costante, questo perché nel momento in cui $\alpha$ è sufficiente a far pesare, anche solo in piccola parte, il costo del cammino nel calcolo dell'\textit{info-gain}, le celle in prossimità dell'agente saranno quelle che tipicamente possiedono un valore di \textit{info-gain} maggiore e verranno quindi preferite dall'agente, portando così a costi di spostamento ridotti.
 Al contempo, si può apprezzare come all'aumentare del parametro, nonsotante la media rimanga invariata, la deviazione standard e relativo massimo diminuscano, evidenziando che i robot tenderanno sempre più a preferire le celle più economiche da raggiungere a discapito di una loro utilità e priorità bassa.
 Si può dedurre che valori di $\alpha$ troppo elevati rendano inutili le politiche di prioritizzazione delle celle e le strategie di gestione delle utilità, poiché gli agenti preferiranno sempre e solo la cella più economica da raggiungere, rendendo marginali gli altri due parametri.
-Infine, in Figura \ref{sfig:alphaVar0.005} si può notare come per un valore di $\alpha$ pari a zero il costo venga completamente ignorato (come ci si aspetta) e quindi le celle scelte dipendono unicamente dalla loro utilità e priorità, causando quindi lo spostamento degli agenti per il territorio, cercando semplicemente la cella con utilità e priorità maggiore. Questo porta ad un drastico aumento del numero di \textit{step} necessari a completare la simulazione, in quanto la maggior parte del tempo è impiegato per lo spostamento dei robot.
-\begin{figure}
+\begin{figure}[t]
 	\subfloat[Media dei costi dei cammini scelti da parte degli agenti durante un insieme di simulazioni con un determinato valore di $\alpha$, relative deviazioni standard e massima deviazione standard presente in una simulazione. In questa figura sono rappresentati i dati relativi a tutti i valori del parametro analizzati.\label{sfig:alphaVarAll}]{
 		\includegraphics[width=.47\linewidth]{images/alpha_results/variation_all}
 	}
@@ -28,6 +26,7 @@ Infine, in Figura \ref{sfig:alphaVar0.005} si può notare come per un valore di 
 	\caption{Per entrambi i grafici, in nero è rappresentata la media delle medie dei costi durante le singole simulazioni effettuate con un determinato valore di $\alpha$, in rosso si rappresenta la media delle deviazioni standard calcolate per ogni simulazione ed infine la riga tratteggiata indica il massimo delle deviazioni standard delle simulazioni per il relativo valore di $\alpha$.}
 	\label{fig:alphaVar}
 \end{figure}
+Infine, in Figura \ref{sfig:alphaVar0.005} si può notare come per un valore di $\alpha$ pari a zero il costo venga completamente ignorato (come ci si aspetta) e quindi le celle scelte dipendono unicamente dalla loro utilità e priorità, causando quindi lo spostamento degli agenti per il territorio, cercando semplicemente la cella con utilità e priorità maggiore. Questo porta ad un drastico aumento del numero di \textit{step} necessari a completare la simulazione, in quanto la maggior parte del tempo è impiegato per lo spostamento dei robot.
 
 Poiché le analisi precedentemente introdotte aggregano i dati in modo sostanziale, si è deciso di analizzare più nello specifico come $\alpha$ influisse nella scelta dei cammini durante la simulazione, in particolare per ogni valore di $\alpha$ preso in considerazione nella parte precedente si è valutato per ogni \textit{step} della simulazione i costi dei cammini scelti dagli agenti.
 Si sono considerati solo gli \textit{step} in cui almeno un robot ha effettuato la scelta della cella \textit{target} e se più robot hanno effettuato una scelta nello stesso \textit{step}, si è considerata la media di essi; tale studio è stato effettuato aggregando le varie simulazioni per lo stesso valore del parametro. 
@@ -60,3 +59,4 @@ Infine, si nota come per valori di $\alpha$ pari ad uno e sei i tempi di esplora
 	\caption{Confronto tra la media dei costi dei cammini durante la simulazione per diversi valori di $\alpha$, anche in questo caso la media è stata calcolata in intervalli di 100 \textit{step}.}
 	\label{fig:alphaComparison}
 \end{figure}
+\clearpage
