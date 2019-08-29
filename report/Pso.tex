@@ -28,7 +28,7 @@ Poiché tale funzione, anche se espressa in termini matematici, non può essere 
 \label{sec:fstpso}
 PSO è una meta-euristica basata sull'intelligenza di sciame delle popolazioni, ispirata dagli stormi di uccelli e banchi di pesce. 
 È particolarmente utile per problemi di ottimizzazione la cui soluzione può essere rappresentata come un vettore numerico \cite{Kennedy1995}. 
-In PSO una popolazione (chiamata sciame) di \textit{N} soluzioni candidate (chiamate particelle) cooperano per identificare la soluzione ottima, rispetto ad una data funzione di fitness \textit{f}, muovendosi dentro un limitato spazio di ricerca \textit{M}-dimensionale, dove \textit{M} è la lunghezza del vettore di valori reali precedentemente citato. 
+In PSO una popolazione (chiamata sciame) di \textit{N} soluzioni candidate (chiamate particelle) cooperano per identificare la soluzione ottima, rispetto ad una data funzione di fitness \textit{f}, muovendosi all'interno di un limitato spazio di ricerca \textit{M}-dimensionale, dove \textit{M} è la lunghezza del vettore di valori reali precedentemente citato. 
 Ogni particella \textit{i} (\textit{i} = 1, \dots, \textit{N}) è caratterizzata da due vettori nello spazio di ricerca: la posizione, $x_i \in \mathbb{R}^\textit{M}$, e la velocità, $v_i \in \mathbb{R}^\textit{M}$. Le posizioni iniziali delle particelle sono selezionate casualmente mediante una distribuzione uniforme all'interno dello spazio di ricerca. 
 La posizione e la velocità di ogni particella sono aggiornate, ad ogni iterazione della fase di ottimizzazione, basandosi su due attrattori: \begin{enumerate}
 	\item la miglior posizione trovata dalla particella fino a quel momento ($\textbf{b}_i \in \mathbb{R}^\textit{M}$), la cui rispettiva costante globale, che ne bilancia l'effetto, prende il nome di fattore cognitivo ($c_{cog} \in \mathbb{R}_+$);
@@ -45,22 +45,22 @@ Si vuole sottolineare che, in PSO i valori del peso dell'inerzia, del fattore co
 
 Per come è stata descritta fin'ora, la tecnica potrebbe portare le particelle al di fuori dello spazio delle soluzioni accettabili. 
 Per evitare questo problema, in PSO lo spazio di ricerca è limitato, basandosi su conoscenze di dominio del problema, e queste condizioni di confine sono applicate a tutte le particelle che raggiungono tali limiti.
-Si evidenzia, che i confini dello spazio di ricerca sono dipendenti dal problema e, quindi, non possono essere determinati a priori con strategie automatiche. 
-Le condizioni al confine usate da PSO (e riutilizzate in FST-PSO) seguono una \textit{damping strategy}; ovvero, tale strategia consiste nel “far rimbalzare” le particelle che escono dai confini modificandogli la velocità rispetto alla dimensione, di cui è stato oltrepassato il limite. 
-Alla particella di interesse, le viene impostata la direzione come l'opposto della direzione che l'ha portata ad uscire e, tale direzione, è inoltre moltiplicata per un valore estratto casualmente da una distribuzione uniforme nell'intervallo $[0, 1)$. 
-PSO presenta un altro problema riguardante la velocità delle particelle, infatti, questa può divergere durante la simulazione. 
-Per impedire ciò, è presente un valore di velocità massima $\textit{v}_{max_m} \in \mathbb{R}_+$ (dove tale velocità si riferisce rispetto all'\textit{m}-esima dimensione dello spazio di ricerca, $\textit{m} = 1, \dots, \textit{M}$) che non può essere superato dalle particelle, nel caso dovessero superarlo, le velocità sarebbero riportate a tale valore. 
-È inoltre possibile, teoricamente, impostare una velocità minima $\textit{v}_{min_m} \in \mathbb{R}_+$ (anche in questo caso la velocità minima è riferita rispetto ogni direzione) a cui possono viaggiare le particelle, in modo da migliorare le capacità esplorative dello sciame. Tale costante, però, non è presente nel PSO standard.
+Si evidenzia che i confini dello spazio di ricerca sono dipendenti dal problema e, quindi, non possono essere determinati a priori con strategie automatiche. 
+Le condizioni al confine usate da PSO (e riutilizzate in FST-PSO) seguono una \textit{damping strategy}, una strategia consistente nel “far rimbalzare” le particelle che escono dai confini modificando la loro velocità rispetto alla dimensione di cui è stato oltrepassato il limite. 
+Alla particella di interesse viene impostata la direzione come l'opposto della direzione che l'ha portata ad uscire, moltiplicata per un valore estratto casualmente da una distribuzione uniforme nell'intervallo $[0, 1)$. 
+PSO presenta un altro problema riguardante la velocità delle particelle; essa infatti può divergere durante la simulazione. 
+Per impedire ciò, è presente un valore di velocità massima $\textit{v}_{max_m} \in \mathbb{R}_+$ (dove tale velocità è riferita all'\textit{m}-esima dimensione dello spazio di ricerca, $\textit{m} = 1, \dots, \textit{M}$) che non può essere superato dalle particelle. Nel caso in cui questo limite venisse infranto, la velocità della particella sarebbe riportata a tale valore. 
+È inoltre possibile, teoricamente, impostare una velocità minima $\textit{v}_{min_m} \in \mathbb{R}_+$ (anche in questo caso la velocità minima è riferita ad ogni direzione) a cui possono viaggiare le particelle, in modo da migliorare le capacità esplorative dello sciame. Tale costante, però, non è presente nell'implementazione di PSO standard.
 
-Tuttavia, in PSO, i valori delle costanti descritte fin'ora (\textit{N}, $c_{cog}$, $c_{soc}$, \textit{w}, il vettore delle velocità minime $\textbf{v}_{min}$, se presente, e il vettore delle velocità massime $\textbf{v}_{max}$) devono essere impostate dall'utente. 
+Tuttavia, in PSO, i valori delle costanti descritte fin'ora (\textit{N}, $c_{cog}$, $c_{soc}$, \textit{w}, il vettore delle velocità minime $\textbf{v}_{min}$, se presente, e il vettore delle velocità massime $\textbf{v}_{max}$) devono essere impostati dall'utente. 
 Il problema che si pone è che il valore di queste costanti può influenzare significativamente il processo di ottimizzazione, in quanto influiscono sia sulla velocità di convergenza della tecnica sia sulla qualità della soluzione ottima. 
-Questo implica che l'utente deve fare più processi di ottimizzazione cercando le giuste configurazioni di costanti, per ottenere dei buoni risultati dal processo di ottimizzazione, portando questo procedimento a richiedere molto tempo. 
-Inoltre, spesso delle buone conoscenze sul dominio applicativo, su cui si sta effettuando il processo di ottimizzazione, possono influenzare tale processo, perché permettono di impostare tali costanti più facilmente.
+Questo implica che l'utente sia obbligato a fare più iterazioni del processo di ottimizzazione, cercando le giuste configurazioni di costanti per ottenere dei buoni risultati; ciò può richiedere un grande dispendio in termini temporali e prestazionali. 
+Inoltre, spesso buone conoscenze sul dominio applicativo su cui si sta effettuando il processo di ottimizzazione, possono influenzare il numero di iterazioni richiesto, poiché permettono di impostare tali costanti più facilmente.
 
-Per il motivo sopra citato, è stato introdotto e si è deciso di usare FST-PSO, alla cui base vi è la logica sopra descritta. 
+Per i motivi sopracitati, è stato introdotto e si è deciso di usare FST-PSO, alla cui base vi è la logica sopra descritta. 
 Tale processo estende un già presente sistema di ottimizzazione, basato anch'esso sulla logica Fuzzy, che prende il nome di PPSO (Proactive Particles in Swarm Optimization) \cite{nobile2015}. 
-La particolarità di PPSO è che la velocità e la posizione della particella erano aggiornate in base a valori delle costanti individuali per quella cellula, l'inerzia e i fattori sociali e cognitivi erano associati rispettivamente a diverse variabili della logica Fuzzy indipendenti tra ogni particella della popolazione (ogni particella possedeva le sue variabili). 
-Invece, in PPSO le velocità minime e massime rispetto ad ogni dimensione dello spazio di ricerca erano comuni tra tutte le particelle. 
+La particolarità di PPSO è che la velocità e la posizione della particella sono aggiornate in base a valori delle costanti individuali per quella particella, l'inerzia e i fattori sociali e cognitivi erano associati rispettivamente a diverse variabili della logica Fuzzy indipendenti tra ogni particella della popolazione (ognuna possedeva le sue variabili). 
+Inoltre, in PPSO le velocità minime e massime rispetto ad ogni dimensione dello spazio di ricerca erano comuni tra tutte le particelle. 
 Al contrario, FST-PSO incorpora anche queste due costanti “all'interno” delle particelle, in modo tale che ogni particella abbia associate a sè le seguenti costanti (i cui valori sono indipendenti dai valori delle stesse delle altre particelle): \begin{itemize}
 	\item $c\_{cog}$;
 	\item $c\_{soc}$;
@@ -68,17 +68,19 @@ Al contrario, FST-PSO incorpora anche queste due costanti “all'interno” dell
 	\item $\textbf{v}_{min}$;
 	\item $\textbf{v}_{min}$.
 \end{itemize}
-I valori di queste 5 costanti sono modificati durante il processo di ottimizzazione basandosi sui valori di uscita determinati da delle regole Fuzzy. 
-Inoltre, il numero di particelle della popolazione, che dev'essere utilizzato per il processo di ottimizzazione, è stabilito dalla seguente euristica: $\textit{N} = \lfloor10 + 2\sqrt{\textit{M}}\rfloor$, quindi il numero di particelle dipende dal numero delle dimensioni dello spazio di ricerca \textit{M}.\\
-Per quanto riguarda questo lavoro, si è sfruttato FST-PSO perché ha lo scopo di evitare all'utente la scelta di tutte le costanti sopra descritte, i cui valori sono impostati automaticamente seguendo delle regole di logica Fuzzy e sono relative alla singola particella.
+I valori di queste 5 costanti sono modificati durante il processo di ottimizzazione basandosi sui valori di uscita determinati da alcune regole Fuzzy. 
+Inoltre, il numero di particelle della popolazione, che dev'essere utilizzato per il processo di ottimizzazione, è stabilito dalla seguente euristica: $\textit{N} = \lfloor10 + 2\sqrt{\textit{M}}\rfloor$.
+Quindi il numero di particelle dipende dal numero delle dimensioni dello spazio di ricerca \textit{M}.\\
+Per quanto riguarda questo lavoro, è stato sfruttato FST-PSO perché permette all'utente evitare la scelta di tutte le costanti sopra descritte, i cui valori sono impostati automaticamente seguendo delle regole di logica Fuzzy, e sono relative alla singola particella.
 
 \section{Problemi riscontrati e risultati}
 \label{sec:psoResults}
-Dato che lo scopo, semplificando, è quello di minimizzare una funzione e quindi eseguire tante simulazioni con parametri diversi tra loro per scoprire quale configurazione permette di ottenere il minimo, ci si trova a dover affrontare delle problematiche legate ai tempi effettivi della simulazione.
-Originariamente, si era supposto che l'area da esplorare fosse di 1 $Km^2$ ovvero di circa 333$\times$333 celle; da un punto di vista pratico, tali simulazioni richiedono un elevato tempo, poiché griglie così grandi vanno ad ingrandire significativamente il grafo sfruttato dai robot e richiedono un numero maggiore di robot, di consegueza l'operazione di calcolo dei cammini minimi aumenta significativamente richiedendo elevati tempi nella pratica: diverse ore per la singola simulazione.
-Poiché per un processo di ottimizzazione (per come è stato definito PSO) è necessario effettuare un numero di simulazioni nell'ordine delle centinaia, non è risultato possibile effettuare tutto il processo di ottimizzazione con mappe di tali dimensioni (il singolo processo avrebbe richiesto settimane).
-Si è quindi deciso di ridurre la scala del problema andando ad analizzare griglie con dimensioni di 30$\times$30 celle e 3 feriti, scalando proporzionalmente anche il raggio di copertura del singolo ripetitore.
-In questo modo, è stato possibile effettuare una singola volta (poiché effettuarlo più volte avrebbe richiesto comunque troppo tempo) il processo di ottimizzazione considerando validi i risultati inferiti sia in termini del numero di robot da utilizzare (anche questi in proporzione) e i valori di $\alpha$ e $\gamma$ che ci si aspetta non debbano modificarsi al variare delle dimensioni della mappa, poiché influiscono le scelte “locali” e tali scelte non vengono influenzate in alcun modo dalla dimensione della mappa o dal numero di robot.
+Dato che lo scopo, semplificando, è quello di minimizzare una funzione e quindi eseguire tante simulazioni con parametri diversi tra loro, al fine di scoprire quale configurazione permette di ottenere il minimo valore di \textit{fitness}, ci si trova a dover affrontare delle problematiche legate ai tempi richiesti della simulazione.
+Originariamente, si era supposto che l'area da esplorare fosse di 1 $Km^2$ ovvero di circa 333$\times$333 celle; da un punto di vista pratico, tali simulazioni richiedono un elevato lasso di tempo, poiché griglie così grandi vanno ad ingrandire significativamente il grafo di visione sfruttato dai robot e richiedono un numero maggiore di robot.
+Di conseguenza, l'operazione di calcolo dei cammini minimi diventa computazionalmente onerosa, richiedendo tempi sempre più elevati nella pratica (diverse ore per la singola simulazione).
+Poiché per un processo di ottimizzazione (per come è stato definito PSO) richiede un numero di simulazioni nell'ordine delle centinaia, non è risultato possibile effettuare tutto il processo di ottimizzazione con mappe di tali dimensioni (il singolo processo avrebbe richiesto settimane).
+Si è quindi deciso di ridurre la scala del problema andando ad analizzare griglie con dimensioni di 30$\times$30 celle e 3 feriti, scalando proporzionalmente anche il raggio di copertura del singolo ripetitore \textit{wifi}.
+In questo modo, è stato possibile effettuare una singola volta (poiché effettuarlo più volte avrebbe richiesto comunque troppo tempo) il processo di ottimizzazione, considerando validi i risultati inferiti sia in termini del numero di robot da utilizzare (anche questi in proporzione) sia in termini di valori di $\alpha$ e $\gamma$, che ci si aspetta non debbano modificarsi al variare delle dimensioni della mappa, in quanto influiscono sulle scelte “locali” ed esse non vengono influenzate in alcun modo dalla dimensione della mappa o dal numero di robot.
 Per queste motivazioni, abbiamo considerato estendibili i risultati ottenuti a mappe di dimensioni maggiori.\\
 Gli intervalli di valori assumibili da tali parametri che hanno determinato lo spazio di ricerca sono:
 \begin{itemize}
@@ -88,7 +90,7 @@ Gli intervalli di valori assumibili da tali parametri che hanno determinato lo s
 	\item $\left[0, 1\right]$ per il valore di $\gamma$.
 \end{itemize}
 Infine, il numero di iterazioni effettuate dal processo è pari a 50.
-Poiché anche un singolo processo di ottimizzazione in queste condizioni richiede diversi giorni, è stato effettuato una sola volta in modo da poter poi effettuare altri studi qualitativi. 
+Poiché l'esecuzione singolo processo di ottimizzazione in queste condizioni richiede diversi giorni, è stato effettuato una sola volta in modo da poter poi effettuare altri studi qualitativi. 
 Nonostante sia stato effettuato una sola volta, possiamo considerare i risultati prodotti abbastanza attendibili, in quanto l'algoritmo ha presentato convergenza verso la soluzione ottima già dalle primissime iterazioni, e non è riuscito a trovare configurazioni che migliorassero significativamente il risultato (si faccia riferimento all'Appendice \ref{apx:pso}).
 Per garantirci di non essere incappati in un minimo locale, abbiamo valutato il valore della funzione di fitness rispetto alla difficoltà complessiva di esplorazione della mappa e i due valori sono concordi tra loro; possiamo quindi affermare, con un buon margine di sicurezza, che i risultati prodotti siano quelli effettivamente ottimi.
 In particolare, $\alpha$ deve essere pari a 8.233, ovvero un valore molto alto che va a far pesare significativamente il costo del cammino; questo implica che se si vuole esplorare in maniera efficiente bisogna ridurre il più possibile i tempi di spostamento.
