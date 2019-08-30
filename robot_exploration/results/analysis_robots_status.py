@@ -13,7 +13,6 @@ if __name__ == "__main__":
 
 	simulations = sorted(list(set(df["sim_id"])))
 	number_of_simulations = len(simulations)
-	#print(number_of_simulations)
 	
 	for s in simulations:
 		tmp_df = df.loc[df["sim_id"] == s]
@@ -69,16 +68,6 @@ if __name__ == "__main__":
 		deploying_std[m] = np.std(deploying_bean)
 
 		plt.figure(figsize = (8, 6), dpi = 300)
-		'''
-		plt.plot(steps, idling, linestyle = '-',
-				 color = "darkred", label = "idling")
-		plt.plot(steps, travelling, linestyle = '-',
-				 color = "darkblue", label = "travelling")
-		plt.plot(steps, exploring, linestyle = '-',
-				 color = "darkgreen", label = "exploring")
-		plt.plot(steps, deploying_bean, linestyle = '-',
-				 color = "darkorange", label = "deploying_bean")
-		'''
 
 		plt.errorbar(idling_mean.keys(), idling_mean.values(), 
 					 linestyle = "-", marker = '.',

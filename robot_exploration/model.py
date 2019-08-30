@@ -16,7 +16,6 @@ import sys
 from scipy.spatial import distance
 
 number_of_steps_csv = "./robot_exploration/results/number_of_steps.csv"
-#exploration_percentage_csv = "./robot_exploration/results/percentage_exploration_simulation_step.csv"
 robot_status_csv = "./robot_exploration/results/robots_status_simulation_step.csv"
 alpha_csv = "./robot_exploration/results/alpha_variation.csv"
 alpha_step_csv = "./robot_exploration/results/alpha_steps.csv"
@@ -33,7 +32,6 @@ class ExplorationArea(Model):
 		gamma_csv = gamma_csv,
 		optimization_task = False, # enable a small part of data collection for optimization task
 		time_csv = number_of_steps_csv,
-		#exploration_percentage_csv = exploration_percentage_csv, 
 		robot_status_csv = robot_status_csv):
 
 		# checking params consistency
@@ -61,11 +59,6 @@ class ExplorationArea(Model):
 			# it represents the sum of the difficulties of every cell
 			self.total_difficulty = 0
 			
-			self.dc_percentage_step = DataCollector(
-				{"step": lambda m: self.get_step(m),
-				 "explored": lambda m: self.get_explored(m)}
-			)
-			
 			self.dc_robot_status = DataCollector(
 				{"idling": lambda m: self.get_number_robots_status(m, "idling"),
 				 "travelling": lambda m: self.get_number_robots_status(m, "travelling"),
@@ -74,7 +67,6 @@ class ExplorationArea(Model):
 				 "step": lambda m: self.get_step(m)}
 			)
 			self.time_csv = time_csv
-			#self.exploration_percentage_csv = exploration_percentage_csv
 			self.robot_status_csv = robot_status_csv
 
 		if self.optimization_task:
@@ -202,7 +194,7 @@ class ExplorationArea(Model):
 			self.grid.place_agent(a, (column, row))
 			self.agent_counter += 1
 			# create initial frontier: add cell in front of the robot if valid and not obstacles
-			cell = [e for e in self.grid.get_cell_list_contents(tuple([column, row + 1])) if isinstance(e, Cell)][0] # maybe this list comprehension can become a function for simple reading
+			cell = [e for e in self.grid.get_cell_list_contents(tuple([column, row + 1])) if isinstance(e, Cell)][0]
 			if cell.explored == 0:
 				self.frontier.add(tuple([column, row +  1]))
 			try:
@@ -219,11 +211,10 @@ class ExplorationArea(Model):
 				pass
 
 			cell = [e for e in self.grid.get_cell_list_contents(tuple([column, row])) if isinstance(e, Cell)][0]
-			# Dove viene deployato il robot viene deployato anche un bean (uno solo)
+			# in the cell where some robots are deployed, only one bean is deployed
 			if not cell.wifi_bean:
 				cell.wifi_bean = True
 				for index in self.grid.get_neighborhood(cell.pos, "moore", include_center = False, radius = self.wifi_range):
-					# cell = self.agent_get_cell(index)
 					cell = [e for e in self.grid.get_cell_list_contents(index) if isinstance(e, Cell)][0]
 					cell.wifi_covered = True
 				if self.dump_datas:
@@ -239,10 +230,8 @@ class ExplorationArea(Model):
 		
 		# call step function for all of the robots in random order
 		self.schedule.step()
-		#print("step " + str(self.schedule.steps))
 
 		if self.dump_datas:
-			self.dc_percentage_step.collect(self)
 			self.dc_robot_status.collect(self)
 		if self.optimization_task:
 			self.total_idling_time += self.get_number_robots_status(self, "idling")
@@ -271,20 +260,10 @@ class ExplorationArea(Model):
 				df = df.append({"nrobots": self.nrobots, "ncells": self.ncells, 
 								"steps": self.schedule.steps, 
 								"total_difficulty": self.total_difficulty,
-                "beans_deployed": self.get_number_bean_deployed(self)},
+                				"beans_deployed": self.get_number_bean_deployed(self)},
 								ignore_index = True)
 				df.to_csv(self.time_csv, index = False)
 				
-				df_explored = self.dc_percentage_step.get_model_vars_dataframe()
-				'''
-				df = pd.read_csv(self.exploration_percentage_csv)
-				if len(df["sim_id"]) == 0: # in case the csv has no values
-					df_explored["sim_id"] = 0
-				else:
-					df_explored["sim_id"] = df["sim_id"][df.index[-1]] + 1 # get the last value of sim_id increase of one
-				df = df.append(df_explored, ignore_index = True, sort = False) # If there are some problems in the csvs, look for this sort, DP
-				df.to_csv(self.exploration_percentage_csv, index = False)
-				'''
 				df_robots_status = self.dc_robot_status.get_model_vars_dataframe()
 				df = pd.read_csv(self.robot_status_csv)
 				if len(df["sim_id"]) == 0:
@@ -358,20 +337,7 @@ class ExplorationArea(Model):
 	# Data collection utilities
 	@staticmethod
 	def get_step(m):
-		return m.schedule.steps
-
-
-	# this should be the bottlenck of data collection
-	@staticmethod
-	def get_explored(m):
-		count_explored = 0
-		for i in m.grid.coord_iter():
-			cell = [obj for obj in m.grid.get_cell_list_contents(i[1:]) if isinstance(obj, Cell)][0]
-			if cell.explored == 2:
-				count_explored += 1
-		result = count_explored / (m.ncells * m.ncells - m.nobstacle)
-		return result
-	
+		return m.schedule.steps	
 
 	# these two should go faster since cells are not in the scheduler anymore
 	@staticmethod

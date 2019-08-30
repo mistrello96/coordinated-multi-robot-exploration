@@ -29,7 +29,7 @@ class Robot(Agent):
 		# used for failure cases in order to set back correctly the utility of the cell
 		self.former_cell_utility = 0
 
-		self.percept() # è ancora utile ? DP
+		self.percept()
 
 		# store the status of the Robot
 		# 0 picking target / not moving
@@ -111,7 +111,7 @@ class Robot(Agent):
 		robot_seen = set(self.model.grid.get_neighborhood(self.pos, "moore", include_center = True, radius = self.radar_radius))
 		for percepted_cell in robot_seen:
 			cell_neigh = set(self.model.grid.get_neighborhood(percepted_cell, "moore", include_center = False, radius = 1))
-			cell_neigh_percepted = set.intersection(robot_seen, cell_neigh) # DP inter isn't definetely a clear variable name
+			cell_neigh_percepted = set.intersection(robot_seen, cell_neigh)
 			for neigh_cell in cell_neigh_percepted:
 				source_index = percepted_cell
 				destination_index = neigh_cell
